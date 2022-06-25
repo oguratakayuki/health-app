@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  content_quantity: 1
+  content_unit: MyString
+  content_unit_per: 1
+  content_unit_per_unit: MyString
+  string: MyString
+
+two:
+  content_quantity: 1
+  content_unit: MyString
+  content_unit_per: 1
+  content_unit_per_unit: MyString
+  string: MyString
