@@ -1,5 +1,18 @@
 # README
 
+## TODO
+* エクセルからNutrients 栄養素取り込み、親子関連付け
+* エクセルの横軸を正しく解析できるか
+* エクセルの縦軸を正しく解析できるか
+* エクセルの営養値を正しく解析できるか
+* エクセルデータ取り込み
+
+
+
+
+
+
+
 # admin
 rails,vuejs
 # nestJs
@@ -19,10 +32,6 @@ ingredients
 tags
   name
 nutrients
-
-nutrients_alias_names
-  nutrient_id どの栄養素
-  alias_name
 
 
 ingredients食品
