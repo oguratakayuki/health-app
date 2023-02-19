@@ -12,14 +12,14 @@
 
 ActiveRecord::Schema.define(version: 2022_06_25_073327) do
 
-  create_table "ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "ingredients", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "remarks"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "ingredients_nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "ingredients_nutrients", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "ingredients_id"
     t.bigint "nutrients_id"
     t.integer "content_quantity"
@@ -32,14 +32,14 @@ ActiveRecord::Schema.define(version: 2022_06_25_073327) do
     t.index ["nutrients_id"], name: "index_ingredients_nutrients_on_nutrients_id"
   end
 
-  create_table "nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "nutrients", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "parent_id"
   end
 
-  create_table "nutrients_intake_standards", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "nutrients_intake_standards", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "nutrient_id"
     t.integer "content"
     t.integer "unit"

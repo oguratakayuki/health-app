@@ -48,8 +48,6 @@ namespace :csv_import do
     puts 'success'
   end
 
-
-
   desc "nutrientsをcsvファイルからimportする"
   task :nutrients, [:file_path] => :environment do |t, args|
     args.with_defaults(:file_path => "./nutrients.csv")
@@ -67,6 +65,14 @@ namespace :csv_import do
     rescue ActiveModel::UnknownAttributeError => invalid
       puts "インポートに失敗：UnknownAttributeError"
     end
-    
   end
+    
+  desc "ingredients_nutrientsをxlsファイルからimportする"
+  task :ingredients_nutrients, [:file_path] => :environment do |t, args|
+    args.with_defaults(:file_path => "./ingredients_nutrients.xlsx")
+    path = Rails.root.join(args.file_path)
+    IngredientsNutrientsImportService::Importer.new(path: path).execute
+  end
+
+
 end

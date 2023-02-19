@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/myapp
     ports:
-      - "3001:3000"
+      - "3009:3000"
     networks:
       - shared-network
   db:
@@ -16,7 +16,7 @@ services:
       MYSQL_DATABASE: health_development
       TZ: 'Asia/Tokyo'
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ./tmp/db:/var/lib/mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
