@@ -4,18 +4,22 @@ module IngredientsNutrientsImportService
     def self.execute(entities)
       results = []
       grouped_entities = entities.group_by(&:name)
-      name_duplicated_entities_groups = grouped_entities.select do |grouped_entity|
-          grouped_entity.size > 1
+      name_duplicated_entities_groups = {}
+      not_name_duplicated_entities_groups = {}
+      grouped_entities.each do |name, grouped_entities|
+        if grouped_entities.size > 1
+          name_duplicated_entities_groups[name] =  grouped_entities
+        else
+          not_name_duplicated_entities_groups[name] = grouped_entities
+        end
       end
-      not_name_duplicated_entities_groups = grouped_entities.select { |grouped_entity| grouped_entity.size == 0 }
       name_duplicated_entities_groups.each do |duplicated_name, entities|
         entities.each do |entity|
           entity.group_name = duplicated_name
           results << entity
         end
       end
-      binding.pry
-      not_name_duplicated_entities_groups.values.concat(results).flatten
+      not_name_duplicated_entities_groups.values.flatten.concat(results).flatten
     end
   end
 end
