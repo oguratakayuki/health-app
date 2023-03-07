@@ -68,7 +68,12 @@ module IngredientsNutrientsImportService
         IngredientsNutrient.insert_all(ingredients_nutrients)
       end
       # TODO
-      # 1. ingredient_group_nameを保存
+      # 1. ingredient_group_nameを保存(categoryが"group"のtagとして保存)
+      #   -> tag = Tag.create(name: 'さんま')
+      #   -> category = Category.create(name: 'group')
+      #   -> tag_category.create(tag_id: tag.id, category.id)
+      #   -> ingredient.tags << tag
+      #
       # 2. 食材ingredientsを保存する（nameとremark)
 
     end
