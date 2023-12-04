@@ -16,7 +16,7 @@ module IngredientsNutrientsImportService
         tag = Tag.find_or_create_by(name: tag)
         IngredientTag.find_or_create_by(ingredient_id: ingredient.id, tag_id: tag.id)
       end
-      IngredientsNutrient.new(
+      IngredientNutrient.new(
         ingredient: ingredient,
         nutrient: nutrient,
         content_quantity: nutrients_unit_entity.content_quantity,

@@ -28,12 +28,6 @@ module IngredientsNutrientsImportService
       end
 
 
-
-
-
-
-
-
       # 全角半角を削除
       #name = name.gsub!(/(^[[:space:]]+)|([[:space:]]+$)/, '')
       # name = 'からし　粒入りマスタード'

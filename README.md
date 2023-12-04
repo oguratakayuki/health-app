@@ -1,10 +1,15 @@
 # README
 
+docker exec -it  health-app-db-1  mysql -u root -p health_development
+rootp
+
 # SETUP
 ```
+docker network create shared-network
+docker-compose up db -d
 docker-compose run web rails csv_import:nutrients['nutrients.csv']
 docker-compose run web rails csv_import:nutrients_intake_standards['nutrients_intake_standards.csv']
-bundle exec rails csv_import:ingredients_nutrients
+docker-compose run web bundle exec rails csv_import:ingredients_nutrients
 ```
 
 ## TODO
