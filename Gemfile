@@ -25,6 +25,13 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
+gem 'devise',             '4.8.0'
+gem 'devise_token_auth',  '1.1.5'
+gem 'devise-i18n',        '1.9.4'
+#CORS設定
+gem 'rack-cors',          '1.1.1'
+gem 'omniauth'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'roo'
