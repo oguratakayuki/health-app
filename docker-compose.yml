@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   web:
     build: .
@@ -10,17 +9,19 @@ services:
     networks:
       - shared-network
   db:
-    image: mysql:5.7
+    image: mysql:8.0.32
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
     platform: linux/x86_64
     environment:
       MYSQL_ROOT_PASSWORD: rootp
       MYSQL_DATABASE: health_development
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userp
       TZ: 'Asia/Tokyo'
     ports:
       - "3307:3306"
     volumes:
       - ./tmp/db:/var/lib/mysql
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - shared-network
   nuxt:
