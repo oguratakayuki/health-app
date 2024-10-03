@@ -24,6 +24,7 @@ gem 'jbuilder', '~> 2.7'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
+gem 'kaminari'
 
 gem 'devise',             '4.8.0'
 gem 'devise_token_auth',  '1.1.5'
