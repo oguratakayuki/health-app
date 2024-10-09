@@ -2,4 +2,5 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   middleware: ["cors"],
+  ssr: false,
 });
