@@ -2,7 +2,7 @@
   <div class="modal" @click="close">
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">食材情報</h2>
-      <form @submit.prevent="handleSubmit(onSubmit)">
+      <form @submit.prevent="onSubmit">
         <div class="form-group">
           <label for="name">名前</label>
           <Field name="name" type="text" id="name" class="input" />
@@ -35,22 +35,18 @@ interface Ingredient {
   original_name: string;
 }
 
-// ingredientがnullまたはundefinedの場合にデフォルト値を設定
 const {ingredient} = defineProps<{
   ingredient: Ingredient | null
 }>()
 
 const emit = defineEmits(['close', 'save']);
 
-// バリデーションスキーマの定義
 const schema = yup.object({
   name: yup.string().required('名前は必須項目です'),
   remarks: yup.string().optional(),
   original_name: yup.string().required('原産地は必須項目です'),
 });
 
-// useForm を使ってフォームのバリデーションを初期化
-// デフォルト値を設定して ingredient が null の場合でも問題なく処理できるように
 const { handleSubmit, values } = useForm({
   validationSchema: schema,
   initialValues: {
@@ -60,17 +56,12 @@ const { handleSubmit, values } = useForm({
   }
 });
 
-const onSubmit = (values: Ingredient) => {
-  console.log('onSubmit');
-  try {
-    emit('save', values);  // フォームの値を親に送信
-  } catch (error) {
-    console.error(error);
-  }
-};
+const onSubmit = handleSubmit(values=>{
+  emit('save', values);
+})
 
 const close = () => {
-  emit('close');  // モーダルを閉じる
+  emit('close');
 };
 </script>
 
