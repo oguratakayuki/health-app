@@ -1,19 +1,22 @@
 <template name="IngredientModal">
   <div class="modal" @click="close">
-    <div class="modal-content">
+    <div class="modal-content" @click.stop>
       <h2 class="modal-title">食材情報</h2>
-      <form @submit.prevent="save">
+      <form @submit.prevent="handleSubmit(onSubmit)">
         <div class="form-group">
           <label for="name">名前</label>
-          <input type="text" id="name" v-model="ingredient.name" />
+          <Field name="name" type="text" id="name" class="input" />
+          <ErrorMessage name="name" class="error-message" />
         </div>
         <div class="form-group">
           <label for="remarks">備考</label>
-          <textarea id="remarks" v-model="ingredient.remarks"></textarea>
+          <Field as="textarea" name="remarks" id="remarks" class="input" />
+          <ErrorMessage name="remarks" class="error-message" />
         </div>
         <div class="form-group">
           <label for="original_name">原産地</label>
-          <input type="text" id="original_name" v-model="ingredient.original_name" />
+          <Field name="original_name" type="text" id="original_name" class="input" />
+          <ErrorMessage name="original_name" class="error-message" />
         </div>
         <button type="submit">保存</button>
       </form>
@@ -22,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { useForm, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 interface Ingredient {
   id: number;
@@ -30,29 +35,45 @@ interface Ingredient {
   original_name: string;
 }
 
-defineProps<{
-  ingredient: Ingredient
+// ingredientがnullまたはundefinedの場合にデフォルト値を設定
+const {ingredient} = defineProps<{
+  ingredient: Ingredient | null
 }>()
 
 const emit = defineEmits(['close', 'save']);
 
-const save = async (value) => {
-  // API呼び出しで保存処理を実行
+// バリデーションスキーマの定義
+const schema = yup.object({
+  name: yup.string().required('名前は必須項目です'),
+  remarks: yup.string().optional(),
+  original_name: yup.string().required('原産地は必須項目です'),
+});
+
+// useForm を使ってフォームのバリデーションを初期化
+// デフォルト値を設定して ingredient が null の場合でも問題なく処理できるように
+const { handleSubmit, values } = useForm({
+  validationSchema: schema,
+  initialValues: {
+    name: ingredient?.name || '',
+    remarks: ingredient?.remarks || '',
+    original_name: ingredient?.original_name || ''
+  }
+});
+
+const onSubmit = (values: Ingredient) => {
+  console.log('onSubmit');
   try {
-    console.log(value);
-    // ...
-    emit('save', ingredient);
+    emit('save', values);  // フォームの値を親に送信
   } catch (error) {
     console.error(error);
   }
 };
 
 const close = () => {
-  // emit('close');
+  emit('close');  // モーダルを閉じる
 };
-
-
 </script>
+
 
 <style scoped>
 .modal {
