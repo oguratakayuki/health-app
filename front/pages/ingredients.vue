@@ -95,8 +95,6 @@ fetchIngredients(currentPage.value);
 
 
 
-
-
 <style scoped>
 .container {
   display: flex;
@@ -112,4 +110,24 @@ fetchIngredients(currentPage.value);
 
 .table-container {
 }
+
+
+table {
+  border-collapse: collapse;
+  border-top: none; /* 上の線を消す */
+  border-left: none; /* 左の線を消す */
+  border-right: none; /* 右の線を消す */
+  border-bottom: 1px solid #ccc; /* テーブルの下に線 */
+}
+td, th {
+  border-top: none; /* 上の線を消す */
+  border-right: none; /* 右の線を消す */
+  border-left: none; /* 左の線を消す */
+  border-bottom: 1px solid #ccc; /* 下の線だけ表示 */
+  padding: 10px; /* セル内の余白 */
+}
+
+
+
+
 </style>

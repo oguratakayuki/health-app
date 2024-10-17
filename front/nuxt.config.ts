@@ -3,4 +3,5 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   middleware: ["cors"],
   ssr: false,
+  css: ["~/assets/css/main.css"],
 });
