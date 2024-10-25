@@ -18,7 +18,7 @@
           <Field name="original_name" type="text" id="original_name" class="input" />
           <ErrorMessage name="original_name" class="error-message" />
         </div>
-        <button type="submit">保存</button>
+        <Button>保存</Button>
       </form>
     </div>
   </div>
@@ -66,6 +66,7 @@ const close = () => {
 </script>
 
 
+
 <style scoped>
 .modal {
   position: fixed;
@@ -81,34 +82,52 @@ const close = () => {
 
 .modal-content {
   background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  width: 20%; /* モーダルの幅を50%に設定 */
-  height: 30%; /* モーダルの高さを50%に設定 */
+  padding: 30px;           /* モーダル内の余白を拡大 */
+  border-radius: 10px;      /* 丸みを強調 */
+  width: 40%;               /* モーダル幅を少し広げる */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-
-
 }
 
 .modal-title {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;      /* タイトルの下に余白を拡大 */
 }
-
-
 
 .form-group {
+  margin-bottom: 20px;      /* 各フォーム要素間の余白を広げる */
   display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+  flex-direction: column;   /* ラベルとフィールドを縦並びに */
 }
 
-.form-group label {
-  margin-right: 10px; /* ラベルの右側に10pxの余白 */
+.input {
+  padding: 10px;            /* フィールド内の余白を広げる */
+  border: 1px solid #ccc;   /* フィールドのボーダーを追加 */
+  border-radius: 5px;       /* フィールドを丸みのある角に */
+  font-size: 16px;
+  margin-top: 5px;          /* ラベルとフィールドの間に余白 */
 }
 
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+button {
+  margin-top: 10px;          /* フォーム末尾のボタンとの間に余白を追加 */
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
 </style>
 

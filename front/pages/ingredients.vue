@@ -24,7 +24,7 @@
               <td>{{ ingredient.name || 'No Name Available' }}</td>
               <td>{{ ingredient.remarks || 'No Remarks Available' }}</td>
               <td>{{ ingredient.original_name || 'No Original' }}</td>
-              <td><button @click="openModal(ingredient)">編集</button></td>
+              <td><Button @click="openModal(ingredient)">編集</Button></td>
             </tr>
           </tbody>
         </table>
