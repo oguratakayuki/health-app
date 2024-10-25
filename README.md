@@ -22,8 +22,10 @@ docker-compose run web bundle exec rails csv_import:ingredients_nutrients
 - [ ] サジェスト（python)
 
 
-## next task
-```
-docker-compose run web bundle exec rails csv_import:ingredients_nutrients
-```
-でingredients_nutrientsにimportできるようにする
+## TODO DETAIL
+### 食材栄養素管理機能(admin crud, マスタデータ管理 nuxt)
+
+- [ ] サイドメニューを作る
+- [ ] ソート機能を作る
+- [ ] 栄養価のCRUDを作る
+- [ ] 汎用的な認証機能を作る
