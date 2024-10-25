@@ -2,9 +2,23 @@
   <div class="container">
     <h2>Ingredients</h2>
     <div class="button-container">
+      <button @click="goToPage(1)" :disabled="currentPage === 1"><<</button>
       <button @click="previousPage" :disabled="currentPage === 1">前へ</button>
-      <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 0">次へ</button>
+
+      <!-- ページ番号の表示 -->
+      <span v-for="page in visiblePages" :key="page">
+        <button
+          @click="goToPage(page)"
+          :class="{ active: page === currentPage }"
+        >
+          {{ page }}
+        </button>
+      </span>
+
+      <button @click="nextPage" :disabled="currentPage === totalPages">次へ</button>
+      <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">>></button>
     </div>
+
     <div class="table-container">
       <div v-if="isLoading">Loading...</div>
       <div v-else>
@@ -30,6 +44,7 @@
         </table>
       </div>
     </div>
+
     <IngredientModal
       v-if="showModal"
       :ingredient="selectedIngredient"
@@ -39,19 +54,32 @@
   </div>
 </template>
 
+
+
 <script setup lang="ts">
-import { ref } from 'vue';
+
+import { ref, computed } from 'vue';
 import { Ingredient } from '~/types/ingredients';
 import IngredientModal from '@/components/modals/IngredientModal.vue';
 
 const showModal = ref(false);
-
-// selectedIngredient のデフォルト値を設定
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
 const isLoading = ref(false);
 const totalPages = ref(0);
+
+// 5ページ分の表示を管理する
+const visiblePages = computed(() => {
+  const pages = [];
+  const start = Math.max(1, currentPage.value - 2); // 現在ページの前後2ページを表示
+  const end = Math.min(totalPages.value, start + 4); // 最大5ページ表示
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
 
 const fetchIngredients = async (page: number) => {
   isLoading.value = true;
@@ -76,17 +104,20 @@ const handleSave = (formData: Ingredient) => {
   showModal.value = false;
 };
 
+const goToPage = (page: number) => {
+  currentPage.value = page;
+  fetchIngredients(page);
+};
+
 const previousPage = () => {
   if (currentPage.value > 1) {
-    currentPage.value--;
-    fetchIngredients(currentPage.value);
+    goToPage(currentPage.value - 1);
   }
 };
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-    fetchIngredients(currentPage.value);
+    goToPage(currentPage.value + 1);
   }
 };
 
@@ -127,7 +158,39 @@ td, th {
   padding: 10px; /* セル内の余白 */
 }
 
+          
+.button-container {
+  display: flex;
+  gap: 20px; /* ボタン間の間隔を広めに */
+  justify-content: center;
+  margin: 20px 0;
+}
 
+.button-container button {
+  background: none;        /* 背景色をなくす */
+  border: none;            /* 枠線をなくす */
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;         /* 適度な文字サイズ */
+  color: #333;             /* テキスト色 */
+  text-decoration: underline; /* アンダーラインを追加 */
+  transition: color 0.2s;  /* ホバー時の色変化を滑らかに */
+}
 
+.button-container button:hover {
+  color: #007bff;          /* ホバー時の色を青に変更 */
+}
+
+.button-container button:disabled {
+  color: #ccc;             /* 無効なボタンの色を薄く */
+  cursor: not-allowed;
+}
+
+/* 現在のページを強調表示 */
+.button-container button.active {
+  color: #000;
+  font-weight: bold;
+  text-decoration: underline;
+}
 
 </style>

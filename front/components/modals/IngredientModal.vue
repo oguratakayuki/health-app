@@ -18,7 +18,7 @@
           <Field name="original_name" type="text" id="original_name" class="input" />
           <ErrorMessage name="original_name" class="error-message" />
         </div>
-        <Button>保存</Button>
+        <SimpleButton>保存</SimpleButton>
       </form>
     </div>
   </div>
@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import SimpleButton from '@/components/ui/SimpleButton.vue';
 
 interface Ingredient {
   id: number;
