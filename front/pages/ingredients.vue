@@ -1,23 +1,12 @@
 <template>
   <div class="container">
     <h2>Ingredients</h2>
-    <div class="button-container">
-      <button @click="goToPage(1)" :disabled="currentPage === 1"><<</button>
-      <button @click="previousPage" :disabled="currentPage === 1">前へ</button>
 
-      <!-- ページ番号の表示 -->
-      <span v-for="page in visiblePages" :key="page">
-        <button
-          @click="goToPage(page)"
-          :class="{ active: page === currentPage }"
-        >
-          {{ page }}
-        </button>
-      </span>
-
-      <button @click="nextPage" :disabled="currentPage === totalPages">次へ</button>
-      <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">>></button>
-    </div>
+    <Pager
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-change="goToPage"
+    />
 
     <div class="table-container">
       <div v-if="isLoading">Loading...</div>
@@ -38,7 +27,7 @@
               <td>{{ ingredient.name || 'No Name Available' }}</td>
               <td>{{ ingredient.remarks || 'No Remarks Available' }}</td>
               <td>{{ ingredient.original_name || 'No Original' }}</td>
-              <td><Button @click="openModal(ingredient)">編集</Button></td>
+              <td><SimpleButton @click="openModal(ingredient)">編集</SimpleButton></td>
             </tr>
           </tbody>
         </table>
@@ -54,37 +43,24 @@
   </div>
 </template>
 
-
-
 <script setup lang="ts">
-
-import { ref, computed } from 'vue';
-import { Ingredient } from '~/types/ingredients';
+import { ref } from 'vue';
+import Pager from '@/components/ui/Pager.vue';
 import IngredientModal from '@/components/modals/IngredientModal.vue';
+import SimpleButton from '@/components/ui/SimpleButton.vue';
+import { Ingredient } from '~/types/ingredients';
 
 const showModal = ref(false);
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
-const isLoading = ref(false);
 const totalPages = ref(0);
-
-// 5ページ分の表示を管理する
-const visiblePages = computed(() => {
-  const pages = [];
-  const start = Math.max(1, currentPage.value - 2); // 現在ページの前後2ページを表示
-  const end = Math.min(totalPages.value, start + 4); // 最大5ページ表示
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-  return pages;
-});
+const isLoading = ref(false);
 
 const fetchIngredients = async (page: number) => {
   isLoading.value = true;
   try {
-    const response = await $fetch(`http://localhost:3009/api/v1/ingredients?page=${page}&_=${Date.now()}`, { ssr: false });
+    const response = await $fetch(`http://localhost:3009/api/v1/ingredients?page=${page}`, { ssr: false });
     ingredients.value = response.ingredients;
     totalPages.value = response.total_pages;
   } catch (error) {
@@ -109,21 +85,8 @@ const goToPage = (page: number) => {
   fetchIngredients(page);
 };
 
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    goToPage(currentPage.value - 1);
-  }
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    goToPage(currentPage.value + 1);
-  }
-};
-
 fetchIngredients(currentPage.value);
 </script>
-
 
 
 <style scoped>
