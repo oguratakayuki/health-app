@@ -14,12 +14,12 @@ docker-compose run web bundle exec rails csv_import:ingredients_nutrients
 
 ## TODO
 - [x] 食材栄養素seedスクリプト(rails)
-- [] 食材栄養素管理機能(admin crud, マスタデータ管理 nuxt) <---
-- [] 食材栄養素api(rails) <---
-- [] 献立管理機能構築(nuxt)
-- [] 食材在庫管理
-- [] サマリー(golang)
-- [] サジェスト（python)
+- [ ] 食材栄養素管理機能(admin crud, マスタデータ管理 nuxt) <---
+- [ ] 食材栄養素api(rails) <---
+- [ ] 献立管理機能構築(nuxt)
+- [ ] 食材在庫管理
+- [ ] サマリー(golang)
+- [ ] サジェスト（python)
 
 
 ## next task
