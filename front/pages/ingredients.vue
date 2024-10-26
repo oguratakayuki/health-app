@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>Ingredients</h2>
+    <h2>Ingredients[食材]</h2>
 
     <Pager
       :currentPage="currentPage"
@@ -88,14 +88,14 @@ const goToPage = (page: number) => {
 fetchIngredients(currentPage.value);
 </script>
 
-
 <style scoped>
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: top;
+  align-items: left;
   height: 100vh; /* 画面の高さを指定 */
+  padding-left: 50px;
 }
 
 .button-container {
@@ -103,57 +103,77 @@ fetchIngredients(currentPage.value);
 }
 
 .table-container {
+  width: 100%; /* 親要素の幅に揃える */
+  overflow-x: auto; /* テーブルが幅を超えた場合にスクロールできるように */
+  margin-top: 20px;
 }
-
 
 table {
+  width: 1600px; /* 全体の幅を2倍に拡大 */
+  /* margin: 0 auto; /* テーブルを中央寄せ */
   border-collapse: collapse;
-  border-top: none; /* 上の線を消す */
-  border-left: none; /* 左の線を消す */
-  border-right: none; /* 右の線を消す */
-  border-bottom: 1px solid #ccc; /* テーブルの下に線 */
-}
-td, th {
-  border-top: none; /* 上の線を消す */
-  border-right: none; /* 右の線を消す */
-  border-left: none; /* 左の線を消す */
-  border-bottom: 1px solid #ccc; /* 下の線だけ表示 */
-  padding: 10px; /* セル内の余白 */
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #ccc;
+  table-layout: fixed; /* 列幅を固定 */
 }
 
-          
+/* 各列の幅を調整 */
+th:first-child,
+td:first-child {
+  width: 80px; /* 最初の列は1/3の幅 */
+}
+
+th:last-child,
+td:last-child {
+  width: 80px; /* 最後の列も1/3の幅 */
+}
+
+th, td {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis; /* はみ出た部分を省略 */
+  white-space: nowrap; /* テキストの折り返しを防ぐ */
+}
+
+th {
+  font-weight: bold;
+}
+
 .button-container {
   display: flex;
-  gap: 20px; /* ボタン間の間隔を広めに */
+  gap: 20px;
   justify-content: center;
   margin: 20px 0;
 }
 
 .button-container button {
-  background: none;        /* 背景色をなくす */
-  border: none;            /* 枠線をなくす */
+  background: none;
+  border: none;
   padding: 0;
   cursor: pointer;
-  font-size: 18px;         /* 適度な文字サイズ */
-  color: #333;             /* テキスト色 */
-  text-decoration: underline; /* アンダーラインを追加 */
-  transition: color 0.2s;  /* ホバー時の色変化を滑らかに */
+  font-size: 18px;
+  color: #333;
+  text-decoration: underline;
+  transition: color 0.2s;
 }
 
 .button-container button:hover {
-  color: #007bff;          /* ホバー時の色を青に変更 */
+  color: #007bff;
 }
 
 .button-container button:disabled {
-  color: #ccc;             /* 無効なボタンの色を薄く */
+  color: #ccc;
   cursor: not-allowed;
 }
 
-/* 現在のページを強調表示 */
 .button-container button.active {
   color: #000;
   font-weight: bold;
   text-decoration: underline;
 }
-
 </style>
+
