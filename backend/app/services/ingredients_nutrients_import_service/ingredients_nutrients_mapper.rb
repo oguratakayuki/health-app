@@ -11,7 +11,10 @@ module IngredientsNutrientsImportService
     # nutrient_id どの栄養
     
     def execute
-      ingredient = Ingredient.find_or_create_by(original_name: ingredient_entity.original_name)
+      ingredient = Ingredient.find_or_create_by(
+        original_name: ingredient_entity.original_name,
+        name: ingredient_entity.name
+      )
       ingredient_entity.tags.each do |tag|
         tag = Tag.find_or_create_by(name: tag)
         IngredientTag.find_or_create_by(ingredient_id: ingredient.id, tag_id: tag.id)
