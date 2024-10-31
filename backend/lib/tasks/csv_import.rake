@@ -4,7 +4,7 @@ require 'csv'
 namespace :csv_import do
   desc "nutrientsをcsvファイルからimportする"
   task :nutrients_intake_standards, [:file_path] => :environment do |t, args|
-    args.with_defaults(:file_path => "./nutrients_intake_standards.csv")
+    args.with_defaults(:file_path => "./common_data/nutrients_intake_standards.csv")
     path = Rails.root.join(args.file_path)
     puts path
     list = []
@@ -50,7 +50,7 @@ namespace :csv_import do
 
   desc "nutrientsをcsvファイルからimportする"
   task :nutrients, [:file_path] => :environment do |t, args|
-    args.with_defaults(:file_path => "./nutrients.csv")
+    args.with_defaults(:file_path => "./common_data/nutrients.csv")
     #do stuff [...]
     path = Rails.root.join(args.file_path)
     list = []
@@ -69,7 +69,7 @@ namespace :csv_import do
     
   desc "ingredients_nutrientsをxlsファイルからimportする"
   task :ingredients_nutrients, [:file_path] => :environment do |t, args|
-    args.with_defaults(:file_path => "./ingredients_nutrients.xlsx")
+    args.with_defaults(:file_path => "./common_data/ingredients_nutrients.xlsx")
     path = Rails.root.join(args.file_path)
     IngredientsNutrientsImportService::Importer.new(path: path).execute
   end
