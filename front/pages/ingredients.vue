@@ -49,6 +49,7 @@ import Pager from '@/components/ui/Pager.vue';
 import IngredientModal from '@/components/modals/IngredientModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { Ingredient } from '~/types/ingredients';
+import Jsona from 'jsona';
 
 const showModal = ref(false);
 const selectedIngredient = ref<Ingredient | null>(null);
@@ -56,13 +57,27 @@ const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
 const totalPages = ref(0);
 const isLoading = ref(false);
+const dataFormatter = new Jsona();
 
 const fetchIngredients = async (page: number) => {
   isLoading.value = true;
   try {
     const response = await $fetch(`http://localhost:3009/api/v1/ingredients?page=${page}`, { ssr: false });
-    ingredients.value = response.ingredients;
-    totalPages.value = response.total_pages;
+    const data = await dataFormatter.deserialize(response);
+    ingredients.value = data.map((row, index) => {
+      // 例) エネルギー（kcal）: 100gあたり291kcal
+      const ingredient_nutrients = row.ingredient_nutrients.map((ingredient_nutrient, index2) => {
+        const { content_quantity, content_unit, content_unit_per, content_unit_per_unit} = ingredient_nutrient
+        return `${ingredient_nutrient.nutrient.name}: ${content_unit_per}${content_unit_per_unit}あたり${content_quantity}${content_unit}`
+      });
+      console.log(ingredient_nutrients[0])
+      return {
+        id: row.id,
+        name: row.name,
+        original_name: row.original_name,
+      };
+    });
+    totalPages.value = response.meta.total_pages;
   } catch (error) {
     console.error(error);
   } finally {
