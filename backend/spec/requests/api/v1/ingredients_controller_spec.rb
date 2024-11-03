@@ -1,12 +1,10 @@
 # frozen_string_literal: true
-# spec/requests/api/v1/ingredients_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe Api::V1::IngredientsController, type: :request do
   describe "GET /api/v1/ingredients" do
     before do
-      # テスト用のデータを20個作成
-      create_list(:ingredient, 20)
+      create :ingredient_nutrient
     end
 
     it "returns paginated ingredients with total_pages" do
@@ -15,6 +13,11 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
 
       # JSONレスポンスを解析
       json = JSON.parse(response.body)
+      # expect(response["data"][0]["id"].to_i).to eq(campaign_first.id)
+      # json['data'][0]['attributes']['name']
+      # json['meta']['total_pages'] == 2
+      # json['data'][0]['relationships']['nutrients']['data']
+      expect(json['data'][0]['relationships']['nutrients']['data'][0]['type']).to eq "nutrient"
 
       # ステータスコードの確認
       expect(response).to have_http_status(:ok)
@@ -44,5 +47,3 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
     end
   end
 end
-
- 
