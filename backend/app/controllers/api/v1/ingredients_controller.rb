@@ -1,6 +1,8 @@
 class Api::V1::IngredientsController < ApplicationController
   def index
-    @ingredients = Ingredient.includes(:nutrients).page(params[:page]).per(10)
+    @ingredients = Ingredient.includes(:nutrients, :ingredient_nutrients)
+       .where.not(ingredient_nutrients: {content_quantity: 0})
+       .page(params[:page]).per(10)
 
     render json: IngredientSerializer.new(
       @ingredients,
@@ -9,10 +11,5 @@ class Api::V1::IngredientsController < ApplicationController
         meta: { total_pages: @ingredients.total_pages } 
       }
     ).serializable_hash.to_json
-
-    # render json: {
-    #   ingredients: @ingredients,
-    #   total_pages: @ingredients.total_pages
-    # }
   end
 end
