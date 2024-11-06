@@ -12,4 +12,21 @@ class Api::V1::IngredientsController < ApplicationController
       }
     ).serializable_hash.to_json
   end
+  # PATCH /api/v1/ingredients/:id
+  def update
+    @ingredient = Ingredient.find(params[:id])
+
+    if @ingredient.update(ingredient_params)
+      render json: { message: "Ingredient updated successfully", ingredient: @ingredient }, status: :ok
+    else
+      render json: { error: "Failed to update ingredient", details: @ingredient.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def ingredient_params
+    params.require(:ingredient).permit(:name, :remarks, :original_name)
+  end
+
 end

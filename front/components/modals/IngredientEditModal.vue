@@ -1,4 +1,4 @@
-<template name="IngredientModal">
+<template name="IngredientEditModal">
   <div class="modal" @click="close">
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">食材情報</h2>
