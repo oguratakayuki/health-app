@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <IngredientModal
+    <IngredientEditModal
       v-if="showModal"
       :ingredient="selectedIngredient"
       @close="showModal = false"
@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Pager from '@/components/ui/Pager.vue';
-import IngredientModal from '@/components/modals/IngredientModal.vue';
+import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { Ingredient } from '~/types/ingredients';
 import Jsona from 'jsona';
@@ -75,6 +75,7 @@ const fetchIngredients = async (page: number) => {
         id: row.id,
         name: row.name,
         original_name: row.original_name,
+        ingredient_nutrients: ingredient_nutrients,
       };
     });
     totalPages.value = response.meta.total_pages;
