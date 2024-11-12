@@ -26,7 +26,13 @@ class Api::V1::IngredientsController < ApplicationController
   private
 
   def ingredient_params
-    params.require(:ingredient).permit(:id, :name, :remarks, :original_name)
+    params.require(:ingredient).permit(
+      :id, :name, :remarks, :original_name,
+      ingredient_nutrients_attributes: [
+        :id, :ingredient_id, :nutrient_id, :content_quantity,
+        :content_unit, :content_unit_per, :content_unit_per_unit
+      ]
+    )
   end
 
 end

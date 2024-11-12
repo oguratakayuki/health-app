@@ -5,4 +5,5 @@ class Ingredient < ApplicationRecord
   has_many :nutrients, through: :ingredient_nutrients
 
   validates :name, presence: true
+  accepts_nested_attributes_for :ingredient_nutrients, allow_destroy: true
 end

@@ -33,16 +33,43 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
   end
 
   describe "PATCH /api/v1/ingredients/:id" do
-    let!(:ingredient) do
-      create(:ingredient, name: "Original Name", remarks: "Original Remarks", original_name: "Original Ingredient Name")
+    let!(:ingredient) { create(:ingredient, name: "Original Name", remarks: "Original Remarks", original_name: "Original Ingredient Name") }
+    let!(:nutrient) { create :nutrient }
+    let!(:ingredient_nutrient1) do
+      create(:ingredient_nutrient,
+             ingredient: ingredient, nutrient: nutrient, content_quantity: 50,
+             content_unit: "mg", content_unit_per: 1, content_unit_per_unit: "tablet"
+            )
     end
+    let!(:ingredient_nutrient2) do
+      create(:ingredient_nutrient,
+             ingredient: ingredient, nutrient: nutrient, content_quantity: 30,
+             content_unit: "g", content_unit_per: 2, content_unit_per_unit: "piece")
+    end
+
     context "正常系" do
       let(:valid_attributes) do
         {
           ingredient: {
             name: "Updated Name",
             remarks: "Updated Remarks",
-            original_name: "Updated Original Name"
+            original_name: "Updated Original Name",
+            ingredient_nutrients_attributes: [
+              {
+                id: ingredient_nutrient1.id,
+                content_quantity: 100,
+                content_unit: "mg",
+                content_unit_per: 1,
+                content_unit_per_unit: "capsule"
+              },
+              {
+                id: ingredient_nutrient2.id,
+                content_quantity: 200,
+                content_unit: "g",
+                content_unit_per: 3,
+                content_unit_per_unit: "tablet"
+              }
+            ]
           }
         }
       end
@@ -50,11 +77,25 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
       it "対象が更新されること" do
         patch "/api/v1/ingredients/#{ingredient.id}", params: valid_attributes
         json = JSON.parse(response.body)
+
         expect(response).to have_http_status(:ok)
         expect(json["message"]).to eq("Ingredient updated successfully")
         expect(json["ingredient"]["name"]).to eq("Updated Name")
         expect(json["ingredient"]["remarks"]).to eq("Updated Remarks")
         expect(json["ingredient"]["original_name"]).to eq("Updated Original Name")
+
+        # 更新されたingredient_nutrientsを確認
+        updated_nutrient1 = ingredient.ingredient_nutrients.find(ingredient_nutrient1.id)
+        expect(updated_nutrient1.content_quantity).to eq(100)
+        expect(updated_nutrient1.content_unit).to eq("mg")
+        expect(updated_nutrient1.content_unit_per).to eq(1)
+        expect(updated_nutrient1.content_unit_per_unit).to eq("capsule")
+
+        updated_nutrient2 = ingredient.ingredient_nutrients.find(ingredient_nutrient2.id)
+        expect(updated_nutrient2.content_quantity).to eq(200)
+        expect(updated_nutrient2.content_unit).to eq("g")
+        expect(updated_nutrient2.content_unit_per).to eq(3)
+        expect(updated_nutrient2.content_unit_per_unit).to eq("tablet")
       end
     end
 
