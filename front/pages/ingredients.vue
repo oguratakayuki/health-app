@@ -18,6 +18,7 @@
               <th>Name</th>
               <th>Remarks</th>
               <th>Original Name</th>
+              <th>Detail</th>
               <th>Edit</th>
             </tr>
           </thead>
@@ -27,6 +28,7 @@
               <td>{{ ingredient.name || 'No Name Available' }}</td>
               <td>{{ ingredient.remarks || 'No Remarks Available' }}</td>
               <td>{{ ingredient.original_name || 'No Original' }}</td>
+              <td><SimpleButton @click="openDetailModal(ingredient)">編集</SimpleButton></td>
               <td><SimpleButton @click="openModal(ingredient)">編集</SimpleButton></td>
             </tr>
           </tbody>
@@ -38,6 +40,12 @@
       v-if="showModal"
       :ingredient="selectedIngredient"
       @close="showModal = false"
+      @save="handleSave"
+    />
+    <ModalsIngredientDetailModal
+      v-if="showDetailModal"
+      :ingredient="selectedIngredient"
+      @close="showDetailModal = false"
       @save="handleSave"
     />
   </div>
@@ -55,6 +63,7 @@ import { useIngredient } from '~/composables/useIngredient';
 const { updateIngredient } = useIngredient();
 
 const showModal = ref(false);
+const showDetailModal = ref(false);
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
@@ -93,6 +102,13 @@ const openModal = (ingredient: Ingredient) => {
   selectedIngredient.value = ingredient;
   showModal.value = true;
 };
+
+const openDetailModal = (ingredient: Ingredient) => {
+  selectedIngredient.value = ingredient;
+  showDetailModal.value = true;
+};
+
+
 
 const handleSave = async (formData: Ingredient) => {
   console.log('保存されたデータ:', formData);
