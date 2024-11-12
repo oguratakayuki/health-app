@@ -3,6 +3,7 @@
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">食材情報</h2>
       <form @submit.prevent="onSubmit">
+        <input type="hidden" v-model="id" name="id" />
         <div class="form-group">
           <label for="name">名前</label>
           <Field name="name" type="text" id="name" class="input" />
@@ -43,6 +44,7 @@ const {ingredient} = defineProps<{
 const emit = defineEmits(['close', 'save']);
 
 const schema = yup.object({
+  id: yup.number(),
   name: yup.string().required('名前は必須項目です'),
   remarks: yup.string().optional(),
   original_name: yup.string().required('原産地は必須項目です'),
@@ -51,6 +53,7 @@ const schema = yup.object({
 const { handleSubmit, values } = useForm({
   validationSchema: schema,
   initialValues: {
+    id: ingredient?.id || '',
     name: ingredient?.name || '',
     remarks: ingredient?.remarks || '',
     original_name: ingredient?.original_name || ''

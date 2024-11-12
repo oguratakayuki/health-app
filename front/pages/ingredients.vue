@@ -50,6 +50,9 @@ import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { Ingredient } from '~/types/ingredients';
 import Jsona from 'jsona';
+import { useIngredient } from '~/composables/useIngredient';
+
+const { updateIngredient } = useIngredient();
 
 const showModal = ref(false);
 const selectedIngredient = ref<Ingredient | null>(null);
@@ -91,8 +94,14 @@ const openModal = (ingredient: Ingredient) => {
   showModal.value = true;
 };
 
-const handleSave = (formData: Ingredient) => {
+const handleSave = async (formData: Ingredient) => {
   console.log('保存されたデータ:', formData);
+  const response = await updateIngredient(formData.id, formData);
+  if (response) {
+    console.log("Ingredient updated:", response);
+  } else {
+    console.error("Ingredient update failed.");
+  }
   showModal.value = false;
 };
 
