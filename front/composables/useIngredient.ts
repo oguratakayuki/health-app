@@ -1,13 +1,4 @@
-// composables/useIngredient.ts
-
-import { Ref } from "vue";
-
-interface Ingredient {
-  id: number;
-  name: string;
-  remarks: string;
-  original_name: string;
-}
+import { Ingredient } from "~/types/ingredients";
 
 export const useIngredient = () => {
   const updateIngredient = async (
@@ -15,6 +6,18 @@ export const useIngredient = () => {
     payload: Partial<Ingredient>
   ): Promise<{ message: string; ingredient: Ingredient } | undefined> => {
     try {
+      const transformedPayload = {
+        ...payload,
+        ingredient_nutrients_attributes: payload.ingredient_nutrients?.map(
+          (nutrient) => {
+            // nutrient プロパティを削除
+            const { nutrient: _, ...rest } = nutrient;
+            return rest;
+          }
+        ),
+      };
+      delete transformedPayload.ingredient_nutrients; // 元のキーを削除
+
       const response = await $fetch<{
         message: string;
         ingredient: Ingredient;
@@ -24,7 +27,7 @@ export const useIngredient = () => {
           "Content-Type": "application/json",
         },
         body: {
-          ingredient: payload,
+          ingredient: transformedPayload, // 修正後のデータを送信
         },
       });
       return response;

@@ -30,7 +30,7 @@ class Api::V1::IngredientsController < ApplicationController
       :id, :name, :remarks, :original_name,
       ingredient_nutrients_attributes: [
         :id, :ingredient_id, :nutrient_id, :content_quantity,
-        :content_unit, :content_unit_per, :content_unit_per_unit
+        :content_unit, :content_unit_per, :content_unit_per_unit, :_destroy
       ]
     )
   end

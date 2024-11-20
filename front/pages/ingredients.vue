@@ -28,7 +28,7 @@
               <td>{{ ingredient.name || 'No Name Available' }}</td>
               <td>{{ ingredient.remarks || 'No Remarks Available' }}</td>
               <td>{{ ingredient.original_name || 'No Original' }}</td>
-              <td><SimpleButton @click="openDetailModal(ingredient)">編集</SimpleButton></td>
+              <td><SimpleButton @click="openDetailModal(ingredient)">詳細</SimpleButton></td>
               <td><SimpleButton @click="openModal(ingredient)">編集</SimpleButton></td>
             </tr>
           </tbody>
@@ -79,8 +79,16 @@ const fetchIngredients = async (page: number) => {
     ingredients.value = data.map((row, index) => {
       // 例) エネルギー（kcal）: 100gあたり291kcal
       const ingredient_nutrients = row.ingredient_nutrients.map((ingredient_nutrient, index2) => {
-        const { content_quantity, content_unit, content_unit_per, content_unit_per_unit} = ingredient_nutrient
-        return `${ingredient_nutrient.nutrient.name}: ${content_unit_per}${content_unit_per_unit}あたり${content_quantity}${content_unit}`
+        const { id, nutrient, content_quantity, content_unit, content_unit_per, content_unit_per_unit} = ingredient_nutrient
+        // return `${ingredient_nutrient.nutrient.name}: ${content_unit_per}${content_unit_per_unit}あたり${content_quantity}${content_unit}`
+        return {
+          id,
+          nutrient,
+          content_quantity,
+          content_unit,
+          content_unit_per,
+          content_unit_per_unit
+        }
       });
       console.log(ingredient_nutrients[0])
       return {
@@ -99,6 +107,7 @@ const fetchIngredients = async (page: number) => {
 };
 
 const openModal = (ingredient: Ingredient) => {
+  console.log(ingredient)
   selectedIngredient.value = ingredient;
   showModal.value = true;
 };
@@ -119,6 +128,8 @@ const handleSave = async (formData: Ingredient) => {
     console.error("Ingredient update failed.");
   }
   showModal.value = false;
+  // reload
+  fetchIngredients(currentPage);
 };
 
 const goToPage = (page: number) => {
