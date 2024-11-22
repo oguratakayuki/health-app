@@ -1,5 +1,5 @@
 <template name="IngredientEditModal">
-  <div class="modal" @click="close">
+  <div class="modal" @click.self="close">
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">食材情報</h2>
       <form @submit.prevent="onSubmit">
@@ -47,12 +47,6 @@ import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { IngredientNutrient, Ingredient } from  '~/types/ingredients';
-
-onBeforeMount(() => {
-  console.log("before mount");
-  console.log(ingredient)
-});
-
 
 const { ingredient } = defineProps<{
   ingredient: Ingredient | null
@@ -130,6 +124,7 @@ const close = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 30;
 }
 
 .modal-content {
@@ -140,6 +135,7 @@ const close = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  z-index: 21;
 }
 
 .modal-title {
@@ -227,4 +223,3 @@ button:hover {
 }
 
 </style>
-

@@ -35,7 +35,10 @@
         </table>
       </div>
     </div>
-
+    <FloatingActionButton
+      v-if="!showModal && !showDetailModal"
+      @click="openNewModal"
+      />
     <IngredientEditModal
       v-if="showModal"
       :ingredient="selectedIngredient"
@@ -56,6 +59,8 @@ import { ref } from 'vue';
 import Pager from '@/components/ui/Pager.vue';
 import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
+import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
+
 import { Ingredient } from '~/types/ingredients';
 import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
@@ -106,6 +111,18 @@ const fetchIngredients = async (page: number) => {
   }
 };
 
+const openNewModal = () => {
+  console.log('openNewModal')
+  const newIngredient: Ingredient = {
+    name: '',
+    remarks: '',
+    original_name: '',
+    ingredient_nutrients: []
+  };
+  selectedIngredient.value = newIngredient;
+  showModal.value = true;
+};
+
 const openModal = (ingredient: Ingredient) => {
   console.log(ingredient)
   selectedIngredient.value = ingredient;
@@ -116,8 +133,6 @@ const openDetailModal = (ingredient: Ingredient) => {
   selectedIngredient.value = ingredient;
   showDetailModal.value = true;
 };
-
-
 
 const handleSave = async (formData: Ingredient) => {
   console.log('保存されたデータ:', formData);

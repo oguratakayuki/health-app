@@ -9,7 +9,7 @@ export interface IngredientNutrient {
 }
 
 export interface Ingredient {
-  id: number;
+  id?: number;
   name: string;
   remarks: string;
   original_name: string;
