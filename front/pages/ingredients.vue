@@ -28,27 +28,27 @@
               <td>{{ ingredient.name || 'No Name Available' }}</td>
               <td>{{ ingredient.remarks || 'No Remarks Available' }}</td>
               <td>{{ ingredient.original_name || 'No Original' }}</td>
-              <td><SimpleButton @click="openDetailModal(ingredient)">詳細</SimpleButton></td>
-              <td><SimpleButton @click="openModal(ingredient)">編集</SimpleButton></td>
+              <td><SimpleButton @click="openModal(ingredient, ModalType.Detail)">詳細</SimpleButton></td>
+              <td><SimpleButton @click="openModal(ingredient, ModalType.Edit)">編集</SimpleButton></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
     <FloatingActionButton
-      v-if="!showModal && !showDetailModal"
-      @click="openNewModal"
+      v-if="!isModalOpen"
+      @click="openModal(null, ModalType.New)"
       />
     <IngredientEditModal
-      v-if="showModal"
+      v-if="isModalOpen && (activeModal === ModalType.Edit || activeModal === ModalType.New)"
       :ingredient="selectedIngredient"
-      @close="showModal = false"
+      @close="closeModal"
       @save="handleSave"
     />
     <ModalsIngredientDetailModal
-      v-if="showDetailModal"
+      v-if="isModalOpen && activeModal === ModalType.Detail"
       :ingredient="selectedIngredient"
-      @close="showDetailModal = false"
+      @close="closeModal"
       @save="handleSave"
     />
   </div>
@@ -65,10 +65,16 @@ import { Ingredient } from '~/types/ingredients';
 import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
 
-const { updateIngredient } = useIngredient();
+enum ModalType {
+  New = 'new',
+  Edit = 'edit',
+  Detail = 'detail',
+}
 
-const showModal = ref(false);
-const showDetailModal = ref(false);
+const { updateIngredient } = useIngredient();
+const isModalOpen = ref(false);
+const activeModal = ref<string | null>(null);
+
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
@@ -111,27 +117,20 @@ const fetchIngredients = async (page: number) => {
   }
 };
 
-const openNewModal = () => {
-  console.log('openNewModal')
-  const newIngredient: Ingredient = {
-    name: '',
-    remarks: '',
-    original_name: '',
-    ingredient_nutrients: []
-  };
-  selectedIngredient.value = newIngredient;
-  showModal.value = true;
-};
-
-const openModal = (ingredient: Ingredient) => {
+const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
   console.log(ingredient)
+  console.log(modalType)
+  if (modalType === ModalType.New) {
+    ingredient = {
+      name: '',
+      remarks: '',
+      original_name: '',
+      ingredient_nutrients: [] as IngredientNutrient[], // IngredientNutrient型で初期化
+    } as Ingredient; // 明示的にIngredient型としてキャスト
+  }
   selectedIngredient.value = ingredient;
-  showModal.value = true;
-};
-
-const openDetailModal = (ingredient: Ingredient) => {
-  selectedIngredient.value = ingredient;
-  showDetailModal.value = true;
+  isModalOpen.value = true;
+  activeModal.value = modalType;
 };
 
 const handleSave = async (formData: Ingredient) => {
@@ -142,9 +141,14 @@ const handleSave = async (formData: Ingredient) => {
   } else {
     console.error("Ingredient update failed.");
   }
-  showModal.value = false;
+  closeModal()
   // reload
   fetchIngredients(currentPage);
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+  activeModal.value = null;
 };
 
 const goToPage = (page: number) => {
