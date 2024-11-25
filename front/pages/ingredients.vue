@@ -64,6 +64,7 @@ import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import { Ingredient } from '~/types/ingredients';
 import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
+import { fetchIngredients } from '~/components/Ingredients/fetchIngredients';
 
 enum ModalType {
   New = 'new',
@@ -80,46 +81,17 @@ const ingredients = ref<Ingredient[]>([]);
 const currentPage = ref(1);
 const totalPages = ref(0);
 const isLoading = ref(false);
-const dataFormatter = new Jsona();
 
-const fetchIngredients = async (page: number) => {
+
+const fetchAndPopulateData = async (page: number) => {
   isLoading.value = true;
-  try {
-    const response = await $fetch(`http://localhost:3009/api/v1/ingredients?page=${page}`, { ssr: false });
-    const data = await dataFormatter.deserialize(response);
-    ingredients.value = data.map((row, index) => {
-      // 例) エネルギー（kcal）: 100gあたり291kcal
-      const ingredient_nutrients = row.ingredient_nutrients.map((ingredient_nutrient, index2) => {
-        const { id, nutrient, content_quantity, content_unit, content_unit_per, content_unit_per_unit} = ingredient_nutrient
-        // return `${ingredient_nutrient.nutrient.name}: ${content_unit_per}${content_unit_per_unit}あたり${content_quantity}${content_unit}`
-        return {
-          id,
-          nutrient,
-          content_quantity,
-          content_unit,
-          content_unit_per,
-          content_unit_per_unit
-        }
-      });
-      console.log(ingredient_nutrients[0])
-      return {
-        id: row.id,
-        name: row.name,
-        original_name: row.original_name,
-        ingredient_nutrients: ingredient_nutrients,
-      };
-    });
-    totalPages.value = response.meta.total_pages;
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isLoading.value = false;
-  }
+  const { ingredients: fetchedIngredients, totalPages: fetchedTotalPages } = await fetchIngredients(page);
+  ingredients.value = fetchedIngredients;
+  totalPages.value = fetchedTotalPages;
+  isLoading.value = false;
 };
 
 const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
-  console.log(ingredient)
-  console.log(modalType)
   if (modalType === ModalType.New) {
     ingredient = {
       name: '',
@@ -134,7 +106,6 @@ const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
 };
 
 const handleSave = async (formData: Ingredient) => {
-  console.log('保存されたデータ:', formData);
   const response = await updateIngredient(formData.id, formData);
   if (response) {
     console.log("Ingredient updated:", response);
@@ -143,7 +114,7 @@ const handleSave = async (formData: Ingredient) => {
   }
   closeModal()
   // reload
-  fetchIngredients(currentPage);
+  fetchAndPopulateData(currentPage.value);
 };
 
 const closeModal = () => {
@@ -153,10 +124,10 @@ const closeModal = () => {
 
 const goToPage = (page: number) => {
   currentPage.value = page;
-  fetchIngredients(page);
+  fetchAndPopulateData(page);
 };
 
-fetchIngredients(currentPage.value);
+fetchAndPopulateData(currentPage.value);
 </script>
 
 <style scoped>
