@@ -87,6 +87,7 @@ const fetchAndPopulateData = async (page: number) => {
   isLoading.value = true;
   const { ingredients: fetchedIngredients, totalPages: fetchedTotalPages } = await fetchIngredients(page);
   ingredients.value = fetchedIngredients;
+  console.log(fetchedIngredients)
   totalPages.value = fetchedTotalPages;
   isLoading.value = false;
 };

@@ -26,7 +26,10 @@
         <div class="nutrient-container">
           <div v-for="(ingredient_nutrient, index) in values.ingredient_nutrients" :key="ingredient_nutrient.id || index">
             <div v-if="!ingredient_nutrient?._destroy" class="form-group nutrient-group">
-              <label>{{ingredient_nutrient.nutrient.name}}</label>
+              <label v-if="ingredient_nutrient.id">{{ingredient_nutrient.nutrient.name}}</label>
+              <!-- TODO nutrientのselect box -->
+              <input type="number" v-else class="input small-input"  />
+              <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
               <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
               <input type="text" v-model="ingredient_nutrient.content_unit" placeholder="単位" class="input small-input" />
               <input type="number" v-model="ingredient_nutrient.content_unit_per" placeholder="含有量/単位" class="input small-input" />
@@ -34,6 +37,7 @@
               <button type="button" @click="markForDeletion(index)" class="remove-button">削除</button>
            </div>
           </div>
+          <button type="button" @click="addNutrient">栄養成分を追加</button>
         </div>
         <SimpleButton>保存</SimpleButton>
       </form>
