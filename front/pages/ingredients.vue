@@ -42,6 +42,7 @@
     <IngredientEditModal
       v-if="isModalOpen && (activeModal === ModalType.Edit || activeModal === ModalType.New)"
       :ingredient="selectedIngredient"
+      :nutrients="nutrients"
       @close="closeModal"
       @save="handleSave"
     />
@@ -61,10 +62,11 @@ import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 
-import { Ingredient } from '~/types/ingredients';
+import { Ingredient,Nutrient } from '~/types/ingredients';
 import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
 import { fetchIngredients } from '~/components/Ingredients/fetchIngredients';
+import { fetchNutrients } from '~/components/Ingredients/fetchNutrients';
 
 enum ModalType {
   New = 'new',
@@ -78,6 +80,7 @@ const activeModal = ref<string | null>(null);
 
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
+const nutrients = ref<Nutrient[]>([]);
 const currentPage = ref(1);
 const totalPages = ref(0);
 const isLoading = ref(false);
@@ -87,8 +90,11 @@ const fetchAndPopulateData = async (page: number) => {
   isLoading.value = true;
   const { ingredients: fetchedIngredients, totalPages: fetchedTotalPages } = await fetchIngredients(page);
   ingredients.value = fetchedIngredients;
-  console.log(fetchedIngredients)
   totalPages.value = fetchedTotalPages;
+
+  const { nutrients: fetchedNutrients } = await fetchNutrients();
+  nutrients.value = fetchedNutrients
+
   isLoading.value = false;
 };
 

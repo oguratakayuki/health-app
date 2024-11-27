@@ -27,8 +27,12 @@
           <div v-for="(ingredient_nutrient, index) in values.ingredient_nutrients" :key="ingredient_nutrient.id || index">
             <div v-if="!ingredient_nutrient?._destroy" class="form-group nutrient-group">
               <label v-if="ingredient_nutrient.id">{{ingredient_nutrient.nutrient.name}}</label>
-              <!-- TODO nutrientのselect box -->
-              <input type="number" v-else class="input small-input"  />
+              <select v-model="selectedNutrient" class="input" v-else>
+                <option value="" disabled>Select a nutrient</option>
+                <option v-for="nutrient in nutrients" :key="nutrient.id" :value="nutrient.id">
+                  {{ nutrient.name }}
+                </option>
+              </select>
               <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
               <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
               <input type="text" v-model="ingredient_nutrient.content_unit" placeholder="単位" class="input small-input" />
@@ -50,11 +54,13 @@ import { ref, onBeforeMount } from "vue";
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
-import { IngredientNutrient, Ingredient } from  '~/types/ingredients';
+import { IngredientNutrient, Ingredient, Nutrient } from  '~/types/ingredients';
 
 const { ingredient } = defineProps<{
-  ingredient: Ingredient | null
+  ingredient: Ingredient | null,
+  nutrients: Nutrient[]
 }>()
+const selectedNutrient = ref<number | null>(null);
 
 const emit = defineEmits(['close', 'save']);
 
