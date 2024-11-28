@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :ingredients, only: [:index, :update]
+      resources :ingredients, only: [:index, :update, :create]
       resources :nutrients, only: [:index]
     end
   end

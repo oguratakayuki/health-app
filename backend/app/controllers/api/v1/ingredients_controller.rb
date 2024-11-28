@@ -23,6 +23,17 @@ class Api::V1::IngredientsController < ApplicationController
     end
   end
 
+  # POST /api/v1/ingredients
+  def create
+    @ingredient = Ingredient.new(ingredient_params)
+
+    if @ingredient.save
+      render json: { message: "Ingredient created successfully", ingredient: @ingredient }, status: :created
+    else
+      render json: { error: "Failed to create ingredient", details: @ingredient.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def ingredient_params

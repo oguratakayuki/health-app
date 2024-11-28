@@ -120,4 +120,73 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
     end
   end
 
+  describe "POST /api/v1/ingredients" do
+    let(:nutrient1) { create(:nutrient) }
+    let(:nutrient2) { create(:nutrient) }
+
+    let(:valid_params) do
+      {
+        ingredient: {
+          name: "Carrot",
+          original_name: "Daucus carota",
+          remarks: "Rich in Vitamin A",
+          ingredient_nutrients_attributes: [
+            {
+              nutrient_id: nutrient1.id,
+              content_quantity: 100,
+              content_unit: "mg",
+              content_unit_per: 1,
+              content_unit_per_unit: "piece"
+            },
+            {
+              nutrient_id: nutrient2.id,
+              content_quantity: 20,
+              content_unit: "mg",
+              content_unit_per: 1,
+              content_unit_per_unit: "piece"
+            }
+          ]
+        }
+      }
+    end
+
+    let(:invalid_params) do
+      {
+        ingredient: {
+          name: "",
+          original_name: "Invalid Ingredient"
+        }
+      }
+    end
+
+    context "when the request is valid" do
+      it "creates a new ingredient and associated ingredient_nutrients" do
+        expect {
+          post "/api/v1/ingredients", params: valid_params
+        }.to change(Ingredient, :count).by(1)
+          .and change(IngredientNutrient, :count).by(2)
+
+        expect(response).to have_http_status(:created)
+
+        json_response = JSON.parse(response.body)
+        expect(json_response["message"]).to eq("Ingredient created successfully")
+        expect(json_response["ingredient"]["name"]).to eq("Carrot")
+      end
+    end
+
+    context "when the request is invalid" do
+      it "returns an error message" do
+        expect {
+          post "/api/v1/ingredients", params: invalid_params
+        }.not_to change(Ingredient, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+
+        json_response = JSON.parse(response.body)
+        expect(json_response["error"]).to eq("Failed to create ingredient")
+        expect(json_response["details"]).to include("Name can't be blank")
+      end
+    end
+  end
+
 end
