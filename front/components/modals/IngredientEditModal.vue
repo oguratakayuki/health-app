@@ -27,17 +27,19 @@
           <div v-for="(ingredient_nutrient, index) in values.ingredient_nutrients" :key="ingredient_nutrient.id || index">
             <div v-if="!ingredient_nutrient?._destroy" class="form-group nutrient-group">
               <label v-if="ingredient_nutrient.id">{{ingredient_nutrient.nutrient.name}}</label>
-              <select v-model="selectedNutrient" class="input" v-else>
+              <select v-model="ingredient_nutrient.nutrient_id" class="input" v-else>
                 <option value="" disabled>Select a nutrient</option>
-                <option v-for="nutrient in nutrients" :key="nutrient.id" :value="nutrient.id">
+                <option v-for="nutrient in nutrients" :key="nutrient.id" :value="nutrient.id" name="nutrient_id"  >
                   {{ nutrient.name }}
                 </option>
               </select>
-              <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
+              <!-- <input type="hidden" v-model="values.id" name="ingredient_id" /> -->
+              <input type="number" v-model="ingredient_nutrient.content_unit_per" placeholder="含有量" class="input small-input" />
+              <input type="text" v-model="ingredient_nutrient.content_unit_per_unit" placeholder="単位/成分" class="input small-input" />
+
               <input type="number" v-model="ingredient_nutrient.content_quantity" placeholder="含有量" class="input small-input" />
               <input type="text" v-model="ingredient_nutrient.content_unit" placeholder="単位" class="input small-input" />
-              <input type="number" v-model="ingredient_nutrient.content_unit_per" placeholder="含有量/単位" class="input small-input" />
-              <input type="text" v-model="ingredient_nutrient.content_unit_per_unit" placeholder="単位/成分" class="input small-input" />
+
               <button type="button" @click="markForDeletion(index)" class="remove-button">削除</button>
            </div>
           </div>
@@ -54,19 +56,19 @@ import { ref, onBeforeMount } from "vue";
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
-import { IngredientNutrient, Ingredient, Nutrient } from  '~/types/ingredients';
+import { IngredientNutrient, Ingredient } from  '~/types/ingredients';
+import { Nutrient } from  '~/types/nutrients';
 
 const { ingredient } = defineProps<{
   ingredient: Ingredient | null,
   nutrients: Nutrient[]
 }>()
-const selectedNutrient = ref<number | null>(null);
 
 const emit = defineEmits(['close', 'save']);
 
 // バリデーションスキーマ
 const schema = yup.object({
-  id: yup.number(),
+  id: yup.number().nullable(),
   name: yup.string().required('名前は必須項目です'),
   remarks: yup.string().optional(),
   original_name: yup.string().required('原産地は必須項目です'),
@@ -116,6 +118,8 @@ const markForDeletion = (index: number) => {
 
 const onSubmit = handleSubmit(values => {
   emit('save', values);
+}, errors => {
+  console.error('Validation errors:', errors);
 });
 
 const close = () => {

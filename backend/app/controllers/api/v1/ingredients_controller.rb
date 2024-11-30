@@ -30,7 +30,11 @@ class Api::V1::IngredientsController < ApplicationController
     if @ingredient.save
       render json: { message: "Ingredient created successfully", ingredient: @ingredient }, status: :created
     else
-      render json: { error: "Failed to create ingredient", details: @ingredient.errors.full_messages }, status: :unprocessable_entity
+      Rails.logger.error("Validation errors: #{@ingredient.errors.full_messages}")
+      render json: {
+        error: "Failed to create ingredient",
+        details: @ingredient.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 

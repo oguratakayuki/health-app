@@ -1,3 +1,5 @@
+import { Nutrient } from "./nutrient";
+
 export interface IngredientNutrient {
   id?: number;
   content_quantity: number;
@@ -16,7 +18,7 @@ export interface Ingredient {
   ingredient_nutrients?: IngredientNutrient[]; // オプショナルプロパティ
 }
 
-export interface Nutrient {
-  id: number;
-  name: string;
+interface IngredientResponse {
+  message: string;
+  ingredient: Ingredient;
 }

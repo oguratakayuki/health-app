@@ -62,7 +62,9 @@ import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 
-import { Ingredient,Nutrient } from '~/types/ingredients';
+import { Ingredient, IngredientResponse } from '~/types/ingredients';
+import { Nutrient } from '~/types/nutrients';
+
 import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
 import { fetchIngredients } from '~/components/Ingredients/fetchIngredients';
@@ -74,7 +76,7 @@ enum ModalType {
   Detail = 'detail',
 }
 
-const { updateIngredient } = useIngredient();
+const { updateIngredient, createIngredient } = useIngredient();
 const isModalOpen = ref(false);
 const activeModal = ref<string | null>(null);
 
@@ -92,8 +94,7 @@ const fetchAndPopulateData = async (page: number) => {
   ingredients.value = fetchedIngredients;
   totalPages.value = fetchedTotalPages;
 
-  const { nutrients: fetchedNutrients } = await fetchNutrients();
-  nutrients.value = fetchedNutrients
+  nutrients.value =  await fetchNutrients();
 
   isLoading.value = false;
 };
@@ -113,16 +114,47 @@ const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
 };
 
 const handleSave = async (formData: Ingredient) => {
-  const response = await updateIngredient(formData.id, formData);
-  if (response) {
-    console.log("Ingredient updated:", response);
+  console.log(`formData.id ${formData.id}`)
+  console.log(formData)
+  let response
+  if (formData.id === null) {
+    create(formData)
   } else {
-    console.error("Ingredient update failed.");
+    update(formData.id, formData);
   }
   closeModal()
   // reload
   fetchAndPopulateData(currentPage.value);
 };
+
+const update = async (id: number, ingredient: Ingredient) => {
+  try {
+    const response: IngredientResponse | undefined = await updateIngredient(id, ingredient);
+
+    if (response) {
+      console.log(response.message, response.ingredient);
+    } else {
+      console.error("Failed to update ingredient: Response is undefined");
+    }
+  } catch (error) {
+    console.error("Error while updating ingredient:", error);
+  }
+
+};
+const create = async (newIngredient: Ingredient) => {
+  try {
+    const response: IngredientResponse | undefined = await createIngredient(newIngredient);
+
+    if (response) {
+      console.log(response.message, response.ingredient);
+    } else {
+      console.error("Failed to create ingredient: Response is undefined");
+    }
+  } catch (error) {
+    console.error("Error while creating ingredient:", error);
+  }
+};
+
 
 const closeModal = () => {
   isModalOpen.value = false;
