@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module IngredientsNutrientsImportService
   class IngredientsNutrientsMapper
-
     include ActiveModel::Model
     include ActiveModel::Attributes
 
@@ -9,7 +10,7 @@ module IngredientsNutrientsImportService
     attribute :nutrient
     # ingredients_id どの食品
     # nutrient_id どの栄養
-    
+
     def execute
       ingredient = Ingredient.find_or_create_by(
         original_name: ingredient_entity.original_name,
@@ -30,4 +31,3 @@ module IngredientsNutrientsImportService
     end
   end
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationError
   class InvalidNutrientsAgeRangeError < StandardError
     def initialize(unit)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IngredientsNutrientsImportService
   module IngredientNameParser
     def self.execute(original_name)
@@ -7,9 +9,8 @@ module IngredientsNutrientsImportService
       matched = name.match('^（(.*)）(.*)（(.*)）')
       if matched
         name = matched[3]
-        tags.concat(matched[2].split("　").reject(&:empty?))
+        tags.concat(matched[2].split('　').reject(&:empty?))
       end
-
 
       matched = name.match('＜(.*)＞　*(.*)')
       if matched
@@ -27,17 +28,16 @@ module IngredientsNutrientsImportService
         tags << matched[2]
       end
 
-
       # 全角半角を削除
-      #name = name.gsub!(/(^[[:space:]]+)|([[:space:]]+$)/, '')
+      # name = name.gsub!(/(^[[:space:]]+)|([[:space:]]+$)/, '')
       # name = 'からし　粒入りマスタード'
-      name = name.gsub(/　/," ").strip
+      name = name.gsub(/　/, ' ').strip
       # matched = name.match('(.*)［(.*)］(.*)')
 
       # 末尾をnameに、それ以外をtagsに
-      names = name.split('　').reject { |c| c.empty? }
-      names = name.split(' ').reject { |c| c.empty? }
-      #binding.pry
+      names = name.split('　').reject(&:empty?)
+      names = name.split(' ').reject(&:empty?)
+      # binding.pry
       if names.count > 1
         # えんどう　グリンピース（揚げ豆）
         main, temp_tags = divide_name_and_tags(names)
@@ -53,6 +53,7 @@ module IngredientsNutrientsImportService
       puts "main name = #{main}, tags = #{tags.inspect}, original = #{original_name}"
       [main, tags]
     end
+
     def self.is_tag?(text)
       return true if text.match('.*タイプ')
       return true if text.match('.*済み')
@@ -65,12 +66,11 @@ module IngredientsNutrientsImportService
       return true if text.match('.*製品')
       return true if text.match('.*つき')
       return true if text.match('.*型')
-      if ['生','乾', '冷凍', '粉', '食塩添加','食塩無添加','小粒','黒','白','ゆで','皮なし','肉','ゆで','焼き', '練り'].include?(text)
-        return true
-      end
+      return true if %w[生 乾 冷凍 粉 食塩添加 食塩無添加 小粒 黒 白 ゆで 皮なし 肉 ゆで 焼き 練り].include?(text)
 
       false
     end
+
     def self.divide_name_and_tags(names)
       tags = []
       main = nil
@@ -80,7 +80,7 @@ module IngredientsNutrientsImportService
           next
         end
         # binding.pry
-        if self.is_tag?(name)
+        if is_tag?(name)
           tags << name
         else
           main = name
@@ -88,6 +88,5 @@ module IngredientsNutrientsImportService
       end
       [main, tags]
     end
-  
   end
 end

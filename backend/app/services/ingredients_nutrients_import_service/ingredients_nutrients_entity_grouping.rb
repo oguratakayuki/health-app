@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IngredientsNutrientsImportService
   module IngredientsNutrientsEntityGrouping
     # 名前が重複する要素群に対して共通のgourp_nameを設定する
@@ -8,7 +10,7 @@ module IngredientsNutrientsImportService
       not_name_duplicated_entities_groups = {}
       grouped_entities.each do |name, grouped_entities|
         if grouped_entities.size > 1
-          name_duplicated_entities_groups[name] =  grouped_entities
+          name_duplicated_entities_groups[name] = grouped_entities
         else
           not_name_duplicated_entities_groups[name] = grouped_entities
         end
@@ -23,4 +25,3 @@ module IngredientsNutrientsImportService
     end
   end
 end
- 

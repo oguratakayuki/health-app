@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateIngredientNutrient < ActiveRecord::Migration[6.1]
   def change
     create_table :ingredient_nutrients do |t|
