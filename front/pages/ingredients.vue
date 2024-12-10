@@ -35,6 +35,10 @@
         </table>
       </div>
     </div>
+    <SearchFab
+      v-if="!isModalOpen"
+      @click="openModal(null, ModalType.Search)"
+      />
     <FloatingActionButton
       v-if="!isModalOpen"
       @click="openModal(null, ModalType.New)"
@@ -52,6 +56,12 @@
       @close="closeModal"
       @save="handleSave"
     />
+    <ModalsIngredientSearchModal
+      v-if="isModalOpen && activeModal === ModalType.Search"
+      :ingredient="selectedIngredient"
+      @close="closeModal"
+      @search="handleSearch"
+    />
   </div>
 </template>
 
@@ -61,6 +71,7 @@ import Pager from '@/components/ui/Pager.vue';
 import IngredientEditModal from '@/components/modals/IngredientEditModal.vue';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
+import SearchFab from '@/components/ui/SearchFab.vue';
 
 import { Ingredient, IngredientResponse } from '~/types/ingredients';
 import { Nutrient } from '~/types/nutrients';
@@ -74,6 +85,7 @@ enum ModalType {
   New = 'new',
   Edit = 'edit',
   Detail = 'detail',
+  Search = 'search',
 }
 
 const { updateIngredient, createIngredient } = useIngredient();
@@ -100,7 +112,7 @@ const fetchAndPopulateData = async (page: number) => {
 };
 
 const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
-  if (modalType === ModalType.New) {
+  if (modalType === ModalType.New || modalType === ModalType.Search ) {
     ingredient = {
       name: '',
       remarks: '',
@@ -125,6 +137,12 @@ const handleSave = async (formData: Ingredient) => {
   closeModal()
   // reload
   fetchAndPopulateData(currentPage.value);
+};
+
+const handleSearch = async (name: string) => {
+  console.log('handle search')
+  console.log(name)
+  closeModal()
 };
 
 const update = async (id: number, ingredient: Ingredient) => {
