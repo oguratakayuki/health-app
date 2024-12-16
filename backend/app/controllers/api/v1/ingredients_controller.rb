@@ -4,6 +4,11 @@ module Api
   module V1
     class IngredientsController < ApplicationController
       def index
+        # TODO
+        # tag 検索
+        # ex. Ingredient.includes(:tags).where(id: 200, tags: { id: [15,111]})
+        # tag をtag_categoriesを使って分類する
+        # -> tag管理画面の実装
         @ingredients = Ingredient.includes(:nutrients, :ingredient_nutrients)
                                  .where.not(ingredient_nutrients: { content_quantity: 0 })
                                  .page(params[:page]).per(10)

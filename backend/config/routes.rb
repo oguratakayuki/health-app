@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :ingredients, only: %i[index update create]
       resources :nutrients, only: [:index]
+      resources :tags, only: [:index]
     end
   end
   # devise_for :users
