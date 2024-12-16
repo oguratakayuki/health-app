@@ -13,21 +13,17 @@ module Api
             meta: { total_pages: @tags.total_pages }
           }
         ).serializable_hash.to_json
-
       end
 
       # PATCH /api/v1/tags/:id
-      def update
-      end
+      def update; end
 
       # POST /api/v1/tags
-      def create
-      end
+      def create; end
 
       private
 
-      def tag_params
-      end
+      def tag_params; end
     end
   end
 end
