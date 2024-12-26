@@ -4,7 +4,8 @@ module Api
   module V1
     class TagsController < ApplicationController
       def index
-        @tags = Tag.page(params[:page]).per(10)
+        @tags = Tag.includes(:tag_categories, :categories)
+                   .page(params[:page]).per(10)
 
         render json: TagSerializer.new(
           @tags,

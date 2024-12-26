@@ -4,32 +4,66 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::IngredientsController, type: :request do
   describe 'GET /api/v1/ingredients' do
-    before do
-      create_list :ingredient_nutrient, 20
+    context 'クエリパラメータなし' do
+      before do
+        create_list :ingredient_nutrient, 20
+      end
+
+      it 'returns paginated ingredients with total_pages' do
+        # ページパラメータを設定
+        get '/api/v1/ingredients', params: { page: 1 }
+
+        json = JSON.parse(response.body)
+        expect(json['data'][0]['relationships']['nutrients']['data'][0]['type']).to eq 'nutrient'
+        expect(response).to have_http_status(:ok)
+        expect(json['data']).to be_an(Array)
+        expect(json['data'].size).to eq(10)
+        expect(json['meta']['total_pages']).to eq(2)
+      end
+
+      it 'returns the second page of ingredients' do
+        # 2ページ目を取得
+        get '/api/v1/ingredients', params: { page: 2 }
+
+        json = JSON.parse(response.body)
+        expect(json['data'][0]['relationships']['nutrients']['data'][0]['type']).to eq 'nutrient'
+        expect(response).to have_http_status(:ok)
+        expect(json['data']).to be_an(Array)
+        expect(json['data'].size).to eq(10)
+        expect(json['meta']['total_pages']).to eq(2)
+      end
     end
 
-    it 'returns paginated ingredients with total_pages' do
-      # ページパラメータを設定
-      get '/api/v1/ingredients', params: { page: 1 }
+    context 'クエリパラメータあり' do
+      let(:ingredients) { ingredient_nutrients.map(&:ingredient) }
+      let(:ingredient_nutrients) { create_list(:ingredient_nutrient, 10) }
+      let!(:tags) { create_list(:tag, 5) }
+      let!(:ingredient_tags) do
+        create(:ingredient_tag, ingredient: ingredients.first, tag: tags.first)
+        create(:ingredient_tag, ingredient: ingredients.second, tag: tags.first)
+      end
+      context 'with valid params' do
+        let(:valid_params) do
+          { ingredient_ids: [ingredients.first.id, ingredients.second.id], tag_ids: [tags.first.id] }
+        end
 
-      json = JSON.parse(response.body)
-      expect(json['data'][0]['relationships']['nutrients']['data'][0]['type']).to eq 'nutrient'
-      expect(response).to have_http_status(:ok)
-      expect(json['data']).to be_an(Array)
-      expect(json['data'].size).to eq(10)
-      expect(json['meta']['total_pages']).to eq(2)
-    end
+        it 'returns a success response' do
+          get api_v1_ingredients_path, params: valid_params
+          expect(response).to have_http_status(:ok)
+        end
 
-    it 'returns the second page of ingredients' do
-      # 2ページ目を取得
-      get '/api/v1/ingredients', params: { page: 2 }
+        it 'returns the correct number of ingredients' do
+          get api_v1_ingredients_path, params: valid_params
+          json = JSON.parse(response.body)
+          expect(json['data'].size).to eq(2) # 2つのingredientが返ってくることを期待
+        end
 
-      json = JSON.parse(response.body)
-      expect(json['data'][0]['relationships']['nutrients']['data'][0]['type']).to eq 'nutrient'
-      expect(response).to have_http_status(:ok)
-      expect(json['data']).to be_an(Array)
-      expect(json['data'].size).to eq(10)
-      expect(json['meta']['total_pages']).to eq(2)
+        it 'includes pagination information' do
+          get api_v1_ingredients_path, params: valid_params
+          json = JSON.parse(response.body)
+          expect(json['meta']['total_pages']).to be_present
+        end
+      end
     end
   end
 

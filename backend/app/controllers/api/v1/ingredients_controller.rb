@@ -5,13 +5,16 @@ module Api
     class IngredientsController < ApplicationController
       def index
         # TODO
-        # tag 検索
-        # ex. Ingredient.includes(:tags).where(id: 200, tags: { id: [15,111]})
         # tag をtag_categoriesを使って分類する
         # -> tag管理画面の実装
-        @ingredients = Ingredient.includes(:nutrients, :ingredient_nutrients)
+        @ingredients = Ingredient.includes(:nutrients, :ingredient_nutrients, :tags)
                                  .where.not(ingredient_nutrients: { content_quantity: 0 })
-                                 .page(params[:page]).per(10)
+
+        @ingredients = @ingredients.where(id: params[:ingredient_ids]) if params[:ingredient_ids]
+
+        @ingredients = @ingredients.where(tags: { id: params[:tag_ids] }) if params[:tag_ids]
+
+        @ingredients = @ingredients.page(params[:page]).per(10)
 
         render json: IngredientSerializer.new(
           @ingredients,
