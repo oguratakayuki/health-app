@@ -10,9 +10,9 @@ export const useIngredient = () => {
         ...payload,
         ingredient_nutrients_attributes: payload.ingredient_nutrients?.map(
           (nutrient) => {
-            // nutrient プロパティを削除
-            const { nutrient: _, ...rest } = nutrient;
-            return rest;
+            const nutrientCopy = { ...nutrient };
+            delete nutrientCopy.nutrient;
+            return nutrientCopy;
           }
         ),
       };
@@ -44,9 +44,9 @@ export const useIngredient = () => {
         ...payload,
         ingredient_nutrients_attributes: payload.ingredient_nutrients?.map(
           (nutrient) => {
-            // nutrient プロパティを削除
-            const { nutrient: _, ...rest } = nutrient;
-            return rest;
+            const nutrientCopy = { ...nutrient };
+            delete nutrientCopy.nutrient;
+            return nutrientCopy;
           }
         ),
       };

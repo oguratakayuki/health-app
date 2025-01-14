@@ -10,7 +10,7 @@ module Api
         @ingredients = Ingredient.includes(:nutrients, :ingredient_nutrients, :tags)
                                  .where.not(ingredient_nutrients: { content_quantity: 0 })
 
-        @ingredients = @ingredients.where(id: params[:ingredient_ids]) if params[:ingredient_ids]
+        @ingredients = @ingredients.where("ingredients.name LIKE ?", "%#{params[:ingredient_name]}%") if params[:ingredient_name]
 
         @ingredients = @ingredients.where(tags: { id: params[:tag_ids] }) if params[:tag_ids]
 

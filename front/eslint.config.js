@@ -16,4 +16,9 @@ export default [
   {
     ignores: [".nuxt", "node_modules", "dist", "*.min.js"],
   },
+  {
+    rules: {
+      "vue/multi-word-component-names": "off",
+    },
+  },
 ];

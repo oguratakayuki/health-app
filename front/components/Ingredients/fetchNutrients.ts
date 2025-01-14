@@ -1,5 +1,4 @@
 import { ref } from "vue";
-import Jsona from "jsona";
 
 import { Nutrient } from "~/types/nutrients";
 

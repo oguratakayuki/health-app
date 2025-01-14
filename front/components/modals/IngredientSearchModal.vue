@@ -2,12 +2,13 @@
   <div class="modal" @click="close">
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">検索</h2>
-      <form @submit.prevent="submit">
-        <div class="form-group">
-          <label for="name">名前</label>
-          <p>{{ingredient.name}}</p>
-        </div>
-      </form>
+      <!-- タグ検索機能コンポーネントを埋め込む -->
+      <input type="text" v-model="localIngredientSearch.name" class="input" />
+      <TagSearch 
+        :tags="tags"
+        :selectedTagIds="localIngredientSearch.tagIds"
+        @update:selectedTagIds="updateTagIds"
+      />
       <div class="button-group">
         <button class="search-button" @click="search">検索</button>
       </div>
@@ -16,15 +17,31 @@
 </template>
 
 <script setup lang="ts">
-import { Ingredient } from '~/types/ingredients';
+import { ref } from 'vue';
+import { IngredientSearch } from '~/types/ingredientSearch';
+import { Tag } from '~/types/tags';
+import TagSearch from '~/components/ui/TagSearch.vue';
 
-const emit = defineEmits(['close']);
-const {ingredient} = defineProps<{
-  ingredient: Ingredient | null
+const emit = defineEmits(['close', 'search']);
+const { tags, ingredientSearch } = defineProps<{
+  tags: Tag[];
+  ingredientSearch: IngredientSearch;
 }>()
 
+const localIngredientSearch = ref({
+  name: ingredientSearch.name,
+  tagIds: [...ingredientSearch.tagIds],
+});
+
+const updateTagIds = (newTagIds: number[]) => {
+  console.log('newTagIds')
+  console.log(newTagIds)
+  localIngredientSearch.value.tagIds = newTagIds;
+};
+
 const search = () => {
-  emit('search', 'hoge');
+  console.log('search !!!!')
+  emit('search', localIngredientSearch.value);
 };
 
 const close = () => {
@@ -33,6 +50,24 @@ const close = () => {
 </script>
 
 <style scoped>
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.search-button {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
 .modal {
   position: fixed;
   top: 0;
@@ -95,4 +130,3 @@ button:hover {
   background-color: #45a049;
 }
 </style>
-

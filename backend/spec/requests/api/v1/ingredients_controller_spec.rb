@@ -44,7 +44,7 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
       end
       context 'with valid params' do
         let(:valid_params) do
-          { ingredient_ids: [ingredients.first.id, ingredients.second.id], tag_ids: [tags.first.id] }
+          { ingredient_name: ingredients.first.name, tag_ids: [tags.first.id] }
         end
 
         it 'returns a success response' do
@@ -55,7 +55,7 @@ RSpec.describe Api::V1::IngredientsController, type: :request do
         it 'returns the correct number of ingredients' do
           get api_v1_ingredients_path, params: valid_params
           json = JSON.parse(response.body)
-          expect(json['data'].size).to eq(2) # 2つのingredientが返ってくることを期待
+          expect(json['data'].size).to eq(1) # 2つのingredientが返ってくることを期待
         end
 
         it 'includes pagination information' do

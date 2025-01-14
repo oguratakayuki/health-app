@@ -2,24 +2,43 @@ import { ref } from "vue";
 import Jsona from "jsona";
 
 import { Ingredient } from "~/types/ingredients";
+import { IngredientSearch } from "~/types/ingredientSearch";
 
-export async function fetchIngredients(page: number) {
+export async function fetchIngredients(
+  page: number,
+  searchParams: IngredientSearch | null
+) {
   const dataFormatter = new Jsona();
   const isLoading = ref(false);
   const ingredients = ref<Ingredient[]>([]);
   const totalPages = ref(0);
+  const baseUrl = "http://localhost:3009/api/v1/ingredients";
+
+  type IngredientSearchParams = {
+    ingredient_name?: string;
+    tag_ids?: string;
+    page: number;
+  };
+
+  const params: IngredientSearchParams = {};
+
+  if (searchParams && searchParams.name) {
+    params.ingredient_name = searchParams.name;
+  }
+
+  if (searchParams && searchParams.tagIds.length > 0) {
+    params.tag_ids = searchParams.tagIds.join(",");
+  }
+  params.page = page;
 
   isLoading.value = true;
   try {
-    const response = await $fetch(
-      `http://localhost:3009/api/v1/ingredients?page=${page}`,
-      { ssr: false }
-    );
+    const response = await $fetch(baseUrl, { params, ssr: false });
     const data = await dataFormatter.deserialize(response);
-    ingredients.value = data.map((row, index) => {
+    ingredients.value = data.map((row) => {
       // 例) エネルギー（kcal）: 100gあたり291kcal
       const ingredient_nutrients = row.ingredient_nutrients.map(
-        (ingredient_nutrient, index2) => {
+        (ingredient_nutrient) => {
           const {
             id,
             nutrient,
@@ -39,7 +58,6 @@ export async function fetchIngredients(page: number) {
           };
         }
       );
-      console.log(ingredient_nutrients[0]);
       return {
         id: row.id,
         name: row.name,

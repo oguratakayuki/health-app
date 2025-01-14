@@ -52,11 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount } from "vue";
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
-import { IngredientNutrient, Ingredient } from  '~/types/ingredients';
+import { Ingredient } from  '~/types/ingredients';
 import { Nutrient } from  '~/types/nutrients';
 
 const { ingredient } = defineProps<{

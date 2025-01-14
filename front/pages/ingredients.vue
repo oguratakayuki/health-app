@@ -58,7 +58,8 @@
     />
     <ModalsIngredientSearchModal
       v-if="isModalOpen && activeModal === ModalType.Search"
-      :ingredient="selectedIngredient"
+      :ingredientSearch="ingredientSearch"
+      :tags="tags"
       @close="closeModal"
       @search="handleSearch"
     />
@@ -73,13 +74,16 @@ import SimpleButton from '@/components/ui/SimpleButton.vue';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import SearchFab from '@/components/ui/SearchFab.vue';
 
-import { Ingredient, IngredientResponse } from '~/types/ingredients';
+import { Ingredient, IngredientNutrient, IngredientResponse } from '~/types/ingredients';
+import { Tag } from '~/types/tags';
 import { Nutrient } from '~/types/nutrients';
 
-import Jsona from 'jsona';
 import { useIngredient } from '~/composables/useIngredient';
 import { fetchIngredients } from '~/components/Ingredients/fetchIngredients';
 import { fetchNutrients } from '~/components/Ingredients/fetchNutrients';
+import { fetchTags } from '~/components/Ingredients/fetchTags';
+import { IngredientSearch } from '~/types/ingredientSearch';
+import { reactive } from 'vue';
 
 enum ModalType {
   New = 'new',
@@ -95,18 +99,26 @@ const activeModal = ref<string | null>(null);
 const selectedIngredient = ref<Ingredient | null>(null);
 const ingredients = ref<Ingredient[]>([]);
 const nutrients = ref<Nutrient[]>([]);
+const tags = ref<Tag[]>([]);
 const currentPage = ref(1);
 const totalPages = ref(0);
 const isLoading = ref(false);
 
+const ingredientSearch = reactive<IngredientSearch>({
+      name: '',
+      tagIds: [],
+    });
 
-const fetchAndPopulateData = async (page: number) => {
+const fetchAndPopulateData = async (page: number, search: IngredientSearch) => {
   isLoading.value = true;
-  const { ingredients: fetchedIngredients, totalPages: fetchedTotalPages } = await fetchIngredients(page);
+  const { ingredients: fetchedIngredients, totalPages: fetchedTotalPages } = await fetchIngredients(page, search);
   ingredients.value = fetchedIngredients;
   totalPages.value = fetchedTotalPages;
 
   nutrients.value =  await fetchNutrients();
+
+  const { tags: fetchedTags } = await fetchTags(1);
+  tags.value = fetchedTags
 
   isLoading.value = false;
 };
@@ -126,9 +138,6 @@ const openModal = (ingredient: Ingredient | null, modalType: ModalType) => {
 };
 
 const handleSave = async (formData: Ingredient) => {
-  console.log(`formData.id ${formData.id}`)
-  console.log(formData)
-  let response
   if (formData.id === null) {
     create(formData)
   } else {
@@ -139,10 +148,11 @@ const handleSave = async (formData: Ingredient) => {
   fetchAndPopulateData(currentPage.value);
 };
 
-const handleSearch = async (name: string) => {
-  console.log('handle search')
-  console.log(name)
+const handleSearch = async (search: IngredientSearch) => {
   closeModal()
+  ingredientSearch.name = search.name;
+  ingredientSearch.tagIds = search.tagIds;
+  fetchAndPopulateData(1, search)
 };
 
 const update = async (id: number, ingredient: Ingredient) => {
@@ -181,7 +191,7 @@ const closeModal = () => {
 
 const goToPage = (page: number) => {
   currentPage.value = page;
-  fetchAndPopulateData(page);
+  fetchAndPopulateData(currentPage.value);
 };
 
 fetchAndPopulateData(currentPage.value);

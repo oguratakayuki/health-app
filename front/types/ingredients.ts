@@ -18,7 +18,7 @@ export interface Ingredient {
   ingredient_nutrients?: IngredientNutrient[]; // オプショナルプロパティ
 }
 
-interface IngredientResponse {
+export interface IngredientResponse {
   message: string;
   ingredient: Ingredient;
 }
