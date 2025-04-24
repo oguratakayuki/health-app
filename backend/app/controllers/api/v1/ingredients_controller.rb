@@ -12,14 +12,14 @@ module Api
 
         @ingredients = @ingredients.where("ingredients.name LIKE ?", "%#{params[:ingredient_name]}%") if params[:ingredient_name]
 
-        @ingredients = @ingredients.where(tags: { id: params[:tag_ids] }) if params[:tag_ids]
+        @ingredients = @ingredients.where(tags: { id: params[:tag_ids].split(',') }) if params[:tag_ids]
 
         @ingredients = @ingredients.page(params[:page]).per(10)
 
         render json: IngredientSerializer.new(
           @ingredients,
           {
-            include: %i[nutrients ingredient_nutrients],
+            include: %i[nutrients ingredient_nutrients tags ingredient_tags],
             meta: { total_pages: @ingredients.total_pages }
           }
         ).serializable_hash.to_json
