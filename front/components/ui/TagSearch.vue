@@ -3,12 +3,12 @@
     <h3>検索キーワード候補</h3>
     <div class="tag-list">
       <button
-        v-for="tag in tags"
+        v-for="tag in filteredTags"
         :key="tag.id"
-        @click="toggleTag(tag.id)"
-        :class="{ selected: localSelectedTagIds.includes(tag.id) }"
+        v-on:click.prevent="removeTag(tag.id)"
+        class="selected"
       >
-        + {{ tag.name }}
+        {{ tag.name }} x
       </button>
     </div>
   </div>
@@ -34,16 +34,22 @@ const emit = defineEmits(['update:selectedTagIds']); // 親コンポーネント
 // ローカルデータを作成して操作
 const localSelectedTagIds = ref([...selectedTagIds]); // 初期値をコピー
 
-// タグの選択・解除処理
-const toggleTag = (tagId: number) => {
+// タグの解除処理
+const removeTag = (tagId: number) => {
+  // localSelectedTagIdsが同期できていないので、動いていない
+  // TODO selectedTagIdsに対してtagIdを指定して、これを除いた配列を作ってemit
+  console.log(`localSelectedTagIds.value ${localSelectedTagIds.value}`)
+  console.log(localSelectedTagIds.value)
   const index = localSelectedTagIds.value.indexOf(tagId);
-  if (index === -1) {
-    localSelectedTagIds.value.push(tagId);
-  } else {
-    localSelectedTagIds.value.splice(index, 1);
-  }
+  localSelectedTagIds.value.splice(index, 1);
+  // TODO 動いていない
   emit('update:selectedTagIds', localSelectedTagIds.value); // 親コンポーネントに通知
 };
+
+const filteredTags = computed(() => {
+  console.log(selectedTagIds)
+  return tags.filter(tag => selectedTagIds.includes(tag.id));
+});
 </script>
 
 <style scoped>

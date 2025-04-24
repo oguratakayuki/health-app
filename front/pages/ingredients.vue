@@ -47,6 +47,7 @@
       v-if="isModalOpen && (activeModal === ModalType.Edit || activeModal === ModalType.New)"
       :ingredient="selectedIngredient"
       :nutrients="nutrients"
+      :tags="tags"
       @close="closeModal"
       @save="handleSave"
     />
@@ -59,6 +60,8 @@
     <ModalsIngredientSearchModal
       v-if="isModalOpen && activeModal === ModalType.Search"
       :ingredientSearch="ingredientSearch"
+      @updateIngredientSearchName="updateIngredientSearchName"
+      @updateTagIds="updateTagIds"
       :tags="tags"
       @close="closeModal"
       @search="handleSearch"
@@ -74,7 +77,7 @@ import SimpleButton from '@/components/ui/SimpleButton.vue';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import SearchFab from '@/components/ui/SearchFab.vue';
 
-import { Ingredient, IngredientNutrient, IngredientResponse } from '~/types/ingredients';
+import { Ingredient, IngredientNutrient, IngredientResponse, IngredientTag } from '~/types/ingredients';
 import { Tag } from '~/types/tags';
 import { Nutrient } from '~/types/nutrients';
 
@@ -108,6 +111,15 @@ const ingredientSearch = reactive<IngredientSearch>({
       name: '',
       tagIds: [],
     });
+
+const updateIngredientSearchName = (name) => {
+  ingredientSearch.name = name
+}
+
+const updateTagIds = (ids) => {
+  ingredientSearch.tagIds = ids
+  console.log(ingredientSearch.tagIds)
+}
 
 const fetchAndPopulateData = async (page: number, search: IngredientSearch) => {
   isLoading.value = true;
@@ -148,22 +160,14 @@ const handleSave = async (formData: Ingredient) => {
   fetchAndPopulateData(currentPage.value);
 };
 
-const handleSearch = async (search: IngredientSearch) => {
+const handleSearch = async () => {
   closeModal()
-  ingredientSearch.name = search.name;
-  ingredientSearch.tagIds = search.tagIds;
-  fetchAndPopulateData(1, search)
+  fetchAndPopulateData(1, ingredientSearch)
 };
 
 const update = async (id: number, ingredient: Ingredient) => {
   try {
     const response: IngredientResponse | undefined = await updateIngredient(id, ingredient);
-
-    if (response) {
-      console.log(response.message, response.ingredient);
-    } else {
-      console.error("Failed to update ingredient: Response is undefined");
-    }
   } catch (error) {
     console.error("Error while updating ingredient:", error);
   }
@@ -172,17 +176,10 @@ const update = async (id: number, ingredient: Ingredient) => {
 const create = async (newIngredient: Ingredient) => {
   try {
     const response: IngredientResponse | undefined = await createIngredient(newIngredient);
-
-    if (response) {
-      console.log(response.message, response.ingredient);
-    } else {
-      console.error("Failed to create ingredient: Response is undefined");
-    }
   } catch (error) {
     console.error("Error while creating ingredient:", error);
   }
 };
-
 
 const closeModal = () => {
   isModalOpen.value = false;

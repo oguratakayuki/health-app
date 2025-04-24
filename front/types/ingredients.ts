@@ -1,5 +1,11 @@
 import { Nutrient } from "./nutrient";
+import { Tag } from "./tag";
 
+export interface IngredientTag {
+  id?: number;
+  tag?: Tag;
+  _destroy?: boolean; // 削除フラグ
+}
 export interface IngredientNutrient {
   id?: number;
   content_quantity: number;
@@ -16,6 +22,7 @@ export interface Ingredient {
   remarks: string;
   original_name: string;
   ingredient_nutrients?: IngredientNutrient[]; // オプショナルプロパティ
+  ingredient_tags?: IngredientTag[]; // オプショナルプロパティ
 }
 
 export interface IngredientResponse {

@@ -21,6 +21,12 @@
           <Field name="original_name" type="text" id="original_name" class="input" />
           <ErrorMessage name="original_name" class="error-message" />
         </div>
+        <TagSearch 
+          :tags="tags"
+          :selectedTagIds="selectedTagIds"
+          @update:selectedTagIds="updateTagIds"
+        />
+ 
         <!-- Ingredient Nutrients入力フィールド -->
         <h3>栄養成分</h3>
         <div class="nutrient-container">
@@ -52,15 +58,18 @@
 </template>
 
 <script setup lang="ts">
+import TagSearch from '~/components/ui/TagSearch.vue';
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { Ingredient } from  '~/types/ingredients';
 import { Nutrient } from  '~/types/nutrients';
+import { Tag } from '~/types/tags';
 
 const { ingredient } = defineProps<{
   ingredient: Ingredient | null,
-  nutrients: Nutrient[]
+  nutrients: Nutrient[],
+  tags: Tag[]
 }>()
 
 const emit = defineEmits(['close', 'save']);
@@ -78,7 +87,8 @@ const schema = yup.object({
       content_unit_per: yup.number().required("含有量/単位は必須項目です"),
       content_unit_per_unit: yup.string().required("単位/成分は必須項目です"),
     })
-  ).optional()
+  ).optional(),
+  ingredient_tags: yup.array().optional()
 });
 
 // フォームの初期化
@@ -89,8 +99,12 @@ const { handleSubmit, values } = useForm({
     name: ingredient?.name || '',
     remarks: ingredient?.remarks || '',
     original_name: ingredient?.original_name || '',
-    ingredient_nutrients: ingredient?.ingredient_nutrients.map(nutrient => ({
-      ...nutrient,
+    ingredient_nutrients: ingredient?.ingredient_nutrients.map(ingredient_nutrient => ({
+      ...ingredient_nutrient,
+      _destroy: false,
+    })) || [],
+    ingredient_tags: ingredient?.ingredient_tags.map(ingredient_tag => ({
+      ...ingredient_tag,
       _destroy: false,
     })) || []
   }
@@ -121,9 +135,28 @@ const onSubmit = handleSubmit(values => {
   console.error('Validation errors:', errors);
 });
 
+const selectedTagIds = computed(() => {
+  // 追加と削除の両方を考慮する必要あり
+  // それぞれのidを取得する
+  // 差分を取得する
+  // objectを生成する
+  return values.ingredient_tags.map((ingredient_tag) => {
+    return ingredient_tag.id
+  })
+})
+
+
 const close = () => {
   emit('close');
 };
+
+const updateTagIds = (newTagIds: number[]) => {
+  console.log('newTagIds')
+  console.log(newTagIds)
+  console.log(values)
+};
+
+
 </script>
 
 <style scoped>

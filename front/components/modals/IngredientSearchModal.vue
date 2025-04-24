@@ -2,17 +2,28 @@
   <div class="modal" @click="close">
     <div class="modal-content" @click.stop>
       <h2 class="modal-title">検索</h2>
+
       <!-- タグ検索機能コンポーネントを埋め込む -->
-      <input type="text" v-model="localIngredientSearch.name" class="input" />
-      <TagSearch 
-        :tags="tags"
-        :selectedTagIds="localIngredientSearch.tagIds"
-        @update:selectedTagIds="updateTagIds"
+      <input 
+        type="text"
+        :value="props.ingredientSearch.name"
+        @change="updateIngredientSearchName"
+        class="input"
+        :placeholder="'食材名を入力して下さい'"
       />
+      <div>
+        <FilterableSelect
+          :options="props.tags" 
+          :selectedTagIds="props.ingredientSearch.tagIds"
+          @update:selected="handleUpdateTagId"
+        />
+        <p>選択済み: {{ selectedCompanies }}</p>
+      </div>
       <div class="button-group">
         <button class="search-button" @click="search">検索</button>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -20,28 +31,30 @@
 import { ref } from 'vue';
 import { IngredientSearch } from '~/types/ingredientSearch';
 import { Tag } from '~/types/tags';
-import TagSearch from '~/components/ui/TagSearch.vue';
 
-const emit = defineEmits(['close', 'search']);
-const { tags, ingredientSearch } = defineProps<{
+import FilterableSelect from '~/components/ui/FilterableSelect.vue'
+
+const selectedCompanies = ref([])
+
+const updateIngredientSearchName = ($event) => {
+  emit('updateIngredientSearchName', $event.target.value)
+}
+
+const handleUpdateTagId = (selected) => {
+  emit('updateTagIds', selected)
+}
+
+
+
+const emit = defineEmits(['close', 'search', 'updateIngredientSearchName', 'updateTagIds']);
+
+const props = defineProps<{
   tags: Tag[];
   ingredientSearch: IngredientSearch;
 }>()
 
-const localIngredientSearch = ref({
-  name: ingredientSearch.name,
-  tagIds: [...ingredientSearch.tagIds],
-});
-
-const updateTagIds = (newTagIds: number[]) => {
-  console.log('newTagIds')
-  console.log(newTagIds)
-  localIngredientSearch.value.tagIds = newTagIds;
-};
-
 const search = () => {
-  console.log('search !!!!')
-  emit('search', localIngredientSearch.value);
+  emit('search')
 };
 
 const close = () => {

@@ -30,10 +30,11 @@ export async function fetchIngredients(
     params.tag_ids = searchParams.tagIds.join(",");
   }
   params.page = page;
+  console.log(params);
 
   isLoading.value = true;
   try {
-    const response = await $fetch(baseUrl, { params, ssr: false });
+    const response = await $fetch(baseUrl, { query: params, ssr: false });
     const data = await dataFormatter.deserialize(response);
     ingredients.value = data.map((row) => {
       // 例) エネルギー（kcal）: 100gあたり291kcal
@@ -47,7 +48,6 @@ export async function fetchIngredients(
             content_unit_per,
             content_unit_per_unit,
           } = ingredient_nutrient;
-          // return `${ingredient_nutrient.nutrient.name}: ${content_unit_per}${content_unit_per_unit}あたり${content_quantity}${content_unit}`
           return {
             id,
             nutrient,
@@ -58,11 +58,19 @@ export async function fetchIngredients(
           };
         }
       );
+      const ingredient_tags = row.ingredient_tags.map((ingredient_tag) => {
+        const { id, tag } = ingredient_tag;
+        return {
+          id,
+          tag,
+        };
+      });
       return {
         id: row.id,
         name: row.name,
         original_name: row.original_name,
         ingredient_nutrients: ingredient_nutrients,
+        ingredient_tags: ingredient_tags,
       };
     });
     totalPages.value = response.meta.total_pages;
