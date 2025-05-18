@@ -21,10 +21,10 @@
           <Field name="original_name" type="text" id="original_name" class="input" />
           <ErrorMessage name="original_name" class="error-message" />
         </div>
-        <TagSearch 
-          :tags="tags"
+        <FilterableSelect
+          :options="tags"
           :selectedTagIds="selectedTagIds"
-          @update:selectedTagIds="updateTagIds"
+          @update:selected="updateTagIds"
         />
  
         <!-- Ingredient Nutrients入力フィールド -->
@@ -65,6 +65,7 @@ import SimpleButton from '@/components/ui/SimpleButton.vue';
 import { Ingredient } from  '~/types/ingredients';
 import { Nutrient } from  '~/types/nutrients';
 import { Tag } from '~/types/tags';
+import FilterableSelect from '~/components/ui/FilterableSelect.vue'
 
 const { ingredient } = defineProps<{
   ingredient: Ingredient | null,
@@ -136,26 +137,26 @@ const onSubmit = handleSubmit(values => {
 });
 
 const selectedTagIds = computed(() => {
-  // 追加と削除の両方を考慮する必要あり
-  // それぞれのidを取得する
-  // 差分を取得する
-  // objectを生成する
   return values.ingredient_tags.map((ingredient_tag) => {
     return ingredient_tag.id
   })
 })
 
-
 const close = () => {
   emit('close');
 };
 
-const updateTagIds = (newTagIds: number[]) => {
-  console.log('newTagIds')
-  console.log(newTagIds)
-  console.log(values)
+const updateTagIds = (selected: string[]) => {
+  console.log(selected)
+  // localVariableにしてここに保持させる
+  const temp = values.ingredient_tags.map((tag) => tag.id)
+  const newTagId = selected.find(item => !temp.includes(item))
+  // TODO _destroyより一括delete/insertの方がfrontは楽
+  values.ingredient_tags.push({
+    id: newTagId,
+    _destroy: false,
+  });
 };
-
 
 </script>
 

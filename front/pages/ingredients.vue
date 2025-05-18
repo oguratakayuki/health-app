@@ -117,6 +117,7 @@ const updateIngredientSearchName = (name) => {
 }
 
 const updateTagIds = (ids) => {
+  console.log('front/pages/ingredients.vue updateTagIds')
   ingredientSearch.tagIds = ids
   console.log(ingredientSearch.tagIds)
 }

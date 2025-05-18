@@ -57,7 +57,8 @@ const props = defineProps<{
   };
 }>();
 
-const localSelectedTagIds = ref([])
+// props.selectedTagIds の値で初期化
+const localSelectedTagIds = ref([...props.selectedTagIds]);
 
 const emit = defineEmits(['update:selected'])
 
