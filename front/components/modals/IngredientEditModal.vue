@@ -147,15 +147,7 @@ const close = () => {
 };
 
 const updateTagIds = (selected: string[]) => {
-  console.log(selected)
-  // localVariableにしてここに保持させる
-  const temp = values.ingredient_tags.map((tag) => tag.id)
-  const newTagId = selected.find(item => !temp.includes(item))
-  // TODO _destroyより一括delete/insertの方がfrontは楽
-  values.ingredient_tags.push({
-    id: newTagId,
-    _destroy: false,
-  });
+  values.ingredient_tags = selected.map((tag) =>  {return { id: tag} })
 };
 
 </script>
