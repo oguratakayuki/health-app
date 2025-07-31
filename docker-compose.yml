@@ -6,8 +6,6 @@ services:
       - ./backend:/myapp
     ports:
       - "3009:3000"
-    networks:
-      - shared-network
   db:
     image: mysql:8.0.32
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
@@ -22,8 +20,6 @@ services:
       - "3307:3306"
     volumes:
       - ./backend/tmp/db:/var/lib/mysql
-    networks:
-      - shared-network
   nuxt:
     container_name: nuxt
     build: docker/nuxt
@@ -39,8 +35,11 @@ services:
       - port=8001
       - CHOKIDAR_USEPOLLING=true
     command: sh -c "yarn && yarn dev -o"
-networks:
-  shared-network:
-    external: true
+  goapi:
+    build:
+      context: .
+      dockerfile: goapi/Dockerfile
+    ports:
+      - "8080:8080"
 volumes:
   nuxt_node_modules:
