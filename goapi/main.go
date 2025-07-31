@@ -21,7 +21,7 @@ func main() {
 		// ^: 文字列の先頭、\d+: 1回以上の数字、$: 文字列の末尾
 		match, _ := regexp.MatchString(`^\d+$`, id)
 		if !match {
-			http.Error(w, "Invalid ID format: ID must be numeric", http.StatusBadRequest) // 400 Bad Request
+			http.Error(w, "Invalid ID format: ID must be numeric !", http.StatusBadRequest) // 400 Bad Request
 			return
 		}
 

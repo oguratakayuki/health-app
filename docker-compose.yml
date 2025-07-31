@@ -36,10 +36,20 @@ services:
       - CHOKIDAR_USEPOLLING=true
     command: sh -c "yarn && yarn dev -o"
   goapi:
-    build:
-      context: .
-      dockerfile: goapi/Dockerfile
-    ports:
-      - "8080:8080"
+     build:
+       context: .
+       dockerfile: goapi/Dockerfile # Dockerfileのパスは変更なし
+     ports:
+       - "8080:8080"
+     volumes:
+       # ホストの 'goapi' ディレクトリをコンテナの '/app/goapi' にマウント
+       - ./goapi:/app/goapi
+       # (任意) Goモジュールのキャッシュをホストに永続化すると、ビルドが速くなる場合がある
+       - go-mod-cache:/go/pkg/mod
+     environment:
+       # Airの設定ファイルパス。後述の.air.tomlが使われるように設定
+       AIR_CONFIG: /app/goapi/.air.toml
+
 volumes:
   nuxt_node_modules:
+  go-mod-cache: # Goモジュールキャッシュ用のボリューム定義

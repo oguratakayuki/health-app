@@ -1,0 +1,22 @@
+# goapi/.air.toml
+# rootは監視対象ディレクトリ
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# goapiディレクトリ内でビルドを行う
+cmd = "go build -o ./tmp/server ." # ビルドコマンド
+bin = "./tmp/server"              # 実行ファイルパス
+
+# その他の設定
+exclude_dir = ["vendor", "tmp", "node_modules", "assets"] # 監視から除外するディレクトリ
+delay = 500 # ms, ファイル変更検知後の待機時間
+log = "air_errors.log" # ビルドログの出力先
+
+[run]
+# コンパイルされたバイナリを直接実行
+cmd = "./tmp/server"
+
+# Airが監視するファイル拡張子
+[watcher]
+exts = ["go", "mod", "sum", "html", "css", "js", "toml"] # 監視対象のファイル拡張子

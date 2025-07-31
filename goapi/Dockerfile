@@ -1,18 +1,20 @@
-FROM golang:1.22.1 AS builder
+# goapi/Dockerfile
+# Dockerfile (for development with hot-reloading)
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app/goapi
 
+# Hot-reloading tool Airをインストール
+RUN go install github.com/air-verse/air@latest
+
+
 COPY goapi/go.mod ./
-# COPY goapi/go.sum ./
 RUN go mod download
 
-COPY goapi/*.go ./
-# 静的リンク指定
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server .
+# ソースコードはボリュームマウントで提供されるため、ここではコピーしない
+# CMDでAirを実行する際に必要となるので、コピーはせず、VOLUMEで参照する
+# COPY goapi/*.go ./
 
-# 最小イメージに移動（バイナリのみ）
-FROM debian:bullseye-slim
-WORKDIR /app
-COPY --from=builder /app/goapi/server .
-EXPOSE 8080
-CMD ["./server"]
+# コンテナ起動時に Air を実行
+# Airはワーキングディレクトリのファイル変更を監視し、自動でビルド・再起動します。
+CMD ["air"]
