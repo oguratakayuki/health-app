@@ -1,3 +1,3 @@
-module example.com/goapi
+module goapi
 
-go 1.22.1
+go 1.24
