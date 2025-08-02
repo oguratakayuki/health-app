@@ -2,16 +2,22 @@
 package usecase
 
 import (
-	"errors"
 	"fmt"
 	"goapi/internal/domain" 
 )
+
+type UserUseCase interface {
+	GetUserByID(id string) (*domain.User, error)
+	// 他のユースケースメソッドもここに追加
+}
 
 type UserInteractor struct {
 	UserRepository UserRepository
 }
 
-func NewUserInteractor(r UserRepository) *UserInteractor {
+// NewUserInteractor はUserInteractorの新しいインスタンスを作成します。
+// NewUserInteractorの戻り値の型をインターフェースにする
+func NewUserInteractor(r UserRepository) UserUseCase {
 	return &UserInteractor{
 		UserRepository: r,
 	}
@@ -25,7 +31,7 @@ func (ui *UserInteractor) GetUserByID(id string) (*domain.User, error) {
 	}
 	if user == nil {
 		// ユーザーが見つからない場合
-		return nil, errors.New("user not found")
+		return nil, ErrUserNotFound // ErrUserNotFound を使用
 	}
 
 	return user, nil

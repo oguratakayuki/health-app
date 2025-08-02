@@ -1,21 +1,23 @@
-// internal/infrastructure/controller/user_controller.go
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"regexp"
 	"goapi/internal/infrastructure/presenter"
-	"goapi/internal/usecase" // ユースケースを呼び出すため
+	"goapi/internal/usecase"
 )
 
 // UserController はユーザー関連のHTTPリクエストを処理します。
 type UserController struct {
-	UserInteractor *usecase.UserInteractor
+	// 依存関係を具体的な実装ではなく、インターフェースに
+	UserInteractor usecase.UserUseCase
 }
 
 // NewUserController はUserControllerの新しいインスタンスを作成します。
-func NewUserController(ui *usecase.UserInteractor) *UserController {
+func NewUserController(ui usecase.UserUseCase) *UserController {
 	return &UserController{
+		// インターフェース型の引数をそのまま構造体のフィールドに代入
 		UserInteractor: ui,
 	}
 }
@@ -40,11 +42,10 @@ func (uc *UserController) GetUserByIDHandler(w http.ResponseWriter, r *http.Requ
 	// 3. ビジネスロジックの呼び出し (ユースケース)
 	user, err := uc.UserInteractor.GetUserByID(id)
 	if err != nil {
-		// エラーハンドリング
-		if err.Error() == "user not found" { // ユースケースで定義した特定のエラー
-			presenter.RenderErrorJSON(w, "User not found", http.StatusNotFound)
-			return
-		}
+    if errors.Is(err, usecase.ErrUserNotFound) { // 定義した変数と直接比較
+        presenter.RenderErrorJSON(w, "User not found", http.StatusNotFound)
+        return
+    }
 		// その他の内部サーバーエラー
 		presenter.RenderErrorJSON(w, "Internal server error", http.StatusInternalServerError)
 		return
