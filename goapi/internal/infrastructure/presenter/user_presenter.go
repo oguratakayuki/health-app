@@ -9,7 +9,7 @@ import (
 
 type UserResponse struct {
 	ID   string `json:"id"`
-	Name string `json:"name"`
+	Email string `json:"email"`
 }
 
 func RenderUserJSON(w http.ResponseWriter, user *domain.User) error {
@@ -18,7 +18,7 @@ func RenderUserJSON(w http.ResponseWriter, user *domain.User) error {
 
 	res := UserResponse{
 		ID:   user.ID,
-		Name: user.Name,
+		Email: user.Email,
 	}
 
 	return json.NewEncoder(w).Encode(res)
