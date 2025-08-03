@@ -47,3 +47,26 @@ func (r *MySQLUserRepository) FindByID(id string) (*domain.User, error) {
 	return &user, nil
 }
 
+func (r *MySQLUserRepository) Update(user *domain.User) (*domain.User, error) {
+	stmt, err := r.db.Prepare("UPDATE users SET email = ? WHERE id = ?")
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare update statement: %w", err)
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(user.Email, user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute update statement: %w", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return nil, usecase.ErrUserNotFound
+	}
+
+	return user, nil
+}
+
