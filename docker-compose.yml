@@ -20,6 +20,11 @@ services:
       - "3307:3306"
     volumes:
       - ./backend/tmp/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   nuxt:
     container_name: nuxt
     build: docker/nuxt
@@ -37,15 +42,17 @@ services:
     command: sh -c "yarn && yarn dev -o"
   goapi:
      build:
-       context: .
-       dockerfile: goapi/Dockerfile # Dockerfileのパスは変更なし
+       context: ./goapi
+       dockerfile: Dockerfile # Dockerfileのパスは変更なし
      ports:
        - "8080:8080"
      volumes:
        # ホストの 'goapi' ディレクトリをコンテナの '/app/goapi' にマウント
        - ./goapi:/app/goapi
-       # (任意) Goモジュールのキャッシュをホストに永続化すると、ビルドが速くなる場合がある
        - go-mod-cache:/go/pkg/mod
+     depends_on:
+       db:
+         condition: service_healthy
      environment:
        # Airの設定ファイルパス。後述の.air.tomlが使われるように設定
        AIR_CONFIG: /app/goapi/.air.toml
@@ -54,6 +61,10 @@ services:
        DB_PASSWORD: rootp
        DB_NAME: health_development
        DB_PORT: 3306
+       PATH: /usr/local/go/bin:$PATH
+       GOPATH: /go
+       command: air -c /app/goapi/.air.toml
+     #command: air -c .air.toml
 volumes:
   nuxt_node_modules:
   go-mod-cache: # Goモジュールキャッシュ用のボリューム定義

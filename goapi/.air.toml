@@ -1,0 +1,20 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/main ."
+  bin = "./tmp/main"
+  exclude_dir = ["tmp", "vendor", "go/pkg/mod", "assets", "testdata", "log", "bin", "dist", "web", "docs", "test", "node_modules", "proc", "sys", "dev", "run", "mnt", "media", "lib", "etc", "var", "usr"]
+  include_dir = []
+  exclude_file = []
+  exclude_regex = ["_test.go"]
+  follow_symlink = true
+  stop_on_error = true
+  log = "air-build-errors.log"
+  delay = 1000 # ms
+  
+[log]
+  time = true
+
+[screen]
+  clear_on_rebuild = true
