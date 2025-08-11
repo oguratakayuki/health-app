@@ -11,9 +11,11 @@ func main() {
 
 	r := gin.Default()
 
-	// ルーティングの設定
-	r.GET("/users", container.UserController.GetUserByID)
+	r.GET("/users", container.UserController.ListUsers)
+	r.GET("/users/:id", container.UserController.GetUser)
+	r.POST("/users", container.UserController.CreateUser)
 	r.PUT("/users/:id", container.UserController.UpdateUser)
+	r.DELETE("/users/:id", container.UserController.DeleteUser)
 
 	log.Println("Listening on :8080")
 	if err := r.Run(":8080"); err != nil {

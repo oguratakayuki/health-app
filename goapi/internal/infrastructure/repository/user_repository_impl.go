@@ -8,19 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
-// GormUserRepository はusecase.UserRepositoryインターフェースのGorm実装です。
+// usecase.UserRepositoryインターフェースの実装
 type GormUserRepository struct {
 	db *gorm.DB
 }
 
-// NewGormUserRepository はGormUserRepositoryの新しいインスタンスを作成します。
 func NewGormUserRepository(db *gorm.DB) usecase.UserRepository {
 	return &GormUserRepository{
 		db: db,
 	}
 }
 
-// FindByID は指定されたIDのユーザーをデータベースから取得します。
 func (r *GormUserRepository) FindByID(id int64) (*domain.User, error) {
 	var user domain.User
 	result := r.db.First(&user, id)
@@ -33,11 +31,38 @@ func (r *GormUserRepository) FindByID(id int64) (*domain.User, error) {
 	return &user, nil
 }
 
-// Update は指定されたユーザー情報をデータベースで更新します。
 func (r *GormUserRepository) Update(user *domain.User) (*domain.User, error) {
 	result := r.db.Save(user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return user, nil
+}
+
+func (r *GormUserRepository) Create(user *domain.User) (*domain.User, error) {
+	result := r.db.Create(user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
+}
+
+func (r *GormUserRepository) Delete(id int64) error {
+	result := r.db.Delete(&domain.User{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("user not found")
+	}
+	return nil
+}
+
+func (r *GormUserRepository) FindAll() ([]*domain.User, error) {
+	var users []*domain.User
+	result := r.db.Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
 }
