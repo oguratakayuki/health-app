@@ -63,8 +63,22 @@ services:
        DB_PORT: 3306
        PATH: /usr/local/go/bin:$PATH
        GOPATH: /go
-       command: air -c /app/goapi/.air.toml
-     #command: air -c .air.toml
+     # command: air -c /app/goapi/.air.toml
+     command: /go/bin/air -c /app/goapi/.air.toml
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./admin:/app
+      - admin_node_modules:/app/node_modules
+    environment:
+      - VITE_API_BASE_URL=/api
+    depends_on:
+      - goapi
 volumes:
   nuxt_node_modules:
   go-mod-cache: # Goモジュールキャッシュ用のボリューム定義
+  admin_node_modules:
