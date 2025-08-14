@@ -1,12 +1,14 @@
 package controller
 
 import (
-       "errors"
-       "net/http"
-       "strconv"
-       "goapi/internal/domain"
-       "goapi/internal/usecase"
-       "github.com/gin-gonic/gin"
+			"errors"
+			"net/http"
+			"strconv"
+			"goapi/internal/domain"
+			"goapi/internal/usecase"
+			"github.com/gin-gonic/gin"
+			 "fmt"
+			 "encoding/json"
 )
 
 type UserController struct {
@@ -21,11 +23,33 @@ func NewUserController(interactor usecase.UserUseCase) *UserController {
 
 // 一覧取得
 func (uc *UserController) ListUsers(c *gin.Context) {
-	users, err := uc.UserInteractor.ListUsers()
+	var filters map[string]interface{}
+	_ = json.Unmarshal([]byte(c.Query("filter")), &filters)
+
+	var r []int
+	_ = json.Unmarshal([]byte(c.Query("range")), &r)
+	start, end := 0, 9
+	if len(r) == 2 {
+		start, end = r[0], r[1]
+	}
+
+	var s []string
+	_ = json.Unmarshal([]byte(c.Query("sort")), &s)
+	sortField, sortOrder := "id", "ASC"
+	if len(s) == 2 {
+		sortField, sortOrder = s[0], s[1]
+	}
+
+	users, total, err := uc.UserInteractor.ListUsersWithParams(filters, sortField, sortOrder, start, end)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
+
+	// Content-Range ヘッダー
+	c.Header("Access-Control-Expose-Headers", "Content-Range")
+	c.Header("Content-Range", fmt.Sprintf("users %d-%d/%d", start, end, total))
+
 	c.JSON(http.StatusOK, users)
 }
 

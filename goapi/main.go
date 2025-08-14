@@ -11,11 +11,12 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/users", container.UserController.ListUsers)
-	r.GET("/users/:id", container.UserController.GetUser)
-	r.POST("/users", container.UserController.CreateUser)
-	r.PUT("/users/:id", container.UserController.UpdateUser)
-	r.DELETE("/users/:id", container.UserController.DeleteUser)
+	api := r.Group("/api")
+	api.GET("/users", container.UserController.ListUsers)
+	api.GET("/users/:id", container.UserController.GetUser)
+	api.POST("/users", container.UserController.CreateUser)
+	api.PUT("/users/:id", container.UserController.UpdateUser)
+	api.DELETE("/users/:id", container.UserController.DeleteUser)
 
 	log.Println("Listening on :8080")
 	if err := r.Run(":8080"); err != nil {

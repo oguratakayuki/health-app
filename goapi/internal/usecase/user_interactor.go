@@ -9,19 +9,20 @@ import (
 type UserRepository interface {
 	FindByID(id int64) (*domain.User, error)
 	Update(user *domain.User) (*domain.User, error)
-  FindAll() ([]*domain.User, error)
-  Create(user *domain.User) (*domain.User, error)
-  Delete(id int64) error
+	FindAll() ([]*domain.User, error)
+	Create(user *domain.User) (*domain.User, error)
+	Delete(id int64) error
+	FindAllWithParams(filters map[string]interface{}, sortField string, sortOrder string, start int, end int) ([]*domain.User, int64, error)
 }
 
 // ユーザー関連のビジネスロジックを定義
 type UserUseCase interface {
-	// test
-  GetUserByID(id int64) (*domain.User, error)
-  UpdateUser(id int64, user *domain.User) (*domain.User, error)
-  ListUsers() ([]*domain.User, error)
-  CreateUser(user *domain.User) (*domain.User, error)
-  DeleteUser(id int64) error
+	GetUserByID(id int64) (*domain.User, error)
+	UpdateUser(id int64, user *domain.User) (*domain.User, error)
+	ListUsers() ([]*domain.User, error)
+	CreateUser(user *domain.User) (*domain.User, error)
+	DeleteUser(id int64) error
+	ListUsersWithParams(filters map[string]interface{}, sortField string, sortOrder string, start int, end int) ([]*domain.User, int64, error)
 }
 
 var ErrUserNotFound = errors.New("user not found")
@@ -56,13 +57,16 @@ func (ui *UserInteractor) UpdateUser(id int64, user *domain.User) (*domain.User,
 }
 
 func (ui *UserInteractor) ListUsers() ([]*domain.User, error) {
-    return ui.UserRepository.FindAll()
+	return ui.UserRepository.FindAll()
 }
 
 func (ui *UserInteractor) CreateUser(user *domain.User) (*domain.User, error) {
-    return ui.UserRepository.Create(user)
+	return ui.UserRepository.Create(user)
 }
 
 func (ui *UserInteractor) DeleteUser(id int64) error {
-    return ui.UserRepository.Delete(id)
+	return ui.UserRepository.Delete(id)
+}
+func (ui *UserInteractor) ListUsersWithParams(filters map[string]interface{}, sortField string, sortOrder string, start int, end int) ([]*domain.User, int64, error) {
+	return ui.UserRepository.FindAllWithParams(filters, sortField, sortOrder, start, end)
 }
