@@ -10,8 +10,8 @@ const dataProvider = simpleRestProvider(apiBase)
 function App() {
   return (
     <Admin dataProvider={dataProvider}>
-      {/* バックエンドに /users があれば自動で一覧表示 */}
       <Resource name="users" list={ListGuesser} />
+      <Resource name="ingredients" list={ListGuesser} />
     </Admin>
   )
 }
