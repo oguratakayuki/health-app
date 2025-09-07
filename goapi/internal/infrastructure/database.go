@@ -4,32 +4,36 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
+
+	"goapi/internal/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-// NewDBConnection は環境変数から読み取った情報をもとにMySQLデータベースへの接続を確立します。
 func NewDBConnection() (*gorm.DB, error) {
-	dbHost := os.Getenv("DB_HOST")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-
-	if dbHost == "" || dbUser == "" || dbPassword == "" || dbName == "" || dbPort == "" {
-		return nil, fmt.Errorf("database connection environment variables are not set")
-	}
+	dbConfig := config.GetDBConfig()
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
-		dbUser, dbPassword, dbHost, dbPort, dbName)
+		dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Name)
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold: time.Second,
+			LogLevel:      logger.Info,
+			Colorful:      true,
+		},
+	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
 	}
 
-	// 接続が有効であることを確認
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get sql db: %w", err)
@@ -37,12 +41,7 @@ func NewDBConnection() (*gorm.DB, error) {
 	if err := sqlDB.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
-	
-	//// テーブルの自動マイグレーション
-	//if err := db.AutoMigrate(&domain.User{}); err != nil {
-	//	return nil, fmt.Errorf("failed to migrate database: %w", err)
-	//}
 
-	log.Println("Successfully connected to MySQL database!")
+	log.Printf("Connected to DB (%s): %s\n", config.GetEnv(), dbConfig.Name)
 	return db, nil
 }

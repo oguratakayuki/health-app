@@ -1,15 +1,15 @@
 package domain
 
-import "gorm.io/gorm"
+import "time"
 
-// User はユーザーエンティティを表します。
 type User struct {
-	gorm.Model
-	ID	int64	`json:"id"`
-	Email string `gorm:"uniqueIndex;type:varchar(255)"`
+	ID        int64      `json:"id" gorm:"primaryKey"`
+	Email     string     `json:"email"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }
 
-// UserUpdateInput はユーザー更新時の入力データを表します。
 type UserUpdateInput struct {
 	Email string `json:"email"`
 }
