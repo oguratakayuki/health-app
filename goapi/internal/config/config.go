@@ -29,7 +29,7 @@ func GetDBConfig() DBConfig {
 			Host:     getEnvOrDefault("DB_HOST", "db"),
 			User:     getEnvOrDefault("DB_USER", "root"),
 			Password: getEnvOrDefault("DB_PASSWORD", "rootp"),
-			Name:     getEnvOrDefault("DB_NAME", "health_test"),
+			Name:     getEnvOrDefault("DB_NAME_TEST", "health_test"),
 			Port:     getEnvOrDefault("DB_PORT", "3306"),
 		}
 	case "production":
