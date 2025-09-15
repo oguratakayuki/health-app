@@ -13,6 +13,8 @@ function App() {
     <Admin dataProvider={dataProvider}>
       <Resource name="users" list={ListGuesser} edit={UserEdit}  />
       <Resource name="ingredients" list={ListGuesser} />
+      <Resource name="nutrients" list={ListGuesser} />
+      <Resource name="ingredient_nutrients" list={ListGuesser} />
     </Admin>
   )
 }

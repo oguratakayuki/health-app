@@ -12,7 +12,7 @@ import (
 )
 
 type IngredientController struct {
-       IngredientInteractor usecase.IngredientUseCase
+	IngredientInteractor usecase.IngredientUseCase
 }
 
 func NewIngredientController(interactor usecase.IngredientUseCase) *IngredientController {
