@@ -79,7 +79,28 @@ services:
       - VITE_API_BASE_URL=/api
     depends_on:
       - goapi
+  graphqlapi:
+    build:
+      context: ./graphqlapi
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000" # Apollo Server のポート
+    volumes:
+      - ./graphqlapi:/app
+      - graphql_node_modules:/app/node_modules
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: rootp
+      DB_NAME: health_development
+      NODE_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+    command: yarn ts-node src/index.ts
 volumes:
   nuxt_node_modules:
   go-mod-cache: # Goモジュールキャッシュ用のボリューム定義
   admin_node_modules:
+  graphql_node_modules:

@@ -1,0 +1,13 @@
+[
+  {
+    "name": "default",
+    "type": "mysql",
+    "host": "db",
+    "port": 3306,
+    "username": "root",
+    "password": "rootp",
+    "database": "health_development",
+    "synchronize": false,
+    "entities": ["entities/*.js"]
+  }
+]
