@@ -9,7 +9,7 @@ COPY go.sum .
 RUN go mod download
 
 # go-air をインストール
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.62.0
 
 # --- デバッグ用のRUNコマンドは削除します ---
 
