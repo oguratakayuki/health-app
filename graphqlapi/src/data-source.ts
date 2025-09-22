@@ -1,10 +1,12 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Categories } from "./entities/Categories";
-import { IngredientNutrients } from "./entities/IngredientNutrients";
-import { Ingredients } from "./entities/Ingredients";
-import { Nutrients } from "./entities/Nutrients";
 import { Users } from "./entities/Users";
+import { Category } from "./entities/Category";
+import { IngredientNutrient } from "./entities/IngredientNutrient";
+import { Ingredient } from "./entities/Ingredient";
+import { Nutrient } from "./entities/Nutrient";
+import { IngredientTag } from "./entities/IngredientTag";
+import { Tag } from "./entities/Tag";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -13,8 +15,16 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || "root",
   password: process.env.DB_PASS || "rootp",
   database: process.env.DB_NAME || "health_development",
-  synchronize: false, // 本番はfalse、開発で試すならtrueでもOK
+  synchronize: false,
   logging: true,
-  entities: [Categories, IngredientNutrients, Ingredients, Nutrients, Users],
+  entities: [
+    Users,
+    Category,
+    IngredientNutrient,
+    Ingredient,
+    Nutrient,
+    IngredientTag,
+    Tag,
+  ],
 });
 

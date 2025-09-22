@@ -1,12 +1,12 @@
 import { Resolver, Query } from "type-graphql";
-import { Nutrients } from "../entities/Nutrients";
+import { Nutrient } from "../entities/Nutrient";
 import { AppDataSource } from "../data-source";
 
 @Resolver()
 export class NutrientResolver {
-  @Query(() => [Nutrients])
+  @Query(() => [Nutrient])
   async nutrients() {
-    const repo = AppDataSource.getRepository(Nutrients);
+    const repo = AppDataSource.getRepository(Nutrient);
     return repo.find();
   }
 }

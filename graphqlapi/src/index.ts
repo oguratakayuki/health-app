@@ -5,13 +5,25 @@ import express, { Application } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { AppDataSource } from "./data-source";
+import { CategoriesResolver } from "./resolvers/CategoriesResolver";
+import { IngredientNutrientsResolver } from "./resolvers/IngredientNutrientsResolver";
+import { IngredientResolver } from './resolvers/IngredientResolver'
 import { NutrientResolver } from "./resolvers/NutrientResolver";
+import { IngredientTagResolver } from './resolvers/IngredientTagResolver'
+import { TagResolver } from './resolvers/TagResolver'
 
 async function bootstrap() {
   await AppDataSource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [NutrientResolver],
+    resolvers: [
+      CategoriesResolver,
+      IngredientNutrientsResolver,
+      IngredientResolver,
+      NutrientResolver,
+      IngredientTagResolver,
+      TagResolver,
+    ],
     validate: false,
   });
 

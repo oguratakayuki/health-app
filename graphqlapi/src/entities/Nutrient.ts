@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType() // GraphQL用にデコレート
 @Entity("nutrients", { schema: "health_development" })
-export class Nutrients {
+export class Nutrient {
   @Field(() => ID) // GraphQL ID型として公開
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
   id!: string;
