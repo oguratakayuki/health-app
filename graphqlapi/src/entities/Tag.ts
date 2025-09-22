@@ -1,5 +1,6 @@
-import { Field, ID, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
+import { TagCategory } from "./TagCategory";
 
 @ObjectType()
 @Entity("tags")
@@ -11,6 +12,10 @@ export class Tag {
   @Field(() => String, { nullable: true })
   @Column("varchar", { name: "name", nullable: true, length: 255 })
   name!: string | null;
+
+  @Field(() => TagCategory)
+  @ManyToOne(() => TagCategory, (category) => category.tags)
+  category!: TagCategory;
 
   @Field()
   @Column("datetime", { name: "created_at" })

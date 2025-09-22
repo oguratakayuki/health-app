@@ -3,7 +3,7 @@ import { IngredientNutrient } from "../entities/IngredientNutrient";
 import { AppDataSource } from "../data-source";
 
 @Resolver()
-export class IngredientNutrientsResolver {
+export class IngredientNutrientResolver {
   @Query(() => [IngredientNutrient])
   async ingredientNutrients() {
     const repo = AppDataSource.getRepository(IngredientNutrient);

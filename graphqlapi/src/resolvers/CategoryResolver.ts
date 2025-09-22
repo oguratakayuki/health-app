@@ -3,7 +3,7 @@ import { Category } from "../entities/Category";
 import { AppDataSource } from "../data-source";
 
 @Resolver()
-export class CategoriesResolver {
+export class CategoryResolver {
   @Query(() => [Category])
   async categories() {
     return AppDataSource.getRepository(Category).find();
