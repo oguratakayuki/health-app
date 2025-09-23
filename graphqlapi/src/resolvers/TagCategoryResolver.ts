@@ -1,6 +1,5 @@
 import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
 import { TagCategory } from "../entities/TagCategory";
-import { Tag } from "../entities/Tag";
 import { AppDataSource } from "../data-source";
 
 @Resolver(() => TagCategory)
