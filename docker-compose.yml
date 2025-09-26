@@ -84,7 +84,7 @@ services:
       context: ./graphqlapi
       dockerfile: Dockerfile
     ports:
-      - "4000:4000" # Apollo Server のポート
+      - "3000:3000"
     volumes:
       - ./graphqlapi:/app
       - graphql_node_modules:/app/node_modules
@@ -98,7 +98,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: yarn ts-node src/index.ts
+    command: yarn dev
 volumes:
   nuxt_node_modules:
   go-mod-cache: # Goモジュールキャッシュ用のボリューム定義

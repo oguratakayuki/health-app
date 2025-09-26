@@ -2,10 +2,11 @@ FROM node:20
 
 WORKDIR /app
 
-# COPY package.json yarn.lock ./
-COPY package.json ./
-RUN yarn install
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
-EXPOSE 4000
+EXPOSE 3000
+
+CMD ["yarn", "dev"]

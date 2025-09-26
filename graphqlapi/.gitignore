@@ -1,0 +1,29 @@
+# 必須ファイル
+.next/
+out/
+build/
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# npm、pnpm、yarn の依存関係
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+.pnpm-debug.log*
+
+# OSが生成するファイル
+.DS_Store
+Thumbs.db
+
+# VS Code の設定
+.vscode/
+
+# その他のキャッシュやログ
+.next/cache/
+*.log
