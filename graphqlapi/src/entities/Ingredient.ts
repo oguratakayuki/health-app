@@ -13,8 +13,12 @@ export class Ingredient {
   @Column()
   name!: string
 
-  @Field(() => [Nutrient])
-  @ManyToMany(() => Nutrient)
-  @JoinTable()
-  nutrients!: Nutrient[]
+  @ManyToMany(() => Nutrient, (nutrient) => nutrient.ingredients)
+  @JoinTable({
+    name: "ingredient_nutrients", // 中間テーブル名
+    joinColumn: { name: "ingredient_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "nutrient_id", referencedColumnName: "id" }
+  })
+  nutrients!: Nutrient[];
+
 }
