@@ -95,10 +95,25 @@ services:
       DB_PASSWORD: rootp
       DB_NAME: health_development
       NODE_ENV: development
+      COGNITO_ENDPOINT: http://cognito-local:9229
+      COGNITO_USER_POOL_ID: local-user-pool-id
+      COGNITO_CLIENT_ID: local-client-id
+      COGNITO_REGION: us-east-1
     depends_on:
       db:
         condition: service_healthy
+      cognito-local:
+        condition: service_started
     command: yarn dev
+  cognito-local:
+    image: jagregory/cognito-local:latest
+    ports:
+      - "9229:9229"
+    environment:
+      - COGNITO_CLIENT_ID=local-client-id
+      - COGNITO_USER_POOL_ID=local-user-pool-id
+    networks:
+      - default
 volumes:
   nuxt_node_modules:
   go-mod-cache: # Goモジュールキャッシュ用のボリューム定義

@@ -1,20 +1,25 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
+@Index("index_users_on_email", ["email"], { unique: true })
 @ObjectType() // ← GraphQL用
-@Entity("categories", { schema: "health_development" })
-export class Category {
-  @Field(() => ID) // GraphQL ID型として公開
+@Entity("users", { schema: "health_development" })
+export class User {
+  @Field(() => ID)
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
   id!: string;
+
+  @Field(() => String, { nullable: false })
+  @Column("varchar", { name: "email", unique: true, length: 255 })
+  email!: string;
 
   @Field(() => String, { nullable: true })
   @Column("varchar", { name: "name", nullable: true, length: 255 })
   name!: string | null;
 
   @Field(() => String, { nullable: true })
-  @Column("varchar", { name: "display_name", nullable: true, length: 255 })
-  displayName!: string | null;
+  @Column("varchar", { name: "cognito_sub", nullable: true, length: 255 })
+  cognito_sub!: string | null;
 
   @Field()
   @Column("datetime", { name: "created_at" })
@@ -24,4 +29,3 @@ export class Category {
   @Column("datetime", { name: "updated_at" })
   updatedAt!: Date;
 }
-

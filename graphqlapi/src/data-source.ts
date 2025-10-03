@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Users } from "./entities/Users";
+import { User } from "./entities/User";
 import { Category } from "./entities/Category";
 import { IngredientNutrient } from "./entities/IngredientNutrient";
 import { Ingredient } from "./entities/Ingredient";
@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: true,
   entities: [
-    Users,
+    User,
     Category,
     IngredientNutrient,
     Ingredient,

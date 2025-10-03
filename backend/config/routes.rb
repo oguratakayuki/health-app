@@ -8,8 +8,4 @@ Rails.application.routes.draw do
       resources :tags, only: [:index]
     end
   end
-  # devise_for :users
-  # namespace :api do
-  #   mount_devise_token_auth_for 'User', at: 'auth'
-  # end
 end
