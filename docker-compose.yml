@@ -96,7 +96,7 @@ services:
       DB_NAME: health_development
       NODE_ENV: development
       COGNITO_ENDPOINT: http://cognito-local:9229
-      COGNITO_USER_POOL_ID: local-user-pool-id
+      COGNITO_USER_POOL_ID: ap-northeast-1_ABCDEFG12
       COGNITO_CLIENT_ID: local-client-id
       COGNITO_REGION: us-east-1
     depends_on:
@@ -110,8 +110,9 @@ services:
     ports:
       - "9229:9229"
     environment:
-      - COGNITO_CLIENT_ID=local-client-id
-      - COGNITO_USER_POOL_ID=local-user-pool-id
+      - AWS_COGNITO_USER_POOL_ID=local-user-pool
+      - AWS_COGNITO_APP_CLIENT_ID=test
+      - AWS_COGNITO_APP_CLIENT_SECRET=test-secret
     networks:
       - default
 volumes:

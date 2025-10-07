@@ -5,6 +5,7 @@ import { buildSchema } from "type-graphql";
 import { resolvers } from "../../src/resolvers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { initializeDataSource } from "../../src/data-source";
+import { createContext } from "../../src/context";
 
 // グローバルスコープでサーバーをキャッシュ
 interface GlobalWithApollo {
@@ -36,7 +37,7 @@ async function createApolloServer() {
     introspection: true,
   });
 
-  await server.start();
+  // await server.start();
   return server;
 }
 
@@ -47,10 +48,12 @@ async function getApolloHandler() {
     globalWithApollo.apolloServer = server;
     globalWithApollo.apolloHandler = startServerAndCreateNextHandler(server, {
       context: async (req: NextApiRequest, res: NextApiResponse) => {
-        return { req, res };
+        // createContextを使用
+        return await createContext({ req, res });
       },
     });
   }
+
   return globalWithApollo.apolloHandler;
 }
 

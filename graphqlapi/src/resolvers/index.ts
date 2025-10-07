@@ -6,6 +6,7 @@ import { NutrientResolver } from "./NutrientResolver";
 import { TagResolver } from "./TagResolver";
 import { TagCategoryResolver } from "./TagCategoryResolver";
 import { UserResolver } from "./UserResolver";
+import { AuthResolver } from "./AuthResolver";
 
 export const resolvers = [
   CategoryResolver,
@@ -16,5 +17,6 @@ export const resolvers = [
   TagResolver,
   TagCategoryResolver,
   UserResolver,
+  AuthResolver
 ] as const;
 

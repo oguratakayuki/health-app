@@ -18,8 +18,8 @@ export class User {
   name!: string | null;
 
   @Field(() => String, { nullable: true })
-  @Column("varchar", { name: "cognito_sub", nullable: true, length: 255 })
-  cognito_sub!: string | null;
+  @Column({ unique: true, name: "cognito_sub" })
+  jognitoSub!: string;
 
   @Field()
   @Column("datetime", { name: "created_at" })
