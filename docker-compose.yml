@@ -96,9 +96,12 @@ services:
       DB_NAME: health_development
       NODE_ENV: development
       COGNITO_ENDPOINT: http://cognito-local:9229
-      COGNITO_USER_POOL_ID: local_0bIbQfA0
-      COGNITO_CLIENT_ID: dw2ru28rkht5b447jjxhz8xy2
+      COGNITO_USER_POOL_ID: local_5FAKI5LW
+      COGNITO_CLIENT_ID: 24yg3mrk2en4gaori4kw0btob
       COGNITO_REGION: us-east-1
+      NEXT_PUBLIC_COGNITO_USER_POOL_ID: local_5FAKI5LW
+      NEXT_PUBLIC_COGNITO_CLIENT_ID: 24yg3mrk2en4gaori4kw0btob
+      NEXT_PUBLIC_COGNITO_ENDPOINT: http://localhost:9229
     depends_on:
       db:
         condition: service_healthy
@@ -114,6 +117,14 @@ services:
       - AWS_COGNITO_USER_POOL_ID=local-user-pool
       - AWS_COGNITO_APP_CLIENT_ID=test
       - AWS_COGNITO_APP_CLIENT_SECRET=test-secret
+      - COGNITO_LOCAL_ADMIN_ACTIONS_ENABLED=true
+      - ADMIN_API_ANONYMOUS_ACCESS=true
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - CORS_ALLOW_HEADERS=Content-Type,X-Amz-Target,Authorization
+      #- CORS_ALLOW_ORIGIN=http://localhost:3000
+      - CORS_ALLOW_ORIGIN=*
     networks:
       - default
 volumes:
