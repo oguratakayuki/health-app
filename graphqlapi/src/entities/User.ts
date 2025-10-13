@@ -7,7 +7,7 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
-  id!: string;
+  id?: string;
 
   @Field(() => String, { nullable: false })
   @Column("varchar", { name: "email", unique: true, length: 255 })
@@ -15,17 +15,17 @@ export class User {
 
   @Field(() => String, { nullable: true })
   @Column("varchar", { name: "name", nullable: true, length: 255 })
-  name!: string | null;
+  name?: string | null;
 
   @Field(() => String, { nullable: true })
   @Column({ unique: true, name: "cognito_sub" })
-  jognitoSub!: string;
+  cognitoSub?: string;
 
   @Field()
   @Column("datetime", { name: "created_at" })
-  createdAt!: Date;
+  createdAt?: Date;
 
   @Field()
   @Column("datetime", { name: "updated_at" })
-  updatedAt!: Date;
+  updatedAt?: Date;
 }

@@ -1,7 +1,7 @@
 // graphqlapi/src/config/cognito.ts
 export const cognitoConfig = {
   local: {
-    endpoint: process.env.COGNITO_ENDPOINT || 'http://localhost:9229',
+    endpoint: process.env.COGNITO_ENDPOINT || 'http://cognito-local:9229',
     userPoolId: process.env.COGNITO_USER_POOL_ID || 'ap-northeast-1_ABCDEFG12',
     clientId: process.env.COGNITO_CLIENT_ID || 'local-client-id',
     region: process.env.COGNITO_REGION || 'us-east-1',
