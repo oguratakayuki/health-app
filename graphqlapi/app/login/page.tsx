@@ -1,4 +1,4 @@
-// src/pages/login.tsx
+'use client';
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -47,7 +47,7 @@ export default function LoginPage() {
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
       }}
     >
-      <h1 style={{ textAlign: "center" }}>ログイン</h1>
+      <h1 style={{ textAlign: "center" }}>ログイン2</h1>
 
       <form onSubmit={handleLogin}>
         <div style={{ marginBottom: "1rem" }}>

@@ -6,7 +6,7 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true, // ← 警告回避
     "strict": true,
     "noEmit": true,
     "incremental": true,
@@ -15,17 +15,34 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "skipLibCheck": true, // ← 警告回避
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/src/*": ["src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/src/*": [
+        "src/*"
+      ]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,   // type-graphql + typeorm で必要
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "emitDecoratorMetadata": true, // type-graphql + typeorm で必要
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
