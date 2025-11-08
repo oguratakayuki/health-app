@@ -1,99 +1,73 @@
-'use client';
-import { useState } from "react";
+"use client";
+
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setError("");
     setMessage("");
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
+      if (!res.ok) {
         throw new Error(data.error || "ログインに失敗しました");
       }
 
-      // ログイン成功時
-      localStorage.setItem("idToken", data.idToken);
-      setMessage("ログイン成功 ✅");
-      console.log("ログイン成功:", data);
+      setMessage("ログイン成功！保護ページへ移動します…");
+
+      // ✅ 成功時に /protected へリダイレクト
+      setTimeout(() => router.push("/protected"), 1000);
     } catch (err: any) {
-      setMessage(`エラー: ${err.message}`);
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: 400,
-        margin: "3rem auto",
-        padding: "2rem",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}
-    >
-      <h1 style={{ textAlign: "center" }}>ログイン2</h1>
-
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="username">ユーザー名</label>
+    <div style={{ maxWidth: 400, margin: "2rem auto" }}>
+      <h1>ログイン</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="username">username:</label>
           <input
+            type="username"
             id="username"
-            type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem" }}
             required
           />
         </div>
-
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">パスワード</label>
+        <div>
+          <label htmlFor="password">パスワード:</label>
           <input
-            id="password"
             type="password"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem" }}
             required
           />
         </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            background: "#0070f3",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
-        >
-          {loading ? "ログイン中..." : "ログイン"}
+        <button type="submit" style={{ marginTop: 10 }}>
+          ログイン
         </button>
       </form>
 
-      {message && (
-        <p style={{ marginTop: "1rem", textAlign: "center" }}>{message}</p>
-      )}
+      {message && <p style={{ color: "green", marginTop: 10 }}>{message}</p>}
+      {error && <p style={{ color: "red", marginTop: 10 }}>{error}</p>}
     </div>
   );
 }

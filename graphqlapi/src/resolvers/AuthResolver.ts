@@ -3,6 +3,19 @@ import { Resolver, Mutation, Arg, ObjectType, Field, Ctx } from "type-graphql";
 import type { GraphQLContext } from "../context";
 import { cognitoService } from "../services/cognitoService";
 import { User } from '../entities/User';
+import { jwtDecode } from "jwt-decode";
+import { userService } from '../../src/services/userService'; // DB操作用
+
+interface CognitoIdTokenPayload {
+  sub: string;
+  email?: string;
+  email_verified?: boolean;
+  name?: string;
+  aud?: string;
+  iss?: string;
+  exp?: number;
+  iat?: number;
+}
 
 @ObjectType()
 class AuthResponse {
@@ -49,9 +62,15 @@ export class AuthResolver {
   ): Promise<AuthResponse> {
     try {
       const cognitoUser = await cognitoService.signIn(email, password);
-      const user = await cognitoService.syncUserToDatabase(cognitoUser);
+      const { idToken, accessToken, refreshToken } = await cognitoService.signIn2(email, password);
+      const decoded = jwtDecode<CognitoIdTokenPayload>(idToken);
+      const cognitoSub = decoded.sub;
+      const name = decoded.name || "NoName";
+      const user = await userService.syncUserByCognitoSub(cognitoSub, email, name);
+      console.log('HERE')
+      console.log(user)
 
-      // セッションにユーザー情報を保存
+      // セッションにユーザー情報を保存(GraphQLのコンテキストに保存)
       ctx.user = user;
 
       return {

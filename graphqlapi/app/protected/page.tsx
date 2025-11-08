@@ -1,59 +1,36 @@
-"use client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import UserInfo from "./user-info";
 
-import { useEffect, useState } from "react";
+export default async function ProtectedPage() {
+  const cookieStore = cookies();
+  const idToken = cookieStore.get("idToken");
 
-export default function ProtectedPage() {
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const idToken = localStorage.getItem("idToken");
-
-      if (!idToken) {
-        setError("ログインしていません。");
-        return;
-      }
-
-      try {
-        const res = await fetch("/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        });
-
-        if (!res.ok) {
-          const errData = await res.json();
-          setError(`エラー: ${errData.error || res.statusText}`);
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.user);
-      } catch (e) {
-        console.error(e);
-        setError("通信エラーが発生しました。");
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
+  if (!idToken) {
+    redirect("/login");
   }
 
-  if (!user) {
-    return <p>読み込み中...</p>;
+  // SSR側で /api/auth/me を叩いて user 情報を取得
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${idToken.value}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    redirect("/login");
   }
 
+  const user = await res.json();
+
+  // クライアント側コンポーネントに渡して表示
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">保護されたページ</h1>
-      <p>ユーザー名: {user.name || "（不明）"}</p>
-      <p>Email: {user.email || "（不明）"}</p>
-      <p>ユーザーID: {user.sub}</p>
+    <div style={{ maxWidth: 600, margin: "2rem auto" }}>
+      <h1>保護されたページ</h1>
+      <p>このページはログインユーザーのみ閲覧できます。</p>
+      <hr style={{ margin: "1rem 0" }} />
+      <UserInfo user={user.user} />
     </div>
   );
 }
-

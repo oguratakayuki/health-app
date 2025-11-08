@@ -6,6 +6,9 @@ import {
   CognitoUserAttribute,
 } from "amazon-cognito-identity-js";
 import { getCognitoConfig } from "../config/cognito";
+import { userService } from '../../src/services/userService'; // DB操作用
+import { initializeDataSource } from '../../src/data-source'; // TypeORM初期化用
+import { jwtDecode } from "jwt-decode";
 
 interface SignUpResult {
   user: CognitoUser;
@@ -36,16 +39,67 @@ export class CognitoService {
 
   }
 
-  async signIn(email: string, password: string) {
-    const authDetails = new AuthenticationDetails({ Username: email, Password: password });
-    const user = new CognitoUser({ Username: email, Pool: this.userPool });
+  async signIn(username: string, password: string): Promise<{
+    idToken: string;
+    accessToken: string;
+    refreshToken?: string;
+  }> {
+    if (!username || !password) {
+      throw new Error("Missing username or password");
+    }
 
-    return new Promise((resolve, reject) => {
-      user.authenticateUser(authDetails, {
-        onSuccess: resolve,
-        onFailure: reject,
-      });
+    // DB初期化
+    try {
+      await initializeDataSource();
+    } catch (error) {
+      console.error("Database initialization failed:", error);
+      throw new Error("Server configuration error (DB init).");
+    }
+
+    // Cognito Local にリクエスト
+    const response = await fetch("http://cognito-local:9229/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
+      },
+      body: JSON.stringify({
+        AuthFlow: "USER_PASSWORD_AUTH",
+        ClientId: "24yg3mrk2en4gaori4kw0btob",
+        AuthParameters: {
+          USERNAME: username,
+          PASSWORD: password,
+        },
+      }),
     });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.AuthenticationResult) {
+      console.error("Login failed ❌:", data);
+      const message = data.message || "Login failed";
+      throw new Error(message);
+    }
+
+    const { IdToken, AccessToken, RefreshToken } = data.AuthenticationResult;
+
+    // トークンデコード & DB同期
+    try {
+      const decodedToken: any = jwtDecode(IdToken);
+      const cognitoSub = decodedToken.sub;
+      const email = decodedToken.email;
+
+      await userService.updateCognitoSub(email, cognitoSub);
+      console.log(`User ${email} linked with sub: ${cognitoSub}`);
+    } catch (tokenError) {
+      console.error("Token decoding or DB linking failed:", tokenError);
+    }
+
+    return {
+      idToken: IdToken,
+      accessToken: AccessToken,
+      refreshToken: RefreshToken,
+    };
   }
 
   async signUp(email: string, password: string, name: string): Promise<SignUpResult> {
