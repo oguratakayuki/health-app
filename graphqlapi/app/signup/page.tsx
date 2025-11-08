@@ -1,4 +1,3 @@
-// app/signup/page.tsx
 "use client";
 
 import { useState, FormEvent } from "react";
@@ -30,8 +29,12 @@ export default function SignupPage() {
         throw new Error(data.error || "サインアップに失敗しました");
       }
 
-      setMessage("サインアップに成功しました。ログインページへ移動します…");
-      setTimeout(() => router.push("/login"), 1500);
+      setMessage("サインアップに成功しました。確認コード入力ページへ移動します…");
+
+      // ✅ /confirm ページへメールアドレス付きで遷移
+      setTimeout(() => {
+        router.push(`/confirm?email=${encodeURIComponent(email)}`);
+      }, 1500);
     } catch (err: any) {
       setError(err.message);
     }
@@ -43,40 +46,22 @@ export default function SignupPage() {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">名前:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
         <div>
           <label htmlFor="email">メールアドレス:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div>
           <label htmlFor="password">パスワード:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        <button type="submit" style={{ marginTop: 10 }}>
-          サインアップ
-        </button>
+        <button type="submit" style={{ marginTop: 10 }}>サインアップ</button>
       </form>
       {message && <p style={{ color: "green", marginTop: 10 }}>{message}</p>}
       {error && <p style={{ color: "red", marginTop: 10 }}>{error}</p>}
     </div>
   );
 }
+
+
