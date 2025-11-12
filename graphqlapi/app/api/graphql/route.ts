@@ -1,55 +1,42 @@
-
 import "reflect-metadata";
-import { ApolloServer } from "@apollo/server";
-import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import { NextRequest } from "next/server";
+import { createYoga } from "graphql-yoga";
 import { buildSchema } from "type-graphql";
 import { resolvers } from "@/src/resolvers";
 import { initializeDataSource } from "@/src/data-source";
 import { verifyIdToken } from "@/src/services/tokenVerifier";
 
-let apolloHandler: any = null;
-let isInitialized = false;
+let yogaInstance: any = null;
 
-async function initializeServer() {
-  if (!isInitialized) {
+async function getYoga() {
+  if (!yogaInstance) {
     await initializeDataSource();
-    const schema = await buildSchema({ resolvers, validate: false });
 
-    const server = new ApolloServer({ schema, introspection: true });
+    // TypeGraphQLでGraphQLSchemaを構築
+    const schema = await buildSchema({
+      resolvers,
+      validate: false,
+    });
 
-    // ✅ context内でidTokenを検証
-    apolloHandler = startServerAndCreateNextHandler(server, {
-      context: async (req: Request) => {
-        const user = await verifyIdToken(req);
+    yogaInstance = createYoga({
+      schema, // ✅ ここを修正！createSchema(schema)ではなくschemaそのものを渡す
+      graphqlEndpoint: "/api/graphql",
+      context: async ({ request }) => {
+        const user = await verifyIdToken(request);
         return { user };
       },
     });
-
-    isInitialized = true;
   }
-  return apolloHandler;
+
+  return yogaInstance;
 }
 
-export async function POST(req: Request) {
-  try {
-    const handler = await initializeServer();
-    return handler(req);
-  } catch (error) {
-    console.error("Apollo Server Error:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+export async function POST(request: NextRequest) {
+  const yoga = await getYoga();
+  return yoga.handleRequest(request);
 }
 
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
+export async function GET(request: NextRequest) {
+  const yoga = await getYoga();
+  return yoga.handleRequest(request);
 }
