@@ -2,7 +2,6 @@
 import {
   CognitoUserPool,
   CognitoUser,
-  AuthenticationDetails,
   CognitoUserAttribute,
 } from "amazon-cognito-identity-js";
 import { getCognitoConfig } from "../config/cognito";
@@ -107,12 +106,10 @@ export class CognitoService {
       new CognitoUserAttribute({ Name: "email", Value: email }),
       new CognitoUserAttribute({ Name: "name", Value: name }), // name属性も送信
     ];
-    console.log('HERE 1.1')
 
     return new Promise((resolve, reject) => {
       this.userPool.signUp(email, password, attributes, [], (err, result) => {
         if (err) {
-          console.log('HERE1.2')
           console.log(err)
 
           reject(err);

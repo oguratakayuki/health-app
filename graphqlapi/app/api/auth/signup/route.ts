@@ -1,6 +1,5 @@
 // app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
-// import type { NextApiRequest, NextApiResponse } from "next";
 
 import { cognitoService } from "../../../../src/services/cognitoService";
 // データベース連携のためのTypeORM関連のインポート（後述）

@@ -1,27 +1,22 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { cognitoService } from "./services/cognitoService";
+import { verifyIdToken } from "./services/tokenVerifier";
 
 export interface GraphQLContext {
-  req: NextApiRequest;
-  res: NextApiResponse;
-  user?: any; // 認証されたユーザー
+  user?: any;
 }
 
-export async function createContext({ req, res }: { req: NextApiRequest; res: NextApiResponse }): Promise<GraphQLContext> {
-  // Cognitoサービスを初期化
-  await cognitoService.initialize();
+export async function createContext(req: Request): Promise<GraphQLContext> {
+  const cookieHeader = req.headers.get("cookie") || "";
+  const match = cookieHeader.match(/idToken=([^;]+)/);
+  const idToken = match ? match[1] : null;
 
-  // 認証トークンからユーザーを取得
-  let user = null;
+  if (!idToken) return { user: null };
+
   try {
-    user = await cognitoService.getCurrentUser();
-  } catch (error) {
-    // 認証されていない場合は無視
+    const user = await verifyIdToken(req);
+    return { user };
+  } catch (e) {
+    console.warn("Invalid token:", e);
+    return { user: null };
   }
-
-  return {
-    req,
-    res,
-    user
-  };
 }
+
