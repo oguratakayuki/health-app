@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import UserInfo from "./user-info";
+import DashboardLayout from '../DashboardLayout';
 
 export default async function ProtectedPage() {
   const cookieStore = cookies();
@@ -26,11 +27,8 @@ export default async function ProtectedPage() {
 
   // クライアント側コンポーネントに渡して表示
   return (
-    <div style={{ maxWidth: 600, margin: "2rem auto" }}>
-      <h1>保護されたページ</h1>
-      <p>このページはログインユーザーのみ閲覧できます。</p>
-      <hr style={{ margin: "1rem 0" }} />
+    <DashboardLayout>
       <UserInfo user={user.user} />
-    </div>
+    </DashboardLayout>
   );
 }
