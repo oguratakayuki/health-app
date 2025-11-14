@@ -34,7 +34,7 @@ export default function SignupPage() {
       // ✅ /confirm ページへメールアドレス付きで遷移
       setTimeout(() => {
         router.push(`/confirm?email=${encodeURIComponent(email)}`);
-      }, 1500);
+      }, 700);
     } catch (err: any) {
       setError(err.message);
     }

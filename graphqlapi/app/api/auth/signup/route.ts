@@ -30,9 +30,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    console.log("HERE");
     await cognitoService.signUp(email, password, name);
-    console.log("HERE2");
 
     const createdUser = await userService.createUser(email, name);
 
