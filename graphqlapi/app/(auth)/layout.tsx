@@ -6,9 +6,9 @@ import { Box, Container, Paper, Typography } from "@mui/material";
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="md"
       sx={{
-        minHeight: "100vh",
+        minHeight: "50vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
