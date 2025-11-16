@@ -20,26 +20,10 @@ import {
 } from '@mui/material';
 import { Restaurant, Scale } from '@mui/icons-material';
 
-const GET_INGREDIENT_NUTRIENTS = gql`
-  query GetIngredientNutrients($limit: Int) {
-    ingredientNutrients(limit: $limit) {
-      id
-      ingredient {
-        name
-      }
-      nutrient {
-        name
-      }
-      contentQuantity
-      contentUnit
-      contentUnitPer
-      contentUnitPerUnit
-    }
-  }
-`;
+import { INGREDIENT_NUTRIENTS_QUERY } from "@/src/graphql/queries/ingredient_nutrients";
 
 export default function IngredientNutrientTable() {
-  const { data, loading, error } = useQuery(GET_INGREDIENT_NUTRIENTS, {
+  const { data, loading, error } = useQuery(INGREDIENT_NUTRIENTS_QUERY, {
     variables: { limit: 30 }
   });
 
