@@ -10,11 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_11_16_025852) do
+ActiveRecord::Schema.define(version: 2025_11_16_090523) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
     t.string "display_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "dish_ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "料理に使用した食材", force: :cascade do |t|
+    t.bigint "dish_id", null: false
+    t.bigint "ingredient_id", null: false
+    t.float "content_quantity", default: 0.0, null: false, comment: "量"
+    t.string "content_unit", null: false, comment: "量の単位"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dish_id"], name: "index_dish_ingredients_on_dish_id"
+    t.index ["ingredient_id"], name: "index_dish_ingredients_on_ingredient_id"
+  end
+
+  create_table "dishes", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.string "name", comment: "料理名"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -47,13 +64,14 @@ ActiveRecord::Schema.define(version: 2025_11_16_025852) do
     t.string "original_name"
   end
 
-  create_table "meal_ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "meal_dishes", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食事の各料理", force: :cascade do |t|
     t.bigint "meal_id", null: false
-    t.bigint "ingredient_id", null: false
+    t.bigint "dish_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["ingredient_id"], name: "index_meal_ingredients_on_ingredient_id"
-    t.index ["meal_id"], name: "index_meal_ingredients_on_meal_id"
+    t.index ["dish_id"], name: "index_meal_dishes_on_dish_id"
+    t.index ["meal_id", "dish_id"], name: "index_meal_dishes_on_meal_id_and_dish_id", unique: true
+    t.index ["meal_id"], name: "index_meal_dishes_on_meal_id"
   end
 
   create_table "meals", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
@@ -115,7 +133,9 @@ ActiveRecord::Schema.define(version: 2025_11_16_025852) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "meal_ingredients", "ingredients"
-  add_foreign_key "meal_ingredients", "meals"
+  add_foreign_key "dish_ingredients", "dishes"
+  add_foreign_key "dish_ingredients", "ingredients"
+  add_foreign_key "meal_dishes", "dishes"
+  add_foreign_key "meal_dishes", "meals"
   add_foreign_key "meals", "users"
 end
