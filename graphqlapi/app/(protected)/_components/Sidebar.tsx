@@ -15,9 +15,11 @@ import {
   Restaurant,
   Person,
   Dashboard,
+  AdminPanelSettings,
 } from '@mui/icons-material';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useMe } from '@/src/hooks/useMe'; // ← 追加
 
 const menuItems = [
   {
@@ -37,10 +39,20 @@ const menuItems = [
   },
 ];
 
+// 管理者のみ表示するメニュー
+const adminMenuItems = [
+  {
+    text: '管理者ページ',
+    icon: <AdminPanelSettings />,
+    path: '/test',
+  },
+];
+
 const drawerWidth = 240;
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { isAdmin, loading } = useMe();
 
   return (
     <Drawer
@@ -73,6 +85,7 @@ export default function Sidebar() {
         </Typography>
       </Box>
       <Divider />
+
       {/* メニューリスト */}
       <List sx={{ p: 1 }}>
         {menuItems.map((item) => (
@@ -116,6 +129,54 @@ export default function Sidebar() {
             </Link>
           </ListItem>
         ))}
+
+        {/* --- 管理者メニュー --- */}
+        {!loading && isAdmin && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            {adminMenuItems.map((item) => (
+              <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
+                <Link href={item.path} style={{ textDecoration: 'none', width: '100%' }}>
+                  <ListItemButton
+                    selected={pathname === item.path}
+                    sx={{
+                      borderRadius: 1,
+                      '&.Mui-selected': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'primary.dark',
+                        },
+                        '& .MuiListItemIcon-root': {
+                          color: 'white',
+                        },
+                      },
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        color: pathname === item.path ? 'white' : 'text.secondary',
+                        minWidth: 40,
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={item.text}
+                      primaryTypographyProps={{
+                        fontSize: '0.9rem',
+                        fontWeight: pathname === item.path ? 'bold' : 'normal',
+                      }}
+                    />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            ))}
+          </>
+        )}
       </List>
     </Drawer>
   );

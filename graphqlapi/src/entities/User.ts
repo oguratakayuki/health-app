@@ -21,6 +21,14 @@ export class User {
   @Column({ unique: true, name: "cognito_sub" })
   cognitoSub?: string;
 
+  @Field(() => Boolean, { nullable: false, defaultValue: false })
+  @Column("tinyint", { 
+    name: "is_admin", 
+    nullable: false, 
+    default: () => "0"
+  })
+  isAdmin!: boolean;
+
   @Field()
   @Column("datetime", { name: "created_at" })
   createdAt?: Date;

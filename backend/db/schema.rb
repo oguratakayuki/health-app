@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_10_03_131857) do
+ActiveRecord::Schema.define(version: 2025_11_16_025852) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 2025_10_03_131857) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
     t.string "cognito_sub"
+    t.boolean "is_admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

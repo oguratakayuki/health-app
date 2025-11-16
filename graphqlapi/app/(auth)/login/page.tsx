@@ -46,9 +46,9 @@ export default function LoginPage() {
         throw new Error(data.error || "ログインに失敗しました");
       }
 
-      setMessage("ログイン成功！保護ページへ移動します…");
+      setMessage("ログイン成功！Dashboardへ移動します…");
 
-      setTimeout(() => router.push("/protected"), 1000);
+      setTimeout(() => router.push("/dashboard"), 500);
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -1,57 +1,69 @@
 // src/services/tokenVerifier.ts
 import jwt from "jsonwebtoken";
-import jwkToPem from "jwk-to-pem";
+import { AppDataSource, initializeDataSource } from "../data-source";
+import { User } from "../entities/User";
 
-const COGNITO_JWKS_URL = process.env.COGNITO_JWKS_URL || "http://cognito-local:9229/jwks.json";
-
-let cachedJwks: Record<string, any> | null = null;
-
-async function getJwks() {
-  if (!cachedJwks) {
-    const res = await fetch(COGNITO_JWKS_URL);
-    if (!res.ok) {
-      throw new Error(`Failed to fetch JWKs: ${res.statusText}`);
-    }
-    cachedJwks = await res.json();
-  }
-  return cachedJwks;
-}
-
-/**
- * cookieからidTokenを取得してJWT検証
- */
-export async function verifyIdToken(req: Request): Promise<any | null> {
+export async function verifyIdToken(req: Request): Promise<User | null> {
   try {
+    if (!AppDataSource.isInitialized) {
+      await initializeDataSource();
+    }
     // CookieからidTokenを抽出
+    console.log(`AAAA`)
     const cookieHeader = req.headers.get("cookie") || "";
     const match = cookieHeader.match(/idToken=([^;]+)/);
     const idToken = match ? decodeURIComponent(match[1]) : null;
+    console.log(`AAAA 1`)
 
     if (!idToken) {
       console.warn("No idToken found in cookie");
       return null;
     }
+    console.log(`AAAA 2`)
 
-    const jwks = await getJwks();
-    if (jwks === null) {
-      throw new Error("Failed to retrieve JWKS."); 
+    // ローカル開発用: 署名検証せずにデコード
+    const decoded: any = jwt.decode(idToken);
+    console.log(`decoded.sub ${decoded.sub}`)
+    if (!decoded?.sub) return null;
+
+    // DB でユーザーを検索
+    const userRepo = AppDataSource.getRepository(User);
+    const user = await userRepo.findOne({
+      where: { cognitoSub: decoded.sub },
+    });
+
+    if (!user) {
+      console.log(`AAAA 3`)
+      console.warn(`User not found in DB: ${decoded.sub}`);
+      return null;
     }
 
-    const decodedHeader = jwt.decode(idToken, { complete: true })?.header;
+    console.log(`AAAA 4`)
+    return user;
+  } catch (error) {
+    console.warn("verifyIdToken failed:", error);
+    return null;
+  }
+}
 
-    if (!decodedHeader || !decodedHeader.kid) {
-      throw new Error("Invalid token header");
-    }
+export async function verifyIdTokenFromCookie(cookieHeader: string): Promise<User | null> {
+  try {
+    console.log('BBBB')
+    console.log(cookieHeader)
+    const match = cookieHeader.match(/idToken=([^;]+)/);
+    const idToken = match ? decodeURIComponent(match[1]) : null;
 
-    const jwk = jwks.keys.find((key: any) => key.kid === decodedHeader.kid);
-    if (!jwk) {
-      throw new Error("Matching JWK not found");
-    }
+    if (!idToken) return null;
 
-    const pem = jwkToPem(jwk);
-    const payload = jwt.verify(idToken, pem, { algorithms: ["RS256"] });
+    const decoded: any = jwt.decode(idToken);
+    if (!decoded?.sub) return null;
 
-    return payload;
+    const userRepo = AppDataSource.getRepository(User);
+    const user = await userRepo.findOne({
+      where: { cognitoSub: decoded.sub },
+    });
+
+    return user ?? null;
   } catch (error) {
     console.warn("verifyIdToken failed:", error);
     return null;
