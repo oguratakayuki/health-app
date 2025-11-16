@@ -23,7 +23,7 @@ const menuItems = [
   {
     text: 'ダッシュボード',
     icon: <Dashboard />,
-    path: '/',
+    path: '/dashboard',
   },
   {
     text: '栄養成分管理',
@@ -33,7 +33,7 @@ const menuItems = [
   {
     text: 'ユーザー情報',
     icon: <Person />,
-    path: '/protected',
+    path: '/user',
   },
 ];
 

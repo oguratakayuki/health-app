@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import UserInfo from "./user-info";
-import DashboardLayout from '../DashboardLayout';
 
 export default async function ProtectedPage() {
   const cookieStore = cookies();
@@ -27,8 +26,6 @@ export default async function ProtectedPage() {
 
   // クライアント側コンポーネントに渡して表示
   return (
-    <DashboardLayout>
-      <UserInfo user={user.user} />
-    </DashboardLayout>
+    <UserInfo user={user.user} />
   );
 }

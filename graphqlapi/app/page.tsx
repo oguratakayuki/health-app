@@ -1,6 +1,5 @@
 "use client";  // クライアントコンポーネントとして明示
 
-import DashboardLayout from './DashboardLayout';
 import {
   Container,
   Typography,
@@ -16,7 +15,6 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <DashboardLayout>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
           ダッシュボード
@@ -97,6 +95,5 @@ export default function HomePage() {
           </Grid>
         </Grid>
       </Container>
-    </DashboardLayout>
   );
 }

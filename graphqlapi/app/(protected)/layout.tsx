@@ -1,7 +1,7 @@
 "use client";
 
 import { Box } from '@mui/material';
-import Sidebar from './components/Layout/Sidebar';
+import Sidebar from './_components/Sidebar';
 
 export default function DashboardLayout({ 
   children,

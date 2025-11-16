@@ -1,6 +1,5 @@
 "use client";
 
-import DashboardLayout from '../DashboardLayout';
 import { useQuery, gql } from "@apollo/client";
 import {
   Box,
@@ -46,29 +45,24 @@ export default function IngredientNutrientTable() {
 
   if (loading) {
     return (
-      <DashboardLayout>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
           <CircularProgress />
           <Typography variant="body1" sx={{ ml: 2 }}>
             読み込み中...
           </Typography>
         </Box>
-      </DashboardLayout>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
         <Alert severity="error" sx={{ m: 2 }}>
           エラー: {error.message}
         </Alert>
-      </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* ヘッダーカード */}
         <Card sx={{ mb: 4, boxShadow: 3 }}>
@@ -162,7 +156,6 @@ export default function IngredientNutrientTable() {
           </Typography>
         </Box>
       </Container>
-    </DashboardLayout>
   );
 }
 
