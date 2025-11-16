@@ -8,6 +8,7 @@ import { Nutrient } from "./entities/Nutrient";
 import { IngredientTag } from "./entities/IngredientTag";
 import { Tag } from "./entities/Tag";
 import { TagCategory } from "./entities/TagCategory";
+import { Dish } from "./entities/Dish";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -27,6 +28,7 @@ export const AppDataSource = new DataSource({
     IngredientTag,
     Tag,
     TagCategory,
+    Dish
   ],
 });
 

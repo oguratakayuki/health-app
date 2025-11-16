@@ -42,9 +42,9 @@ const menuItems = [
 // 管理者のみ表示するメニュー
 const adminMenuItems = [
   {
-    text: '管理者ページ',
+    text: '献立情報',
     icon: <AdminPanelSettings />,
-    path: '/test',
+    path: '/dishes',
   },
 ];
 

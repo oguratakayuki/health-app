@@ -8,6 +8,7 @@ import { TagCategoryResolver } from "./TagCategoryResolver";
 import { UserResolver } from "./UserResolver";
 import { AuthResolver } from "./AuthResolver";
 import { MeResolver } from "./MeResolver";
+import { DishResolver } from "./DishResolver";
 
 export const resolvers = [
   CategoryResolver,
@@ -19,6 +20,7 @@ export const resolvers = [
   TagCategoryResolver,
   UserResolver,
   AuthResolver,
-  MeResolver
+  MeResolver,
+  DishResolver,
 ] as const;
 
