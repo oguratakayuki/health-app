@@ -2,50 +2,58 @@ import { Resolver, Query, Mutation, Arg } from "type-graphql";
 import { Dish } from "../entities/Dish";
 import { AppDataSource, initializeDataSource } from "../data-source";
 
-@Resolver(Dish)
+@Resolver(() => Dish)
 export class DishResolver {
   @Query(() => [Dish])
-  async dishes(): Promise<Dish[]> {
+  async dishes() {
     await initializeDataSource();
-    return AppDataSource.getRepository(Dish).find();
+    const repo = AppDataSource.getRepository(Dish);
+    return repo.find({
+      relations: ["dishIngredients", "dishIngredients.ingredient", "ingredients"],
+    });
   }
 
   @Query(() => Dish, { nullable: true })
-  async dish(@Arg("id") id: string): Promise<Dish | null> {
+  async dish(@Arg("id") id: string) {
     await initializeDataSource();
-    return AppDataSource.getRepository(Dish).findOne({ where: { id: id as unknown as string } });
+    const repo = AppDataSource.getRepository(Dish);
+
+    return repo.findOne({
+      where: { id },
+      relations: ["dishIngredients", "dishIngredients.ingredient", "ingredients"],
+    });
   }
 
   @Mutation(() => Dish)
-  async createDish(@Arg("name") name: string): Promise<Dish> {
+  async createDish(@Arg("name") name: string) {
     await initializeDataSource();
+    const repo = AppDataSource.getRepository(Dish);
+
     const now = new Date();
-    const dish = AppDataSource.getRepository(Dish).create({ 
+
+    const dish = repo.create({
       name,
       createdAt: now,
       updatedAt: now,
     });
-    return AppDataSource.getRepository(Dish).save(dish);
-  }
 
-  @Mutation(() => Dish)
-  async updateDish(@Arg("id") id: string, @Arg("name") name: string): Promise<Dish> {
-    await initializeDataSource();
-    const now = new Date();
-    const repo = AppDataSource.getRepository(Dish);
-    const dish = await repo.findOne({ where: { id: id as unknown as string } });
-    if (!dish) throw new Error("Dish not found");
-    dish.name = name;
-    dish.updatedAt = now
     return repo.save(dish);
   }
 
-  @Mutation(() => Boolean)
-  async deleteDish(@Arg("id") id: string): Promise<boolean> {
+  @Mutation(() => Dish)
+  async updateDish(
+    @Arg("id") id: string,
+    @Arg("name") name: string
+  ) {
     await initializeDataSource();
     const repo = AppDataSource.getRepository(Dish);
-    const result = await repo.delete({ id: id as unknown as string });
-    return result.affected ? true : false;
+
+    const dish = await repo.findOne({ where: { id } });
+    if (!dish) throw new Error("Dish not found");
+
+    dish.name = name;
+    dish.updatedAt = new Date();
+
+    return repo.save(dish);
   }
 }
-

@@ -41,4 +41,21 @@ export const DELETE_DISH = gql`
     deleteDish(id: $id)
   }
 `;
-
+export const GET_DISH_WITH_INGREDIENTS = gql`
+  query Dish($id: Int!) {
+    dish(id: $id) {
+      id
+      name
+      dishIngredients {
+        id
+        ingredient {
+          id
+          name
+        }
+        ingredient_id
+        content_quantity
+        content_unit
+      }
+    }
+  }
+`;

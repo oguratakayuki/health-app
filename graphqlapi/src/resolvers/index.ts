@@ -9,6 +9,7 @@ import { UserResolver } from "./UserResolver";
 import { AuthResolver } from "./AuthResolver";
 import { MeResolver } from "./MeResolver";
 import { DishResolver } from "./DishResolver";
+import { DishIngredientResolver } from "./DishIngredientResolver";
 
 export const resolvers = [
   CategoryResolver,
@@ -22,5 +23,6 @@ export const resolvers = [
   AuthResolver,
   MeResolver,
   DishResolver,
+  DishIngredientResolver,
 ] as const;
 

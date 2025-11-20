@@ -12,12 +12,12 @@ export class IngredientNutrient {
   id!: string;
 
   @Field(() => Ingredient, { nullable: true })
-  @ManyToOne(() => Ingredient, ingredient => ingredient.ingredientNutrients)
+  @ManyToOne('Ingredient', 'ingredientNutrients')
   @JoinColumn({ name: "ingredient_id" })
   ingredient!: Ingredient;
 
   @Field(() => Nutrient, { nullable: true })
-  @ManyToOne(() => Nutrient, nutrient => nutrient.ingredientNutrients)
+  @ManyToOne('Nutrient', 'ingredientNutrients')
   @JoinColumn({ name: "nutrient_id" })
   nutrient!: Nutrient;
 

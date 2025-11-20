@@ -2,13 +2,14 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./entities/User";
 import { Category } from "./entities/Category";
-import { IngredientNutrient } from "./entities/IngredientNutrient";
 import { Ingredient } from "./entities/Ingredient";
 import { Nutrient } from "./entities/Nutrient";
+import { Dish } from "./entities/Dish";
 import { IngredientTag } from "./entities/IngredientTag";
 import { Tag } from "./entities/Tag";
 import { TagCategory } from "./entities/TagCategory";
-import { Dish } from "./entities/Dish";
+import { DishIngredient } from "./entities/DishIngredient";
+import { IngredientNutrient } from "./entities/IngredientNutrient";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -22,13 +23,14 @@ export const AppDataSource = new DataSource({
   entities: [
     User,
     Category,
-    IngredientNutrient,
     Ingredient,
     Nutrient,
     IngredientTag,
     Tag,
     TagCategory,
-    Dish
+    Dish,
+    DishIngredient,
+    IngredientNutrient,
   ],
 });
 

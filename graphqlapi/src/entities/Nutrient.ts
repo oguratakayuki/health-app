@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID, Int } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { Ingredient } from "./Ingredient";
 import { IngredientNutrient } from "./IngredientNutrient";
 
@@ -26,11 +26,17 @@ export class Nutrient {
   @Column("int", { name: "parent_id", nullable: true })
   parentId!: number | null;
 
-  @Field(() => [IngredientNutrient])
-  @OneToMany(() => IngredientNutrient, inRel => inRel.nutrient)
-  ingredientNutrients!: IngredientNutrient[]
+  // @Field(() => [IngredientNutrient])
+  // @OneToMany(() => IngredientNutrient, inRel => inRel.nutrient)
+  // ingredientNutrients!: IngredientNutrient[];
 
-  @ManyToMany(() => Ingredient, (ingredient) => ingredient.nutrients)
+  @Field(() => [Ingredient])
+  @ManyToMany(() => Ingredient, ingredient => ingredient.nutrients)
+  @JoinTable({
+    name: "ingredient_nutrients",
+    joinColumn: { name: "nutrient_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "ingredient_id", referencedColumnName: "id" }
+  })
   ingredients!: Ingredient[];
-
 }
+

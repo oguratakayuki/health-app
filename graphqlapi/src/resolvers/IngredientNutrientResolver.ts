@@ -1,6 +1,6 @@
 import { Query, Resolver, Arg, Int } from "type-graphql";
 import { IngredientNutrient } from "../entities/IngredientNutrient";
-import { AppDataSource } from "../data-source";
+import { AppDataSource, initializeDataSource } from "../data-source";
 
 @Resolver()
 export class IngredientNutrientResolver {
@@ -8,6 +8,7 @@ export class IngredientNutrientResolver {
   async ingredientNutrients(
     @Arg("limit", () => Int, { nullable: true }) limit?: number
   ) {
+    await initializeDataSource();
     const queryBuilder = AppDataSource.getRepository(IngredientNutrient)
       .createQueryBuilder("ingredientNutrient")
       .leftJoinAndSelect("ingredientNutrient.ingredient", "ingredient")

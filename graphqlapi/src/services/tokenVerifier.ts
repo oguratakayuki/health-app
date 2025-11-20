@@ -48,6 +48,9 @@ export async function verifyIdToken(req: Request): Promise<User | null> {
 
 export async function verifyIdTokenFromCookie(cookieHeader: string): Promise<User | null> {
   try {
+    if (!AppDataSource.isInitialized) {
+      await initializeDataSource();
+    }
     console.log('BBBB')
     console.log(cookieHeader)
     const match = cookieHeader.match(/idToken=([^;]+)/);
