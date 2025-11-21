@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { ObjectType, Field, ID } from 'type-graphql'
 import { Nutrient } from './Nutrient'
 import { Dish } from './Dish'
-import { DishIngredient } from './DishIngredient'
+// import { DishIngredient } from './DishIngredient'
 import { IngredientNutrient } from './IngredientNutrient'
 
 @ObjectType()
@@ -16,28 +16,26 @@ export class Ingredient {
   @Column()
   name!: string
 
-  // OneToMany は JoinTable 不要
-  @OneToMany(() => DishIngredient, (dishIngredient) => dishIngredient.ingredient)
-  dishIngredients!: DishIngredient[]
+  // @Field(() => [DishIngredient])
+  // dishIngredients?: DishIngredient[];
 
-  // @OneToMany(() => IngredientNutrient, (ingredientNutrient) => ingredientNutrient.ingredient)
-  // ingredientNutrients!: IngredientNutrient[]
+  @Field(() => [Nutrient])
+  nutrients?: Nutrient[];
 
-  // ManyToMany Nutrient
-  @ManyToMany(() => Nutrient, (nutrient) => nutrient.ingredients)
-  @JoinTable({
-    name: "ingredient_nutrients",
-    joinColumn: { name: "ingredient_id", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "nutrient_id", referencedColumnName: "id" }
-  })
-  nutrients!: Nutrient[]
+  @Field(() => [IngredientNutrient])
+  ingredient_nutrients?: IngredientNutrient[];
 
-  // ManyToMany Dish
-  @ManyToMany(() => Dish, (dish) => dish.ingredients)
-  @JoinTable({
-    name: "dish_ingredients",
-    joinColumn: { name: "ingredient_id", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "dish_id", referencedColumnName: "id" }
-  })
-  dishes!: Dish[]
+  @Field(() => [Dish])
+  dishes?: Dish[];
+
+  @Field()
+  @CreateDateColumn({ name: "created_at" })
+  createdAt!: Date;
+
+  @Field()
+  @UpdateDateColumn({ name: "created_at" })
+  updatedAt!: Date;
+
+
+
 }

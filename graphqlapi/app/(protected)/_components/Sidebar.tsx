@@ -46,6 +46,16 @@ const adminMenuItems = [
     icon: <AdminPanelSettings />,
     path: '/dishes',
   },
+  {
+    text: '栄養素情報',
+    icon: <AdminPanelSettings />,
+    path: '/nutrients',
+  },
+  {
+    text: '食材情報',
+    icon: <AdminPanelSettings />,
+    path: '/ingredients',
+  },
 ];
 
 const drawerWidth = 240;

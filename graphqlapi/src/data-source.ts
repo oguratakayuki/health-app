@@ -5,11 +5,14 @@ import { Category } from "./entities/Category";
 import { Ingredient } from "./entities/Ingredient";
 import { Nutrient } from "./entities/Nutrient";
 import { Dish } from "./entities/Dish";
+import { DishEntity } from "./entities/DishEntity";
 import { IngredientTag } from "./entities/IngredientTag";
 import { Tag } from "./entities/Tag";
 import { TagCategory } from "./entities/TagCategory";
 import { DishIngredient } from "./entities/DishIngredient";
 import { IngredientNutrient } from "./entities/IngredientNutrient";
+import { NutrientEntity } from "./entities/NutrientEntity";
+import { IngredientEntity } from "./entities/IngredientEntity";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -31,6 +34,9 @@ export const AppDataSource = new DataSource({
     Dish,
     DishIngredient,
     IngredientNutrient,
+    NutrientEntity,
+    IngredientEntity,
+    DishEntity,
   ],
 });
 

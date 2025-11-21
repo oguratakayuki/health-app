@@ -1,6 +1,5 @@
-
 import { ObjectType, Field, ID, Int } from "type-graphql";
-import { Column, Entity, Index, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Ingredient } from "./Ingredient";
 import { Dish } from "./Dish";
 
@@ -11,15 +10,11 @@ export class DishIngredient {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
   id!: string;
 
-  // @Field(() => Ingredient, { nullable: true })
-  // @ManyToOne('Ingredient', 'dishIngredients')
-  // @JoinColumn({ name: "ingredient_id" })
-  // ingredient!: Ingredient;
+  @Field(() => Dish)
+  dish?: Dish;
 
-  // @Field(() => Dish, { nullable: true })
-  // @ManyToOne('Dish', 'dishIngredients')
-  // @JoinColumn({ name: "dish_id" })
-  // dish!: Dish;
+  @Field(() => Ingredient)
+  ingredient?: Ingredient;
 
   @Field(() => Int, { nullable: true })
   @Column("int", { name: "content_quantity", nullable: true })

@@ -1,13 +1,14 @@
 import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
 import { DishIngredient } from "../entities/DishIngredient";
+import { DishIngredientEntity } from "../entities/DishIngredientEntity";
 import { AppDataSource, initializeDataSource } from "../data-source";
 
 @Resolver(() => DishIngredient)
 export class DishIngredientResolver {
-  @Query(() => [DishIngredient])
+  @Query(() => [DishIngredientEntity])
   async dishIngredients() {
     await initializeDataSource();
-    const repo = AppDataSource.getRepository(DishIngredient);
+    const repo = AppDataSource.getRepository(DishIngredientEntity);
     return repo.find({
       relations: ["dish", "ingredient"], // リレーションを取得
     });
@@ -16,7 +17,7 @@ export class DishIngredientResolver {
   @Query(() => DishIngredient, { nullable: true })
   async dishIngredient(@Arg("id", () => Int) id: string) {
     await initializeDataSource();
-    const repo = AppDataSource.getRepository(DishIngredient);
+    const repo = AppDataSource.getRepository(DishIngredientEntity);
     return repo.findOne({
       where: { id },
       relations: ["dish", "ingredient"],
@@ -31,7 +32,7 @@ export class DishIngredientResolver {
     @Arg("contentUnit") contentUnit: string
   ) {
     await initializeDataSource();
-    const repo = AppDataSource.getRepository(DishIngredient);
+    const repo = AppDataSource.getRepository(DishIngredientEntity);
 
     const now = new Date();
 
@@ -49,12 +50,12 @@ export class DishIngredientResolver {
 
   @Mutation(() => DishIngredient)
   async updateDishIngredient(
-    @Arg("id", () => Int) id: string,
+    @Arg("id", () => Int) id: number,
     @Arg("contentQuantity") contentQuantity: number,
     @Arg("contentUnit") contentUnit: string
   ) {
     await initializeDataSource();
-    const repo = AppDataSource.getRepository(DishIngredient);
+    const repo = AppDataSource.getRepository(DishIngredientEntity);
 
     const dishIngredient = await repo.findOne({ where: { id } });
     if (!dishIngredient) throw new Error("DishIngredient not found");
@@ -67,9 +68,9 @@ export class DishIngredientResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteDishIngredient(@Arg("id", () => Int) id: string) {
+  async deleteDishIngredient(@Arg("id", () => Int) id: number) {
     await initializeDataSource();
-    const repo = AppDataSource.getRepository(DishIngredient);
+    const repo = AppDataSource.getRepository(DishIngredientEntity);
     const result = await repo.delete({ id });
     return result.affected ? true : false;
   }

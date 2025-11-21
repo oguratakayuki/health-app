@@ -1,42 +1,31 @@
 import { ObjectType, Field, ID, Int } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Ingredient } from "./Ingredient";
-import { IngredientNutrient } from "./IngredientNutrient";
 
 @ObjectType()
 @Entity("nutrients", { schema: "health_development" })
 export class Nutrient {
   @Field(() => ID)
   @PrimaryGeneratedColumn({ type: "bigint", name: "id" })
-  id!: string;
+  id?: string;
 
   @Field(() => String, { nullable: true })
-  @Column("varchar", { name: "name", nullable: true, length: 255 })
-  name!: string | null;
+  @Column("varchar", { name: "name", nullable: false, length: 255 })
+  name!: string;
 
   @Field()
-  @Column("datetime", { name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
 
   @Field()
-  @Column("datetime", { name: "updated_at" })
+  @UpdateDateColumn({ name: "created_at" })
   updatedAt!: Date;
 
   @Field(() => Int, { nullable: true })
   @Column("int", { name: "parent_id", nullable: true })
-  parentId!: number | null;
-
-  // @Field(() => [IngredientNutrient])
-  // @OneToMany(() => IngredientNutrient, inRel => inRel.nutrient)
-  // ingredientNutrients!: IngredientNutrient[];
+  parentId?: number | null;
 
   @Field(() => [Ingredient])
-  @ManyToMany(() => Ingredient, ingredient => ingredient.nutrients)
-  @JoinTable({
-    name: "ingredient_nutrients",
-    joinColumn: { name: "nutrient_id", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "ingredient_id", referencedColumnName: "id" }
-  })
-  ingredients!: Ingredient[];
+  ingredients?: Ingredient[];
 }
 
