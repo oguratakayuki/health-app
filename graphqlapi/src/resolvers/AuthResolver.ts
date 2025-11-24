@@ -41,16 +41,16 @@ export class AuthResolver {
     @Arg("name", { nullable: true }) name?: string
   ): Promise<AuthResponse> {
     try {
-      await cognitoService.signUp(email, password, { name });
+      await cognitoService.signUp(email, password, name as unknown as string );
       return {
         success: true,
         message: "ユーザー登録が完了しました。確認メールを確認してください。",
-      };
+      } as AuthResponse;
     } catch (error: any) {
       return {
         success: false,
         message: error.message || "登録に失敗しました",
-      };
+      } as AuthResponse;
     }
   }
 
@@ -62,7 +62,7 @@ export class AuthResolver {
   ): Promise<AuthResponse> {
     try {
       const cognitoUser = await cognitoService.signIn(email, password);
-      const { idToken, accessToken, refreshToken } = await cognitoService.signIn2(email, password);
+      const { idToken, accessToken, refreshToken } = await cognitoService.signIn(email, password);
       const decoded = jwtDecode<CognitoIdTokenPayload>(idToken);
       const cognitoSub = decoded.sub;
       const name = decoded.name || "NoName";
@@ -77,32 +77,32 @@ export class AuthResolver {
         success: true,
         message: "ログインに成功しました",
         user: user,
-      };
+      } as AuthResponse;
     } catch (error: any) {
       return {
         success: false,
         message: error.message || "ログインに失敗しました",
-      };
+      } as AuthResponse;
     }
   }
 
-  @Mutation(() => AuthResponse)
-  async signOut(@Ctx() ctx: GraphQLContext): Promise<AuthResponse> {
-    try {
-      await cognitoService.signOut();
-      ctx.user = null;
+  // @Mutation(() => AuthResponse)
+  // async signOut(@Ctx() ctx: GraphQLContext): Promise<AuthResponse> {
+  //   try {
+  //     await cognitoService.signOut();
+  //     ctx.user = null;
 
-      return {
-        success: true,
-        message: "ログアウトしました",
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        message: error.message || "ログアウトに失敗しました",
-      };
-    }
-  }
+  //     return {
+  //       success: true,
+  //       message: "ログアウトしました",
+  //     };
+  //   } catch (error: any) {
+  //     return {
+  //       success: false,
+  //       message: error.message || "ログアウトに失敗しました",
+  //     };
+  //   }
+  // }
 
   @Mutation(() => AuthResponse)
   async getCurrentUser(@Ctx() ctx: GraphQLContext): Promise<AuthResponse> {
@@ -110,7 +110,7 @@ export class AuthResolver {
       return {
         success: false,
         message: "認証されていません",
-      };
+      } as AuthResponse;
     }
 
     return {

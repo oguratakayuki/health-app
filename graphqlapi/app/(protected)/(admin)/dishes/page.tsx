@@ -52,7 +52,7 @@ export default function DishListPage() {
       </Box>
 
       <List>
-        {data.dishes.map((dish: any) => (
+        {data.prismaDishes.map((dish: any) => (
           <ListItem key={dish.id} divider>
             <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
               <Typography variant="body1">{dish.name}</Typography>

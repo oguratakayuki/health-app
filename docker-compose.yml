@@ -102,6 +102,7 @@ services:
       NEXT_PUBLIC_COGNITO_USER_POOL_ID: local_5FAKI5LW
       NEXT_PUBLIC_COGNITO_CLIENT_ID: 24yg3mrk2en4gaori4kw0btob
       NEXT_PUBLIC_COGNITO_ENDPOINT: http://localhost:9229
+      DATABASE_URL: "mysql://root:rootp@db:3306/health_development"
     depends_on:
       db:
         condition: service_healthy

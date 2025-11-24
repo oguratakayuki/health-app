@@ -8,8 +8,10 @@ import { TagCategoryResolver } from "./TagCategoryResolver";
 import { UserResolver } from "./UserResolver";
 import { AuthResolver } from "./AuthResolver";
 import { MeResolver } from "./MeResolver";
-import { DishResolver } from "./DishResolver";
+// import { DishResolver } from "./DishResolver";
 // import { DishIngredientResolver } from "./DishIngredientResolver";
+import { TestResolver } from "./TestResolver"; 
+import { PrismaDishResolver } from "./prisma/DishResolver";
 
 export const resolvers = [
   CategoryResolver,
@@ -22,7 +24,9 @@ export const resolvers = [
   UserResolver,
   AuthResolver,
   MeResolver,
-  DishResolver,
+  // DishResolver,
   // DishIngredientResolver,
+  TestResolver,
+  PrismaDishResolver,
 ] as const;
 
