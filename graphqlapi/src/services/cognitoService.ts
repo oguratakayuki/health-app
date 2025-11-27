@@ -64,7 +64,7 @@ export class CognitoService {
       },
       body: JSON.stringify({
         AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: "24yg3mrk2en4gaori4kw0btob",
+        ClientId: "aoziznd202gllzsx7b1q4ksgr",
         AuthParameters: {
           USERNAME: username,
           PASSWORD: password,
