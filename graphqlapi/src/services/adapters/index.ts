@@ -1,6 +1,7 @@
 import { DishService } from '../DishService';
-import { createPrismaDishService } from './PrismaAdapter';
-// import { createTypeORMDishService } from './TypeORMAdapter';
+import { NutrientService } from '../NutrientService';
+import { createTypeORMDishService } from './TypeORMAdapter';
+import { createPrismaDishService, createPrismaNutrientService } from './PrismaAdapter';
 
 /**
  * サービスファクトリー
@@ -17,6 +18,10 @@ export class ServiceFactory {
     // }
     // デフォルトはPrisma
     return createPrismaDishService();
+  }
+
+  static createNutrientService(): NutrientService {
+    return createPrismaNutrientService();
   }
 
   // データソースを切り替えるメソッド（開発用）

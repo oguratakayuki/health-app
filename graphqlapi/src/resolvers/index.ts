@@ -12,6 +12,7 @@ import { MeResolver } from "./MeResolver";
 // import { DishIngredientResolver } from "./DishIngredientResolver";
 import { TestResolver } from "./TestResolver"; 
 import { PrismaDishResolver } from "./prisma/DishResolver";
+import { PrismaNutrientResolver } from "./prisma/NutrientResolver";
 
 export const resolvers = [
   CategoryResolver,
@@ -28,5 +29,6 @@ export const resolvers = [
   // DishIngredientResolver,
   TestResolver,
   PrismaDishResolver,
+  PrismaNutrientResolver,
 ] as const;
 

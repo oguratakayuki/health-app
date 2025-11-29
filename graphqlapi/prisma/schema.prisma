@@ -38,5 +38,35 @@ model Ingredient {
   createdAt    DateTime @map("created_at")
   updatedAt    DateTime @map("updated_at")
   dishIngredients DishIngredient[]
+  ingredientNutrients IngredientNutrient[]
   @@map("ingredients")
+}
+
+model Nutrient {
+  id        BigInt   @id @default(autoincrement())
+  name      String?
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+  parentId  BigInt?  @map("parent_id")
+  // リレーション
+  ingredientNutrients IngredientNutrient[]
+  children           Nutrient[]              @relation("NutrientToNutrient")
+  parent             Nutrient?               @relation("NutrientToNutrient", fields: [parentId], references: [id])
+  @@map("nutrients")
+}
+
+model IngredientNutrient {
+  id                    BigInt   @id @default(autoincrement())
+  ingredientId          BigInt?  @map("ingredient_id")
+  nutrientId            BigInt?  @map("nutrient_id")
+  contentQuantity       Int?     @map("content_quantity")
+  contentUnit           String?  @map("content_unit")
+  contentUnitPer        Int?     @map("content_unit_per")
+  contentUnitPerUnit    String?  @map("content_unit_per_unit")
+  createdAt             DateTime @map("created_at")
+  updatedAt             DateTime @map("updated_at")
+  // リレーション
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
+  nutrient   Nutrient?   @relation(fields: [nutrientId], references: [id])
+  @@map("ingredient_nutrients")
 }

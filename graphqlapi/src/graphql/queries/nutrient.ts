@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 
 export const GET_NUTRIENTS = gql`
   query GetNutrients {
-    nutrients {
+    prismaNutrients {
       id
       name
       createdAt
