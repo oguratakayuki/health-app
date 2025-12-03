@@ -19,7 +19,7 @@ export default function NutrientAdminPage() {
   const [editingName, setEditingName] = useState("");
 
   if (loading) return <div>Loading...</div>;
-  const list = data?.nutrients || [];
+  const list = data?.prismaNutrients || [];
 
   const handleCreate = async () => {
     if (!name) return;

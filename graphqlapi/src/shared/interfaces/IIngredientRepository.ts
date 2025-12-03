@@ -1,16 +1,18 @@
 import { 
-  Ingredient, 
-  CreateIngredientInput, 
-  UpdateIngredientInput 
+  Ingredient,
+  CreateIngredientInput,
+  UpdateIngredientInput,
+  IngredientWithRelations
 } from '../types/Ingredient';
 
 export interface IIngredientRepository {
-  findById(id: string): Promise<Ingredient | null>;
-  findAll(): Promise<Ingredient[]>;
-  create(ingredient: CreateIngredientInput): Promise<Ingredient>;
-  update(id: string, ingredient: UpdateIngredientInput): Promise<Ingredient>;
-  delete(id: string): Promise<boolean>;
+  findAll(): Promise<IngredientWithRelations[]>;
+  findById(id: bigint): Promise<IngredientWithRelations | null>;
+  create(ingredient: CreateIngredientData): Promise<Ingredient>;
+  update(id: bigint, ingredient: Partial<Ingredient>): Promise<Ingredient>;
+
+  delete(id: bigint): Promise<void>;
   findByName(name: string): Promise<Ingredient[]>;
-  searchByName(keyword: string): Promise<Ingredient[]>;
+  // searchByName(keyword: string): Promise<Ingredient[]>;
   count(): Promise<number>;
 }

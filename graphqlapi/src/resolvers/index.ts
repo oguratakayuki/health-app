@@ -2,7 +2,7 @@ import { CategoryResolver } from "./CategoryResolver";
 import { IngredientResolver } from "./IngredientResolver";
 import { IngredientNutrientResolver } from "./IngredientNutrientResolver";
 import { IngredientTagResolver } from "./IngredientTagResolver";
-import { NutrientResolver } from "./NutrientResolver";
+// import { NutrientResolver } from "./NutrientResolver";
 import { TagResolver } from "./TagResolver";
 import { TagCategoryResolver } from "./TagCategoryResolver";
 import { UserResolver } from "./UserResolver";
@@ -19,7 +19,7 @@ export const resolvers = [
   IngredientResolver,
   IngredientNutrientResolver,
   IngredientTagResolver,
-  NutrientResolver,
+  // NutrientResolver,
   TagResolver,
   TagCategoryResolver,
   UserResolver,

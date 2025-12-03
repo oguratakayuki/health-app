@@ -18,3 +18,7 @@ export interface CreateDishInput {
 export interface UpdateDishInput {
   name?: string;
 }
+
+export interface DishWithIngredients extends Dish {
+  dishIngredients: DishIngredient[];
+}
