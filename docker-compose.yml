@@ -86,7 +86,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./graphqlapi:/app
+      # - ./graphqlapi:/app
+      - ./graphqlapi:/app:cached
+      # - graphql_node_modules:/app/node_modules
       - graphql_node_modules:/app/node_modules
     environment:
       DB_HOST: db
