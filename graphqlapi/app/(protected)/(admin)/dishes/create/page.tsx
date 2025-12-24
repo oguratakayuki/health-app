@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { CREATE_DISH } from "@/src/graphql/queries/dish";
+import { CREATE_DISH } from "@/infrastructure/graphql/queries/dish";
 import { useRouter } from "next/navigation";
 import {
   Container,

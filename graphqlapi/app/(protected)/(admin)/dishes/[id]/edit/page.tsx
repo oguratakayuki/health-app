@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_DISH, UPDATE_DISH } from "@/src/graphql/queries/dish";
+import { GET_DISH, UPDATE_DISH } from "@/infrastructure/graphql/queries/dish";
 import {
   GET_DISH_INGREDIENTS,
   CREATE_DISH_INGREDIENT,
   UPDATE_DISH_INGREDIENT,
   DELETE_DISH_INGREDIENT,
   GET_INGREDIENTS,
-} from "@/src/graphql/queries/dishIngredients";
+} from "@/infrastructure/graphql/queries/dishIngredients";
 
 import { useRouter, useParams } from "next/navigation";
 import {

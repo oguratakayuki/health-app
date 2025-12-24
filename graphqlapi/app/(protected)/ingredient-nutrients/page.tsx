@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { Restaurant, Scale } from '@mui/icons-material';
 
-import { INGREDIENT_NUTRIENTS_QUERY } from "@/src/graphql/queries/ingredient_nutrients";
+import { INGREDIENT_NUTRIENTS_QUERY } from "@/infrastructure/graphql/queries/ingredient_nutrients";
 
 export default function IngredientNutrientTable() {
   const { data, loading, error } = useQuery(INGREDIENT_NUTRIENTS_QUERY, {

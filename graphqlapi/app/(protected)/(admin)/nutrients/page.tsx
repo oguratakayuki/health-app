@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_NUTRIENTS, CREATE_NUTRIENT, UPDATE_NUTRIENT, DELETE_NUTRIENT } from "@/src/graphql/queries/nutrient";
+import { GET_NUTRIENTS, CREATE_NUTRIENT, UPDATE_NUTRIENT, DELETE_NUTRIENT } from "@/infrastructure/graphql/queries/nutrient";
 import {
   Container, Box, TextField, Button, List, ListItem, ListItemText, IconButton
 } from "@mui/material";

@@ -6,7 +6,7 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true, // ← 警告回避
+    "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "incremental": true,
@@ -21,17 +21,16 @@
       "@/*": [
         "./src/*"
       ],
-      "@/src/*": [
-        "src/*"
-      ],
+      "@app/*": ["./app/*"],
       "@prisma/client": ["./node_modules/.prisma/client"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true, // type-graphql + typeorm で必要
+    "emitDecoratorMetadata": true,
     "typeRoots": [
       "./src/types",
       "./node_modules/@types"
     ],
+    "types": ["jest", "node", "@types/jest", "@quramy/jest-prisma"],
     "plugins": [
       {
         "name": "next"
@@ -40,7 +39,10 @@
   },
   "include": [
     "src",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "app/**/*"
   ],
   "exclude": [
     "node_modules",

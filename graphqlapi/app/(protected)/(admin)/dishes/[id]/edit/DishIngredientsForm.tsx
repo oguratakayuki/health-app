@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { UPDATE_DISH_INGREDIENTS } from "@/src/graphql/queries/dishIngredients";
+import { UPDATE_DISH_INGREDIENTS } from "@/infrastructure/graphql/queries/dishIngredients";
 
 export default function DishIngredientsForm({
   dishId,

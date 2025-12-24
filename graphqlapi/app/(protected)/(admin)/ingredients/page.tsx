@@ -7,7 +7,7 @@ import {
   CREATE_INGREDIENT,
   UPDATE_INGREDIENT,
   DELETE_INGREDIENT,
-} from "@/src/graphql/queries/ingredient";
+} from "@/infrastructure/graphql/queries/ingredient";
 import {
   Container,
   Box,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cognitoService } from "../../../../src/services/cognitoService";
+import { ServiceFactory } from '@/application/services/adapters';
 
 export async function POST(req: Request) {
   try {
@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    const cognitoService = ServiceFactory.createCognitoService();
 
     // Cognito で確認コードを検証
     await cognitoService.confirmSignUp(email, code);

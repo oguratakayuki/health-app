@@ -19,7 +19,7 @@ import {
 } from '@mui/icons-material';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useMe } from '@/src/hooks/useMe'; // ← 追加
+import { useMe } from '@/hooks/useMe'; // ← 追加
 
 const menuItems = [
   {

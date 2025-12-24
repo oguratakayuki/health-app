@@ -3,27 +3,16 @@ import "reflect-metadata";
 import { NextRequest } from "next/server";
 import { createYoga } from "graphql-yoga";
 import { buildSchema } from "type-graphql";
-import { resolvers } from "@/src/resolvers";
-import { initializeDataSource } from "@/src/data-source";
-import { verifyIdToken } from "@/src/services/tokenVerifier";
-
-import { prisma } from "../../../lib/prisma";
-import { testPrismaConnection } from "../../../lib/test-connection";
+import { resolvers } from "@/presentation/resolvers";
+import { verifyIdToken } from "@/application/services/tokenVerifier";
+import { ServiceFactory } from "@/application/services/adapters";
+import { GraphQLContext } from "@/application/types/context";
 
 let yogaInstance: any = null;
 
 async function getYoga() {
   if (!yogaInstance) {
-    // TypeORMデータソースの初期化
-    const dataSource = await initializeDataSource();
-
-    // Prisma接続のテスト
-    console.log('🔧 Testing Prisma connection...');
-    const prismaConnected = await testPrismaConnection();
-    if (!prismaConnected) {
-      throw new Error('Prisma connection failed');
-    }
-
+    console.log('🔧 Initializing GraphQL Yoga with context support...');
     // GraphQLスキーマの構築
     const schema = await buildSchema({
       resolvers,
@@ -33,26 +22,68 @@ async function getYoga() {
     yogaInstance = createYoga({
       schema,
       graphqlEndpoint: "/api/graphql",
-      context: async ({ request }) => {
-        const user = await verifyIdToken(request);
-        return { 
+      context: async ({ request }): Promise<GraphQLContext> => {
+        // ユーザー認証
+        let user;
+        try {
+          user = await verifyIdToken(request);
+        } catch (error) {
+          console.warn('Authentication failed:', error.message);
+          // 認証失敗でもコンテキストは作成（公開クエリ用）
+          user = undefined;
+        }
+        // サービスインスタンスを作成
+        const services = ServiceFactory.getServicesFromContext();
+        // 完全なコンテキストを作成
+        const context: GraphQLContext = {
           user,
-          prisma // Prismaクライアントをコンテキストに追加
+          ...services,
         };
+        return context;
       },
+      // 開発環境ではGraphiQLを有効化
+      graphiql: process.env.NODE_ENV !== 'production',
+      // エラーハンドリング
+      maskedErrors: process.env.NODE_ENV === 'production',
+      // リクエスト/レスポンスログ（開発環境のみ）
+      logging: process.env.NODE_ENV !== 'production' ? 'debug' : undefined,
     });
+    console.log('✅ GraphQL Yoga initialized with context support');
   }
 
   return yogaInstance;
 }
 
 export async function POST(request: NextRequest) {
-  const yoga = await getYoga();
-  return yoga.handleRequest(request);
+  try {
+    const yoga = await getYoga();
+    const response = await yoga.handleRequest(request);
+    return response;
+  } catch (error: any) {
+    console.error('GraphQL handler error:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal server error', 
+        ...(process.env.NODE_ENV !== 'production' && { details: error.message })
+      }),
+      { 
+        status: 500, 
+        headers: { 'Content-Type': 'application/json' } 
+      }
+    );
+  }
 }
 
 export async function GET(request: NextRequest) {
-  const yoga = await getYoga();
-  return yoga.handleRequest(request);
+  return POST(request);
 }
 
+// 開発環境でのホットリロード対応
+if (process.env.NODE_ENV !== 'production' && typeof global !== 'undefined') {
+  (global as any).__cleanupGraphQL = async () => {
+    if (yogaInstance) {
+      yogaInstance = null;
+      console.log('🧹 GraphQL Yoga instance cleaned up');
+    }
+  };
+}

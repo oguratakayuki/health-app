@@ -1,7 +1,7 @@
 // app/(protected)/(admin)/layout.tsx
 import { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { getUserSession } from "@/src/services/getUserSession";
+import { getUserSession } from "@/application/services/getUserSession";
 
 type AdminLayoutProps = {
   children: ReactNode;

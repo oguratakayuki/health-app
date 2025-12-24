@@ -1,9 +1,8 @@
 // app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
 
-import { cognitoService } from "../../../../src/services/cognitoService";
+import { ServiceFactory } from '@/application/services/adapters';
 // データベース連携のためのTypeORM関連のインポート（後述）
-import { userService } from "../../../../src/services/userService";
 import { initializeDataSource } from "../../../../src/data-source";
 
 
@@ -30,6 +29,8 @@ export async function POST(req: Request) {
   }
 
   try {
+    const cognitoService = ServiceFactory.createCognitoService();
+    const userService = ServiceFactory.createUserService();
     await cognitoService.signUp(email, password, name);
 
     const createdUser = await userService.createUser(email, name);

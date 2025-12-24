@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { GET_DISHES } from "@/src/graphql/queries/dish";
+import { GET_DISHES } from "@/infrastructure/graphql/queries/dish";
 import Link from "next/link";
 import {
   Container,

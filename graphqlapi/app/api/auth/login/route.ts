@@ -1,6 +1,6 @@
 // app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { cognitoService } from '../../../../src/services/cognitoService'; // DB操作用
+import { ServiceFactory } from '@/application/services/adapters';
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Missing username or password" }, { status: 400 });
     }
 
+    const cognitoService = ServiceFactory.createCognitoService();
     const { idToken, accessToken, refreshToken } = await cognitoService.signIn(username, password)
 
     const res = NextResponse.json({ message: "ログイン成功" });
