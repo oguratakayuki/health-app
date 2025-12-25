@@ -1,18 +1,17 @@
 module.exports = {
-  preset: 'ts-jest',
+  preset: "ts-jest",
   testEnvironment: "node",
-  setupFiles: ['<rootDir>/setupEnv.js'],
-  setupFilesAfterEnv: ['<rootDir>/setup-jest.js'],
-  roots: ['<rootDir>/src'],
+  roots: ["<rootDir>/src"],
+  setupFiles: ["<rootDir>/setupEnv.js"],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   testMatch: [
-    '**/__tests__/**/*.+(ts|tsx|js)',
-    '**/?(*.)+(spec|test).+(ts|tsx|js)'
+    "**/__tests__/**/*.+(ts|tsx|js)",
+    "**/?(*.)+(spec|test).+(ts|tsx|js)",
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    "^.+\\.(ts|tsx)$": "ts-jest",
   },
   maxWorkers: 1,
 };
