@@ -15,13 +15,23 @@ services:
       MYSQL_DATABASE: health_development
       MYSQL_USER: user
       MYSQL_PASSWORD: userp
-      TZ: 'Asia/Tokyo'
+      TZ: "Asia/Tokyo"
     ports:
       - "3307:3306"
     volumes:
       - ./backend/tmp/db:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p$$MYSQL_ROOT_PASSWORD",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -41,31 +51,31 @@ services:
       - CHOKIDAR_USEPOLLING=true
     command: sh -c "yarn && yarn dev -o"
   goapi:
-     build:
-       context: ./goapi
-       dockerfile: Dockerfile # Dockerfileのパスは変更なし
-     ports:
-       - "8080:8080"
-     volumes:
-       # ホストの 'goapi' ディレクトリをコンテナの '/app/goapi' にマウント
-       - ./goapi:/app/goapi
-       - go-mod-cache:/go/pkg/mod
-     depends_on:
-       db:
-         condition: service_healthy
-     environment:
-       # Airの設定ファイルパス。後述の.air.tomlが使われるように設定
-       AIR_CONFIG: /app/goapi/.air.toml
-       DB_HOST: db
-       DB_USER: root
-       DB_PASSWORD: rootp
-       DB_NAME: health_development
-       DB_NAME_TEST: health_test
-       DB_PORT: 3306
-       PATH: /usr/local/go/bin:$PATH
-       GOPATH: /go
-     # command: air -c /app/goapi/.air.toml
-     command: /go/bin/air -c /app/goapi/.air.toml
+    build:
+      context: ./goapi
+      dockerfile: Dockerfile # Dockerfileのパスは変更なし
+    ports:
+      - "8080:8080"
+    volumes:
+      # ホストの 'goapi' ディレクトリをコンテナの '/app/goapi' にマウント
+      - ./goapi:/app/goapi
+      - go-mod-cache:/go/pkg/mod
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Airの設定ファイルパス。後述の.air.tomlが使われるように設定
+      AIR_CONFIG: /app/goapi/.air.toml
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: rootp
+      DB_NAME: health_development
+      DB_NAME_TEST: health_test
+      DB_PORT: 3306
+      PATH: /usr/local/go/bin:$PATH
+      GOPATH: /go
+    # command: air -c /app/goapi/.air.toml
+    command: /go/bin/air -c /app/goapi/.air.toml
   admin:
     build:
       context: ./admin
@@ -93,18 +103,7 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: rootp
-      DB_NAME: health_development
       NODE_ENV: development
-      COGNITO_ENDPOINT: http://cognito-local:9229
-      COGNITO_USER_POOL_ID: local_6bKNuP3H
-      COGNITO_CLIENT_ID: aoziznd202gllzsx7b1q4ksgr
-      COGNITO_REGION: us-east-1
-      NEXT_PUBLIC_COGNITO_USER_POOL_ID: local_6bKNuP3H
-      NEXT_PUBLIC_COGNITO_CLIENT_ID: aoziznd202gllzsx7b1q4ksgr
-      NEXT_PUBLIC_COGNITO_ENDPOINT: http://localhost:9229
-      DATABASE_URL: "mysql://root:rootp@db:3306/health_development"
     depends_on:
       db:
         condition: service_healthy

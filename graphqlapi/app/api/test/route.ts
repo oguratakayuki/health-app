@@ -1,49 +1,39 @@
 // app/api/test/route.ts
-import { NextResponse } from 'next/server'
-import { prisma } from '../../../lib/prisma'
+import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
-// BigIntを文字列に変換する関数
-function serializeBigInt(obj: any): any {
-  if (typeof obj === 'bigint') {
-    return obj.toString()
-  } else if (Array.isArray(obj)) {
-    return obj.map(serializeBigInt)
-  } else if (obj !== null && typeof obj === 'object') {
-    const result: any = {}
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = serializeBigInt(value)
-    }
-    return result
-  }
-  return obj
-}
+const prisma = new PrismaClient();
 
 export async function GET() {
+  let dbStatus: "ok" | "ng" = "ng";
+  let dbError: string | null = null;
+
   try {
-    const dishes = await prisma.dish.findMany({
-      include: {
-        dishIngredients: {
-          include: {
-            ingredient: true
-          }
-        }
-      }
-    })
-
-    // BigIntを変換
-    const serializedDishes = serializeBigInt(dishes)
-
-    return NextResponse.json({
-      success: true,
-      dishes: serializedDishes,
-      count: serializedDishes.length,
-      generatedFrom: 'src/generated/'
-    })
-  } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      error: error.message
-    }, { status: 500 })
+    // DB 接続確認
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = "ok";
+  } catch (e: any) {
+    dbError = e?.message ?? String(e);
   }
-}
 
+  return NextResponse.json({
+    env: {
+      NODE_ENV: process.env.NODE_ENV,
+      DB_HOST: process.env.DB_HOST,
+      DB_PORT: process.env.DB_PORT,
+      DB_USER: process.env.DB_USER,
+      DB_NAME: process.env.DB_NAME,
+      DATABASE_URL: process.env.DATABASE_URL,
+
+      // Next.js でクライアントにも露出する変数
+      NEXT_PUBLIC_COGNITO_USER_POOL_ID:
+        process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
+      NEXT_PUBLIC_COGNITO_CLIENT_ID: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
+      NEXT_PUBLIC_COGNITO_ENDPOINT: process.env.NEXT_PUBLIC_COGNITO_ENDPOINT,
+    },
+    database: {
+      status: dbStatus,
+      error: dbError,
+    },
+  });
+}
