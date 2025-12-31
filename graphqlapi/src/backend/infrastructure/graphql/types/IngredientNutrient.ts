@@ -1,6 +1,6 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { Ingredient } from "../Ingredient";
-import { Nutrient } from "../Nutrient";
+import { Ingredient } from "./Ingredient";
+import { Nutrient } from "./Nutrient";
 
 @ObjectType()
 export class IngredientNutrient {
