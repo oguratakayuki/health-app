@@ -3,16 +3,16 @@ import "reflect-metadata";
 import { NextRequest } from "next/server";
 import { createYoga } from "graphql-yoga";
 import { buildSchema } from "type-graphql";
-import { resolvers } from "@/presentation/resolvers";
-import { verifyIdToken } from "@/application/services/tokenVerifier";
-import { ServiceFactory } from "@/application/services/adapters";
-import { GraphQLContext } from "@/application/types/context";
+import { resolvers } from "@/backend/presentation/resolvers";
+import { verifyIdToken } from "@/backend/application/services/tokenVerifier";
+import { ServiceFactory } from "@/backend/application/services/adapters";
+import { GraphQLContext } from "@/backend/application/types/context";
 
 let yogaInstance: any = null;
 
 async function getYoga() {
   if (!yogaInstance) {
-    console.log('🔧 Initializing GraphQL Yoga with context support...');
+    console.log("🔧 Initializing GraphQL Yoga with context support...");
     // GraphQLスキーマの構築
     const schema = await buildSchema({
       resolvers,
@@ -28,7 +28,7 @@ async function getYoga() {
         try {
           user = await verifyIdToken(request);
         } catch (error) {
-          console.warn('Authentication failed:', error.message);
+          console.warn("Authentication failed:", error.message);
           // 認証失敗でもコンテキストは作成（公開クエリ用）
           user = undefined;
         }
@@ -42,13 +42,13 @@ async function getYoga() {
         return context;
       },
       // 開発環境ではGraphiQLを有効化
-      graphiql: process.env.NODE_ENV !== 'production',
+      graphiql: process.env.NODE_ENV !== "production",
       // エラーハンドリング
-      maskedErrors: process.env.NODE_ENV === 'production',
+      maskedErrors: process.env.NODE_ENV === "production",
       // リクエスト/レスポンスログ（開発環境のみ）
-      logging: process.env.NODE_ENV !== 'production' ? 'debug' : undefined,
+      logging: process.env.NODE_ENV !== "production" ? "debug" : undefined,
     });
-    console.log('✅ GraphQL Yoga initialized with context support');
+    console.log("✅ GraphQL Yoga initialized with context support");
   }
 
   return yogaInstance;
@@ -60,16 +60,18 @@ export async function POST(request: NextRequest) {
     const response = await yoga.handleRequest(request);
     return response;
   } catch (error: any) {
-    console.error('GraphQL handler error:', error);
+    console.error("GraphQL handler error:", error);
     return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error', 
-        ...(process.env.NODE_ENV !== 'production' && { details: error.message })
+      JSON.stringify({
+        error: "Internal server error",
+        ...(process.env.NODE_ENV !== "production" && {
+          details: error.message,
+        }),
       }),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
-      }
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }
@@ -79,11 +81,11 @@ export async function GET(request: NextRequest) {
 }
 
 // 開発環境でのホットリロード対応
-if (process.env.NODE_ENV !== 'production' && typeof global !== 'undefined') {
+if (process.env.NODE_ENV !== "production" && typeof global !== "undefined") {
   (global as any).__cleanupGraphQL = async () => {
     if (yogaInstance) {
       yogaInstance = null;
-      console.log('🧹 GraphQL Yoga instance cleaned up');
+      console.log("🧹 GraphQL Yoga instance cleaned up");
     }
   };
 }

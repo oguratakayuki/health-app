@@ -1,7 +1,7 @@
 // app/(protected)/(admin)/layout.tsx
 import { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { getUserSession } from "@/application/services/getUserSession";
+import { getUserSession } from "@/backend/application/services/getUserSession";
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -20,4 +20,3 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
-

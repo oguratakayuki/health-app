@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { GET_DISHES } from "@/infrastructure/graphql/queries/dish";
+import { GET_DISHES } from "@/frontend/graphql/queries/dish";
 import Link from "next/link";
 import {
   Container,
@@ -12,15 +12,20 @@ import {
   ListItem,
   CircularProgress,
   Alert,
-} from '@mui/material';
-import { Add, Restaurant } from '@mui/icons-material';
+} from "@mui/material";
+import { Add, Restaurant } from "@mui/icons-material";
 
 export default function DishListPage() {
   const { data, loading, error } = useQuery(GET_DISHES);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -44,7 +49,7 @@ export default function DishListPage() {
       </Box>
 
       <Box mb={3}>
-        <Link href="/dishes/create" style={{ textDecoration: 'none' }}>
+        <Link href="/dishes/create" style={{ textDecoration: "none" }}>
           <Button variant="contained" startIcon={<Add />}>
             新規作成
           </Button>
@@ -54,7 +59,12 @@ export default function DishListPage() {
       <List>
         {data.prismaDishes.map((dish: any) => (
           <ListItem key={dish.id} divider>
-            <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              width="100%"
+            >
               <Typography variant="body1">{dish.name}</Typography>
               <Box display="flex" gap={1}>
                 <Link href={`/dishes/${dish.id}`}>

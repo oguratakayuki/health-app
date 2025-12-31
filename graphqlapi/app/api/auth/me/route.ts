@@ -17,17 +17,23 @@ export async function GET(request: Request) {
     const authHeader = request.headers.get("authorization");
 
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Authorization header missing" }), {
-        status: 401,
-      });
+      return new Response(
+        JSON.stringify({ error: "Authorization header missing" }),
+        {
+          status: 401,
+        },
+      );
     }
 
     // "Bearer <token>" 形式を想定
     const token = authHeader.split(" ")[1];
     if (!token) {
-      return new Response(JSON.stringify({ error: "Invalid Authorization header format" }), {
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({ error: "Invalid Authorization header format" }),
+        {
+          status: 400,
+        },
+      );
     }
 
     // jwt-decodeでデコード（署名検証はしない）
@@ -35,7 +41,9 @@ export async function GET(request: Request) {
 
     // 有効期限チェック（あれば）
     if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-      return new Response(JSON.stringify({ error: "Token expired" }), { status: 401 });
+      return new Response(JSON.stringify({ error: "Token expired" }), {
+        status: 401,
+      });
     }
 
     return new Response(
@@ -43,11 +51,12 @@ export async function GET(request: Request) {
         message: "User info fetched successfully",
         user: decoded,
       }),
-      { status: 200 }
+      { status: 200 },
     );
   } catch (err) {
     console.error("Error decoding token:", err);
-    return new Response(JSON.stringify({ error: "Failed to decode token" }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Failed to decode token" }), {
+      status: 400,
+    });
   }
 }
-

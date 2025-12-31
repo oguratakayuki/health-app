@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { CREATE_DISH } from "@/infrastructure/graphql/queries/dish";
+import { CREATE_DISH } from "@/frontend/graphql/queries/dish";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -12,8 +12,8 @@ import {
   Button,
   CircularProgress,
   Paper,
-} from '@mui/material';
-import { Add, ArrowBack } from '@mui/icons-material';
+} from "@mui/material";
+import { Add, ArrowBack } from "@mui/icons-material";
 
 export default function CreateDishPage() {
   const [name, setName] = useState("");

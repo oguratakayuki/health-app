@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
-    "sourceType": "module"
+    "sourceType": "module",
+    "browser": true
   },
   "plugins": ["@typescript-eslint"],
   "extends": [
@@ -20,4 +21,3 @@
     "@typescript-eslint/no-explicit-any": "off"
   }
 }
-

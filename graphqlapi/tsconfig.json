@@ -21,16 +21,35 @@
       "@/*": [
         "./src/*"
       ],
-      "@app/*": ["./app/*"],
-      "@prisma/client": ["./node_modules/.prisma/client"]
+      "@backend/*": [
+        "./src/backend/*"
+      ],
+      "@frontend/*": [
+        "./src/frontend/*"
+      ],
+      "@app/*": [
+        "./app/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@prisma/client": [
+        "./node_modules/.prisma/client"
+      ]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "typeRoots": [
-      "./src/types",
+      "./src/backend/types",
+      "./src/frontend/types",
       "./node_modules/@types"
     ],
-    "types": ["jest", "node", "@types/jest", "@quramy/jest-prisma"],
+    "types": [
+      "jest",
+      "node",
+      "@types/jest",
+      "@quramy/jest-prisma"
+    ],
     "plugins": [
       {
         "name": "next"
@@ -38,14 +57,16 @@
     ]
   },
   "include": [
-    "src",
+    "src/**/*",
+    "app/**/*",
     ".next/types/**/*.ts",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "app/**/*"
+    "next-env.d.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    ".next"
   ]
 }

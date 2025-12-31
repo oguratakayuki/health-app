@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { UPDATE_DISH_INGREDIENTS } from "@/infrastructure/graphql/queries/dishIngredients";
+import { UPDATE_DISH_INGREDIENTS } from "@/frontend/graphql/queries/dishIngredients";
 
 export default function DishIngredientsForm({
   dishId,
@@ -79,7 +79,9 @@ export default function DishIngredientsForm({
               <td className="p-2 border">
                 <select
                   value={row.ingredient_id}
-                  onChange={(e) => updateRow(idx, "ingredient_id", e.target.value)}
+                  onChange={(e) =>
+                    updateRow(idx, "ingredient_id", e.target.value)
+                  }
                   className="border p-1"
                 >
                   {ingredients.map((i) => (
@@ -146,4 +148,3 @@ export default function DishIngredientsForm({
     </div>
   );
 }
-

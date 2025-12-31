@@ -10,51 +10,51 @@ import {
   Box,
   Typography,
   Divider,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Restaurant,
   Person,
   Dashboard,
   AdminPanelSettings,
-} from '@mui/icons-material';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { useMe } from '@/hooks/useMe'; // ← 追加
+} from "@mui/icons-material";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { useMe } from "@/frontend/hooks/useMe";
 
 const menuItems = [
   {
-    text: 'ダッシュボード',
+    text: "ダッシュボード",
     icon: <Dashboard />,
-    path: '/dashboard',
+    path: "/dashboard",
   },
   {
-    text: '栄養成分管理',
+    text: "栄養成分管理",
     icon: <Restaurant />,
-    path: '/ingredient-nutrients',
+    path: "/ingredient-nutrients",
   },
   {
-    text: 'ユーザー情報',
+    text: "ユーザー情報",
     icon: <Person />,
-    path: '/user',
+    path: "/user",
   },
 ];
 
 // 管理者のみ表示するメニュー
 const adminMenuItems = [
   {
-    text: '献立情報',
+    text: "献立情報",
     icon: <AdminPanelSettings />,
-    path: '/dishes',
+    path: "/dishes",
   },
   {
-    text: '栄養素情報',
+    text: "栄養素情報",
     icon: <AdminPanelSettings />,
-    path: '/nutrients',
+    path: "/nutrients",
   },
   {
-    text: '食材情報',
+    text: "食材情報",
     icon: <AdminPanelSettings />,
-    path: '/ingredients',
+    path: "/ingredients",
   },
 ];
 
@@ -69,12 +69,12 @@ export default function Sidebar() {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        '& .MuiDrawer-paper': {
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
-          boxSizing: 'border-box',
-          backgroundColor: 'background.paper',
-          borderRight: '1px solid',
-          borderColor: 'divider',
+          boxSizing: "border-box",
+          backgroundColor: "background.paper",
+          borderRight: "1px solid",
+          borderColor: "divider",
         },
       }}
       variant="permanent"
@@ -82,13 +82,13 @@ export default function Sidebar() {
     >
       {/* アプリタイトル */}
       <Box sx={{ p: 2 }}>
-        <Typography 
-          variant="h6" 
-          component="div" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: 'primary.main',
-            textAlign: 'center'
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            fontWeight: "bold",
+            color: "primary.main",
+            textAlign: "center",
           }}
         >
           栄養管理アプリ
@@ -100,39 +100,42 @@ export default function Sidebar() {
       <List sx={{ p: 1 }}>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-            <Link href={item.path} style={{ textDecoration: 'none', width: '100%' }}>
+            <Link
+              href={item.path}
+              style={{ textDecoration: "none", width: "100%" }}
+            >
               <ListItemButton
                 selected={pathname === item.path}
                 sx={{
                   borderRadius: 1,
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.main',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'primary.dark',
+                  "&.Mui-selected": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "primary.dark",
                     },
-                    '& .MuiListItemIcon-root': {
-                      color: 'white',
+                    "& .MuiListItemIcon-root": {
+                      color: "white",
                     },
                   },
-                  '&:hover': {
-                    backgroundColor: 'action.hover',
+                  "&:hover": {
+                    backgroundColor: "action.hover",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: pathname === item.path ? 'white' : 'text.secondary',
+                    color: pathname === item.path ? "white" : "text.secondary",
                     minWidth: 40,
                   }}
                 >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary={item.text}
                   primaryTypographyProps={{
-                    fontSize: '0.9rem',
-                    fontWeight: pathname === item.path ? 'bold' : 'normal',
+                    fontSize: "0.9rem",
+                    fontWeight: pathname === item.path ? "bold" : "normal",
                   }}
                 />
               </ListItemButton>
@@ -146,39 +149,43 @@ export default function Sidebar() {
             <Divider sx={{ my: 1 }} />
             {adminMenuItems.map((item) => (
               <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-                <Link href={item.path} style={{ textDecoration: 'none', width: '100%' }}>
+                <Link
+                  href={item.path}
+                  style={{ textDecoration: "none", width: "100%" }}
+                >
                   <ListItemButton
                     selected={pathname === item.path}
                     sx={{
                       borderRadius: 1,
-                      '&.Mui-selected': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: 'primary.dark',
+                      "&.Mui-selected": {
+                        backgroundColor: "primary.main",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "primary.dark",
                         },
-                        '& .MuiListItemIcon-root': {
-                          color: 'white',
+                        "& .MuiListItemIcon-root": {
+                          color: "white",
                         },
                       },
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
+                      "&:hover": {
+                        backgroundColor: "action.hover",
                       },
                     }}
                   >
                     <ListItemIcon
                       sx={{
-                        color: pathname === item.path ? 'white' : 'text.secondary',
+                        color:
+                          pathname === item.path ? "white" : "text.secondary",
                         minWidth: 40,
                       }}
                     >
                       {item.icon}
                     </ListItemIcon>
-                    <ListItemText 
+                    <ListItemText
                       primary={item.text}
                       primaryTypographyProps={{
-                        fontSize: '0.9rem',
-                        fontWeight: pathname === item.path ? 'bold' : 'normal',
+                        fontSize: "0.9rem",
+                        fontWeight: pathname === item.path ? "bold" : "normal",
                       }}
                     />
                   </ListItemButton>

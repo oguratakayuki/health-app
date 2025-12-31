@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_DISH, UPDATE_DISH } from "@/infrastructure/graphql/queries/dish";
+import { GET_DISH, UPDATE_DISH } from "@/frontend/graphql/queries/dish";
 import {
   GET_DISH_INGREDIENTS,
   CREATE_DISH_INGREDIENT,
   UPDATE_DISH_INGREDIENT,
   DELETE_DISH_INGREDIENT,
   GET_INGREDIENTS,
-} from "@/infrastructure/graphql/queries/dishIngredients";
+} from "@/frontend/graphql/queries/dishIngredients";
 
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -23,8 +23,8 @@ import {
   Select,
   MenuItem,
   IconButton,
-} from '@mui/material';
-import { Edit, ArrowBack, Delete } from '@mui/icons-material';
+} from "@mui/material";
+import { Edit, ArrowBack, Delete } from "@mui/icons-material";
 
 export default function EditDishPage() {
   const router = useRouter();
@@ -111,7 +111,12 @@ export default function EditDishPage() {
 
   if (loading || !ingredientsData) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -197,10 +202,7 @@ export default function EditDishPage() {
               />
 
               {/* 更新ボタン */}
-              <Button
-                variant="contained"
-                onClick={() => handleUpdate(item)}
-              >
+              <Button variant="contained" onClick={() => handleUpdate(item)}>
                 更新
               </Button>
 
@@ -252,10 +254,7 @@ export default function EditDishPage() {
               sx={{ width: 120 }}
             />
 
-            <Button
-              variant="contained"
-              onClick={handleAdd}
-            >
+            <Button variant="contained" onClick={handleAdd}>
               追加
             </Button>
           </Box>

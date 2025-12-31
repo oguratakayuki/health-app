@@ -1,6 +1,6 @@
 // app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { ServiceFactory } from '@/application/services/adapters';
+import { ServiceFactory } from "@/backend/application/services/adapters";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,23 +8,46 @@ export async function POST(req: NextRequest) {
     const { username, password } = body;
 
     if (!username || !password) {
-      return NextResponse.json({ message: "Missing username or password" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Missing username or password" },
+        { status: 400 },
+      );
     }
 
     const cognitoService = ServiceFactory.createCognitoService();
-    const { idToken, accessToken, refreshToken } = await cognitoService.signIn(username, password)
+    const { idToken, accessToken, refreshToken } = await cognitoService.signIn(
+      username,
+      password,
+    );
 
     const res = NextResponse.json({ message: "ログイン成功" });
-    res.cookies.set("idToken", idToken!, { httpOnly: true, secure: true, path: "/", sameSite: "lax" });
-    res.cookies.set("accessToken", accessToken!, { httpOnly: true, secure: true, path: "/", sameSite: "lax" });
+    res.cookies.set("idToken", idToken!, {
+      httpOnly: true,
+      secure: true,
+      path: "/",
+      sameSite: "lax",
+    });
+    res.cookies.set("accessToken", accessToken!, {
+      httpOnly: true,
+      secure: true,
+      path: "/",
+      sameSite: "lax",
+    });
     if (refreshToken) {
-      res.cookies.set("refreshToken", refreshToken, { httpOnly: true, secure: true, path: "/", sameSite: "lax" });
+      res.cookies.set("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "lax",
+      });
     }
 
     return res;
   } catch (error) {
     console.error("Error during login:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
-

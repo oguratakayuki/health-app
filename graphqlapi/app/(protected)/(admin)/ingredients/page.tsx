@@ -7,7 +7,7 @@ import {
   CREATE_INGREDIENT,
   UPDATE_INGREDIENT,
   DELETE_INGREDIENT,
-} from "@/infrastructure/graphql/queries/ingredient";
+} from "@/frontend/graphql/queries/ingredient";
 import {
   Container,
   Box,
@@ -101,10 +101,7 @@ export default function IngredientAdminPage() {
               </>
             }
           >
-            <ListItemText
-              primary={item.name}
-              secondary={`id: ${item.id}`}
-            />
+            <ListItemText primary={item.name} secondary={`id: ${item.id}`} />
           </ListItem>
         ))}
       </List>
@@ -125,4 +122,3 @@ export default function IngredientAdminPage() {
     </Container>
   );
 }
-
