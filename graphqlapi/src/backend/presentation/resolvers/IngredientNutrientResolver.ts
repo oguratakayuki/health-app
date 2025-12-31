@@ -2,7 +2,7 @@
 import { Query, Resolver, Arg, Int, Ctx } from "type-graphql";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { IIngredientNutrientService } from "@/backend/domain/interfaces/IIngredientNutrientService";
-import { IngredientNutrient } from "@/backend/infrastructure/graphql/types/prisma/IngredientNutrient";
+import { IngredientNutrient } from "@/backend/infrastructure/graphql/types/IngredientNutrient";
 
 @Resolver()
 export class IngredientNutrientResolver {
