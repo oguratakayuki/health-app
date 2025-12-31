@@ -1,4 +1,3 @@
-// import { CategoryResolver } from "./CategoryResolver";
 import { IngredientResolver } from "./IngredientResolver";
 import { IngredientNutrientResolver } from "./IngredientNutrientResolver";
 // import { IngredientTagResolver } from "./IngredientTagResolver";
@@ -13,7 +12,6 @@ import { DishResolver } from "./DishResolver";
 import { NutrientResolver } from "./NutrientResolver";
 
 export const resolvers = [
-  // CategoryResolver,
   IngredientResolver,
   IngredientNutrientResolver,
   // IngredientTagResolver,
@@ -28,4 +26,3 @@ export const resolvers = [
   DishResolver,
   NutrientResolver,
 ] as const;
-

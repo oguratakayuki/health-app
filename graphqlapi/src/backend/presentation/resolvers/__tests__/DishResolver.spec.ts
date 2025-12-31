@@ -1,5 +1,5 @@
 // src/presentation/resolvers/prisma/__tests__/DishResolver.spec.ts
-import "reflect-metadata"; // これを追加
+import "reflect-metadata";
 import { DishResolver } from "../../DishResolver";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { Dish } from "@/backend/infrastructure/graphql/types/Dish";
