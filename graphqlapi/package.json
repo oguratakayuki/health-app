@@ -6,16 +6,16 @@
     "lint": "next lint",
     "test:backend": "NODE_ENV=test jest --runInBand",
     "test:backend:watch": "NODE_ENV=test jest --watch",
-    "test:frontend": "NODE_ENV=test jest --testPathPattern=src/frontend",
+    "test:frontend": "NODE_ENV=test jest --testPathPatterns=src/frontend",
     "test": "npm run test:backend && npm run test:frontend",
-    "test:repo": "NODE_ENV=test jest --testPathPattern=Repository --runInBand",
-    "test:service": "NODE_ENV=test jest --testPathPattern=Service",
+    "test:repo": "NODE_ENV=test jest --testPathPatterns=Repository --runInBand",
+    "test:service": "NODE_ENV=test jest --testPathPatterns=Service",
     "test:single": "NODE_ENV=test jest",
     "test:coverage": "NODE_ENV=test jest --coverage",
-    "test:user": "NODE_ENV=test jest --testPathPattern=UserRepository",
-    "test:dish": "NODE_ENV=test jest --testPathPattern=DishRepository",
-    "test:ingredient": "NODE_ENV=test jest --testPathPattern=IngredientRepository",
-    "test:hooks": "NODE_ENV=test jest --testPathPattern=useMe"
+    "test:user": "NODE_ENV=test jest --testPathPatterns=UserRepository",
+    "test:dish": "NODE_ENV=test jest --testPathPatterns=DishRepository",
+    "test:ingredient": "NODE_ENV=test jest --testPathPatterns=IngredientRepository",
+    "test:hooks": "NODE_ENV=test jest --testPathPatterns=useMe"
   },
   "dependencies": {
     "@apollo/client": "3.8.0",

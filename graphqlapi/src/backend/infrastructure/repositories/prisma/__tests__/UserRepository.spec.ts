@@ -1,16 +1,18 @@
-// src/infrastructure/repositories/prisma/__tests__/UserRepository.spec.ts
-import { UserRepository } from '../UserRepository';
-import { CreateUserInput, UpdateUserInput } from '@/src/domain/entities/User';
-import { runInTransaction } from '../../../../../test-transaction';
+import { UserRepository } from "../UserRepository";
+import {
+  CreateUserInput,
+  UpdateUserInput,
+} from "@/backend/domain/entities/User";
+import { runInTransaction } from "./test-transaction";
 
-describe('UserRepository', () => {
+describe("UserRepository", () => {
   //
   // ----------------------------
   // #findByEmail
   // ----------------------------
   //
-  describe('#findByEmail', () => {
-    it('ユーザーを作成して検索できること', async () => {
+  describe("#findByEmail", () => {
+    it("ユーザーを作成して検索できること", async () => {
       await runInTransaction(async (tx) => {
         const repository = new UserRepository(tx);
 
@@ -18,8 +20,8 @@ describe('UserRepository', () => {
 
         await repository.create({
           email,
-          name: 'Test User',
-          cognitoSub: 'test_sub',
+          name: "Test User",
+          cognitoSub: "test_sub",
         });
 
         const found = await repository.findByEmail(email);
@@ -28,11 +30,11 @@ describe('UserRepository', () => {
       });
     });
 
-    it('存在しないメールアドレスはnullを返すこと', async () => {
+    it("存在しないメールアドレスはnullを返すこと", async () => {
       await runInTransaction(async (tx) => {
         const repository = new UserRepository(tx);
 
-        const found = await repository.findByEmail('nonexistent@example.com');
+        const found = await repository.findByEmail("nonexistent@example.com");
         expect(found).toBeNull();
       });
     });
@@ -43,14 +45,14 @@ describe('UserRepository', () => {
   // #create
   // ----------------------------
   //
-  describe('#create', () => {
-    it('新しいユーザーを作成できること', async () => {
+  describe("#create", () => {
+    it("新しいユーザーを作成できること", async () => {
       await runInTransaction(async (tx) => {
         const repository = new UserRepository(tx);
 
         const input: CreateUserInput = {
           email: `new_${Date.now()}@example.com`,
-          name: 'New User',
+          name: "New User",
         };
 
         const result = await repository.create(input);
@@ -82,8 +84,8 @@ describe('UserRepository', () => {
   // #update
   // ----------------------------
   //
-  describe('#update', () => {
-    it('ユーザーを更新できること', async () => {
+  describe("#update", () => {
+    it("ユーザーを更新できること", async () => {
       await runInTransaction(async (tx) => {
         const repository = new UserRepository(tx);
 
@@ -91,21 +93,21 @@ describe('UserRepository', () => {
 
         const user = await repository.create({
           email,
-          name: 'Original Name',
-          cognitoSub: 'original_sub',
+          name: "Original Name",
+          cognitoSub: "original_sub",
         });
 
         const updateInput: UpdateUserInput = {
-          name: 'Updated Name',
+          name: "Updated Name",
           isAdmin: true,
         };
 
         const updated = await repository.update(user.id, updateInput);
 
-        expect(updated.name).toBe('Updated Name');
+        expect(updated.name).toBe("Updated Name");
         expect(updated.isAdmin).toBe(true);
         expect(updated.updatedAt.getTime()).toBeGreaterThan(
-          user.updatedAt.getTime()
+          user.updatedAt.getTime(),
         );
       });
     });
@@ -116,27 +118,26 @@ describe('UserRepository', () => {
   // #findAll
   // ----------------------------
   //
-  describe('#findAll', () => {
-    it('複数ユーザーを取得できること', async () => {
+  describe("#findAll", () => {
+    it("複数ユーザーを取得できること", async () => {
       await runInTransaction(async (tx) => {
         const repository = new UserRepository(tx);
 
         await repository.create({
           email: `user1_${Date.now()}@example.com`,
-          name: 'User 1',
+          name: "User 1",
         });
         await repository.create({
           email: `user2_${Date.now()}@example.com`,
-          name: 'User 2',
+          name: "User 2",
         });
 
         const users = await repository.findAll();
 
         expect(users.length).toBe(2);
-        expect(users[0].name).toBe('User 1');
-        expect(users[1].name).toBe('User 2');
+        expect(users[0].name).toBe("User 1");
+        expect(users[1].name).toBe("User 2");
       });
     });
   });
 });
-

@@ -2,7 +2,7 @@
  * src/infrastructure/repositories/prisma/__tests__/NutrientRepository.spec.ts
  */
 import { PrismaNutrientRepository } from "../NutrientRepository";
-import { prisma, runInTransaction } from "../../../../../test-transaction";
+import { prisma, runInTransaction } from "./test-transaction";
 import {
   CreateNutrientInput,
   UpdateNutrientInput,
