@@ -1,0 +1,21 @@
+import { defineConfig } from "vitest/config";
+import path from "path";
+
+export default defineConfig({
+  test: {
+    environment: "node",
+    globals: true,
+    include: [
+      "src/backend/**/Repository/**/*.spec.ts",
+      "src/backend/**/repositories/**/__tests__/**/*.spec.ts",
+    ],
+    setupFiles: ["./setupEnv.js"],
+  },
+  resolve: {
+    alias: {
+      "@backend": path.resolve(__dirname, "src/backend"),
+      "@frontend": path.resolve(__dirname, "src/frontend"),
+      "@": path.resolve(__dirname, "src"),
+    },
+  },
+});

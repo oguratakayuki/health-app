@@ -4,18 +4,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:backend": "NODE_ENV=test jest --runInBand",
-    "test:backend:watch": "NODE_ENV=test jest --watch",
-    "test:frontend": "NODE_ENV=test jest --testPathPatterns=src/frontend",
+    "test:backend": "NODE_ENV=test vitest --runInBand",
+    "test:backend:watch": "NODE_ENV=test vitest --watch",
+    "test:frontend": "NODE_ENV=test vitest --testPathPatterns=src/frontend",
     "test": "npm run test:backend && npm run test:frontend",
-    "test:repo": "NODE_ENV=test jest --testPathPatterns=Repository --runInBand",
-    "test:service": "NODE_ENV=test jest --testPathPatterns=Service",
-    "test:single": "NODE_ENV=test jest",
-    "test:coverage": "NODE_ENV=test jest --coverage",
-    "test:user": "NODE_ENV=test jest --testPathPatterns=UserRepository",
-    "test:dish": "NODE_ENV=test jest --testPathPatterns=DishRepository",
-    "test:ingredient": "NODE_ENV=test jest --testPathPatterns=IngredientRepository",
-    "test:hooks": "NODE_ENV=test jest --testPathPatterns=useMe"
+    "test:repo": "NODE_ENV=test vitest run",
+    "test:repo:watch": "NODE_ENV=test vitest",
+    "test:service": "NODE_ENV=test vitest --testPathPatterns=Service",
+    "test:single": "NODE_ENV=test vitest",
+    "test:coverage": "NODE_ENV=test vitest --coverage",
+    "test:user": "NODE_ENV=test vitest --testPathPatterns=UserRepository",
+    "test:dish": "NODE_ENV=test viest --testPathPatterns=DishRepository",
+    "test:ingredient": "NODE_ENV=test vitest --testPathPatterns=IngredientRepository",
+    "test:hooks": "NODE_ENV=test vitest --testPathPatterns=useMe"
   },
   "dependencies": {
     "@apollo/client": "3.8.0",
@@ -48,7 +49,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
-    "@quramy/jest-prisma": "^1.8.1",
     "@types/bcryptjs": "^3.0.0",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^30.0.0",
@@ -57,12 +57,8 @@
     "@types/node": "^24.7.0",
     "@types/react": "^18.3.0",
     "eslint": "^9.36.0",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0",
-    "jest-environment-node": "^30.2.0",
-    "jest-extended": "^7.0.0",
     "prisma": "^6",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^4.0.16"
   }
 }
