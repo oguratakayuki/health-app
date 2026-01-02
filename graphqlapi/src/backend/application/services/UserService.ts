@@ -24,7 +24,6 @@ export class UserService implements IUserService {
   }
 
   async createUser(email: string, name: string): Promise<User> {
-    const now = new Date();
     const userData: CreateUserInput = {
       email,
       name,
@@ -35,7 +34,6 @@ export class UserService implements IUserService {
   }
 
   async getUsers(limit?: number): Promise<User[]> {
-    // 実装が必要（UserResolverで使用）
     try {
       const users = await this.userRepository.findAll();
       return limit ? users.slice(0, limit) : users;
