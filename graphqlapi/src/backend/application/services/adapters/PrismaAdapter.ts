@@ -2,10 +2,12 @@ import { DishService } from "../DishService";
 import { UserService } from "../UserService";
 import { CognitoService } from "../CognitoService";
 import { NutrientService } from "../NutrientService";
+import { NutrientsIntakeStandardService } from "../NutrientsIntakeStandardService";
 import { IngredientService } from "../IngredientService";
 import { IngredientNutrientService } from "../IngredientNutrientService";
 import { PrismaDishRepository } from "@/backend/infrastructure/repositories/prisma/DishRepository";
 import { PrismaNutrientRepository } from "@/backend/infrastructure/repositories/prisma/NutrientRepository";
+import { NutrientsIntakeStandardRepository } from "@/backend/infrastructure/repositories/prisma/NutrientsIntakeStandardRepository";
 import { PrismaIngredientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientRepository";
 import { IngredientNutrientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientNutrientRepository";
 import { UserRepository } from "@/backend/infrastructure/repositories/prisma/UserRepository";
@@ -44,6 +46,12 @@ export function createPrismaNutrientService(): NutrientService {
   const prisma = getPrismaClient();
   const repository = new PrismaNutrientRepository(prisma);
   return new NutrientService(repository);
+}
+
+export function createNutrientsIntakeStandardService(): NutrientsIntakeStandardService {
+  const prisma = getPrismaClient();
+  const repository = new NutrientsIntakeStandardRepository(prisma);
+  return new NutrientsIntakeStandardService(repository);
 }
 
 export function createPrismaIngredientService(): IngredientService {

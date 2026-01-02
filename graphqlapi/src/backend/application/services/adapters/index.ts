@@ -1,19 +1,21 @@
-// src/application/services/adapters/index.ts
-import { DishService } from '../DishService';
-import { NutrientService } from '../NutrientService';
-import { IngredientService } from '../IngredientService';
-import { CognitoService } from '../CognitoService';
-import { UserService } from '../UserService';
-import { IngredientNutrientService } from '../IngredientNutrientService';
+// src/backend/application/services/adapters/index.ts
+import { DishService } from "../DishService";
+import { NutrientService } from "../NutrientService";
+import { NutrientsIntakeStandardService } from "../NutrientsIntakeStandardService";
+import { IngredientService } from "../IngredientService";
+import { CognitoService } from "../CognitoService";
+import { UserService } from "../UserService";
+import { IngredientNutrientService } from "../IngredientNutrientService";
 
-import { 
+import {
   createPrismaDishService,
   createPrismaNutrientService,
   createPrismaIngredientService,
   createCognitoService,
   createUserService,
   createIngredientNutrientService,
-} from './PrismaAdapter';
+  createNutrientsIntakeStandardService,
+} from "./PrismaAdapter";
 
 /**
  * サービスファクトリー
@@ -38,6 +40,15 @@ export class ServiceFactory {
     return createPrismaNutrientService();
   }
 
+  static createNutrientsIntakeStandardService(
+    context?: any,
+  ): NutrientsIntakeStandardService {
+    if (context?.nutrientsIntakeStandardService) {
+      return context.nutrientsIntakeStandardService;
+    }
+    return createNutrientsIntakeStandardService();
+  }
+
   static createIngredientService(context?: any): IngredientService {
     if (context?.ingredientService) {
       return context.ingredientService;
@@ -59,7 +70,9 @@ export class ServiceFactory {
     return createUserService();
   }
 
-  static createIngredientNutrientService(context?: any): IngredientNutrientService {
+  static createIngredientNutrientService(
+    context?: any,
+  ): IngredientNutrientService {
     if (context?.ingredientNutrientService) {
       return context.ingredientNutrientService;
     }
@@ -70,11 +83,19 @@ export class ServiceFactory {
   static getServicesFromContext(context?: any) {
     return {
       dishService: context?.dishService || this.createDishService(context),
-      nutrientService: context?.nutrientService || this.createNutrientService(context),
-      ingredientService: context?.ingredientService || this.createIngredientService(context),
-      cognitoService: context?.cognitoService || this.createCognitoService(context),
+      nutrientService:
+        context?.nutrientService || this.createNutrientService(context),
+      ingredientService:
+        context?.ingredientService || this.createIngredientService(context),
+      cognitoService:
+        context?.cognitoService || this.createCognitoService(context),
       userService: context?.userService || this.createUserService(context),
-      ingredientNutrientService: context?.ingredientNutrientService || this.createIngredientNutrientService(context),
+      ingredientNutrientService:
+        context?.ingredientNutrientService ||
+        this.createIngredientNutrientService(context),
+      nutrientsIntakeStandardService:
+        context?.nutrientsIntakeStandard ||
+        this.createNutrientsIntakeStandardService(context),
     };
   }
 

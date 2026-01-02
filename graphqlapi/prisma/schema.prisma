@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-3.0.x", "darwin-arm64", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
@@ -9,75 +9,97 @@ datasource db {
 }
 
 model Dish {
-  id        BigInt   @id @default(autoincrement())
-  name      String?
-  createdAt DateTime @map("created_at")
-  updatedAt DateTime @map("updated_at")
+  id              BigInt           @id @default(autoincrement())
+  name            String?
+  createdAt       DateTime         @map("created_at")
+  updatedAt       DateTime         @map("updated_at")
   dishIngredients DishIngredient[]
+
   @@map("dishes")
 }
 
 model DishIngredient {
-  id              BigInt   @id @default(autoincrement())
-  dishId          BigInt   @map("dish_id")
-  ingredientId    BigInt   @map("ingredient_id")
-  contentQuantity Float    @map("content_quantity") @default(0)
-  contentUnit     String   @map("content_unit")
-  createdAt       DateTime @map("created_at")
-  updatedAt       DateTime @map("updated_at")
-  dish       Dish       @relation(fields: [dishId], references: [id])
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  id              BigInt     @id @default(autoincrement())
+  dishId          BigInt     @map("dish_id")
+  ingredientId    BigInt     @map("ingredient_id")
+  contentQuantity Float      @default(0) @map("content_quantity")
+  contentUnit     String     @map("content_unit")
+  createdAt       DateTime   @map("created_at")
+  updatedAt       DateTime   @map("updated_at")
+  dish            Dish       @relation(fields: [dishId], references: [id])
+  ingredient      Ingredient @relation(fields: [ingredientId], references: [id])
+
   @@map("dish_ingredients")
 }
 
 model Ingredient {
-  id           BigInt   @id @default(autoincrement())
-  name         String?
-  remarks      String?
-  originalName String?  @map("original_name")
-  createdAt    DateTime @map("created_at")
-  updatedAt    DateTime @map("updated_at")
-  dishIngredients DishIngredient[]
+  id                  BigInt               @id @default(autoincrement())
+  name                String?
+  remarks             String?
+  originalName        String?              @map("original_name")
+  createdAt           DateTime             @map("created_at")
+  updatedAt           DateTime             @map("updated_at")
+  dishIngredients     DishIngredient[]
   ingredientNutrients IngredientNutrient[]
+
   @@map("ingredients")
 }
 
 model Nutrient {
-  id        BigInt   @id @default(autoincrement())
-  name      String?
-  createdAt DateTime @map("created_at")
-  updatedAt DateTime @map("updated_at")
-  parentId  BigInt?  @map("parent_id")
+  id                       BigInt                    @id @default(autoincrement())
+  name                     String?
+  createdAt                DateTime                  @map("created_at")
+  updatedAt                DateTime                  @map("updated_at")
+  parentId                 BigInt?                   @map("parent_id")
   // リレーション
-  ingredientNutrients IngredientNutrient[]
-  children           Nutrient[]              @relation("NutrientToNutrient")
-  parent             Nutrient?               @relation("NutrientToNutrient", fields: [parentId], references: [id])
+  ingredientNutrients      IngredientNutrient[]
+  children                 Nutrient[]                @relation("NutrientToNutrient")
+  parent                   Nutrient?                 @relation("NutrientToNutrient", fields: [parentId], references: [id])
+  nutrientsIntakeStandards NutrientsIntakeStandard[]
+
   @@map("nutrients")
 }
 
+model NutrientsIntakeStandard {
+  id         BigInt    @id @default(autoincrement())
+  nutrientId BigInt?   @map("nutrient_id")
+  content    Int?
+  unit       Int?
+  gender     Int?
+  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(6)
+  ageFrom    Decimal?  @map("age_from") @db.Decimal(10, 0)
+  ageTo      Decimal?  @map("age_to") @db.Decimal(10, 0)
+  nutrient   Nutrient? @relation(fields: [nutrientId], references: [id])
+
+  @@map("nutrients_intake_standards")
+}
+
 model IngredientNutrient {
-  id                    BigInt   @id @default(autoincrement())
-  ingredientId          BigInt?  @map("ingredient_id")
-  nutrientId            BigInt?  @map("nutrient_id")
-  contentQuantity       Int?     @map("content_quantity")
-  contentUnit           String?  @map("content_unit")
-  contentUnitPer        Int?     @map("content_unit_per")
-  contentUnitPerUnit    String?  @map("content_unit_per_unit")
-  createdAt             DateTime @map("created_at")
-  updatedAt             DateTime @map("updated_at")
+  id                 BigInt      @id @default(autoincrement())
+  ingredientId       BigInt?     @map("ingredient_id")
+  nutrientId         BigInt?     @map("nutrient_id")
+  contentQuantity    Int?        @map("content_quantity")
+  contentUnit        String?     @map("content_unit")
+  contentUnitPer     Int?        @map("content_unit_per")
+  contentUnitPerUnit String?     @map("content_unit_per_unit")
+  createdAt          DateTime    @map("created_at")
+  updatedAt          DateTime    @map("updated_at")
   // リレーション
-  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
-  nutrient   Nutrient?   @relation(fields: [nutrientId], references: [id])
+  ingredient         Ingredient? @relation(fields: [ingredientId], references: [id])
+  nutrient           Nutrient?   @relation(fields: [nutrientId], references: [id])
+
   @@map("ingredient_nutrients")
 }
 
 model User {
-  id         BigInt    @id @default(autoincrement())
-  email      String    @unique @db.VarChar(255)
-  name       String?   @db.VarChar(255)
-  cognitoSub String?   @unique @map("cognito_sub") @db.VarChar(255)
-  isAdmin    Boolean   @default(false) @map("is_admin")
-  createdAt  DateTime  @map("created_at")
-  updatedAt  DateTime  @map("updated_at")
+  id         BigInt   @id @default(autoincrement())
+  email      String   @unique @db.VarChar(255)
+  name       String?  @db.VarChar(255)
+  cognitoSub String?  @unique @map("cognito_sub") @db.VarChar(255)
+  isAdmin    Boolean  @default(false) @map("is_admin")
+  createdAt  DateTime @map("created_at")
+  updatedAt  DateTime @map("updated_at")
+
   @@map("users")
 }

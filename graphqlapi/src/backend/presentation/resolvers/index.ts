@@ -10,6 +10,7 @@ import { MeResolver } from "./MeResolver";
 import { DishResolver } from "./DishResolver";
 // import { DishIngredientResolver } from "./DishIngredientResolver";
 import { NutrientResolver } from "./NutrientResolver";
+import { NutrientsIntakeStandardResolver } from "./NutrientsIntakeStandardResolver";
 
 export const resolvers = [
   IngredientResolver,
@@ -25,4 +26,5 @@ export const resolvers = [
   // DishIngredientResolver,
   DishResolver,
   NutrientResolver,
+  NutrientsIntakeStandardResolver,
 ] as const;

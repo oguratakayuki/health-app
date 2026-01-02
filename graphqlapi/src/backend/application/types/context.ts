@@ -1,6 +1,7 @@
 // src/types/context.ts
 import { DishService } from "@/backend/application/services/DishService";
 import { NutrientService } from "@/backend/application/services/NutrientService";
+import { NutrientsIntakeStandardService } from "@/backend/application/services/NutrientsIntakeStandardService";
 import { IngredientService } from "@/backend/application/services/IngredientService";
 import { CognitoService } from "@/backend/application/services/CognitoService";
 import { UserService } from "@/backend/application/services/UserService";
@@ -21,6 +22,7 @@ export interface GraphQLContext {
   cognitoService?: CognitoService;
   userService?: UserService;
   ingredientNutrientService?: IngredientNutrientService;
+  nutrientsIntakeStandardService: NutrientsIntakeStandardService;
   // 後方互換性のためのPrismaクライアント
   prisma?: any;
 }
