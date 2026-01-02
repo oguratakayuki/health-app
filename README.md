@@ -16,6 +16,10 @@ docker compose run web bundle exec rails csv_import:ingredients_nutrients
 ```
 nuxi cleanup
 docker compose run --rm nuxt npm run lint:fix
+# graphqlapi
+docker compose run graphqlapi npx prisma generate
+docker compose run graphqlapi npm run test:single NutrientsIntakeStandard
+DATABASE_URL=mysql://root:rootp@db:3306/health_development npx prisma generate
 ```
 
 ## TODO

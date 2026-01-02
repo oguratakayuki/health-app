@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_11_29_062734) do
+ActiveRecord::Schema.define(version: 2026_01_02_050536) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 2025_11_29_062734) do
   end
 
   create_table "ingredient_tags", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "ingredient_id"
-    t.integer "tag_id"
+    t.bigint "ingredient_id"
+    t.bigint "tag_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -90,11 +90,12 @@ ActiveRecord::Schema.define(version: 2025_11_29_062734) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "parent_id"
+    t.index ["name"], name: "index_nutrients_on_name", unique: true
     t.index ["parent_id"], name: "fk_rails_687edf74d9"
   end
 
   create_table "nutrients_intake_standards", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "nutrient_id"
+    t.bigint "nutrient_id"
     t.integer "content"
     t.integer "unit"
     t.integer "gender"
@@ -105,15 +106,15 @@ ActiveRecord::Schema.define(version: 2025_11_29_062734) do
   end
 
   create_table "nutrients_relations", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "parent_id"
-    t.integer "child_id"
+    t.bigint "parent_id"
+    t.bigint "child_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tag_categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "tag_id"
-    t.integer "category_id"
+    t.bigint "tag_id"
+    t.bigint "category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

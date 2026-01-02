@@ -22,7 +22,7 @@ module IngredientsNutrientsImportService
       end
       IngredientNutrient.new(
         ingredient: ingredient,
-        nutrient: nutrient,
+        nutrient_id: nutrient.id,
         content_quantity: nutrients_unit_entity.content_quantity,
         content_unit: nutrients_unit_entity.content_unit,
         content_unit_per: nutrients_unit_entity.content_unit_per,

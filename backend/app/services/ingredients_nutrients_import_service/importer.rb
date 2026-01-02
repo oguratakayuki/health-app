@@ -20,12 +20,15 @@ module IngredientsNutrientsImportService
       (6..66).map do |column_index|
         nutrients_name = sheet.cell(6, column_index)
         nutrients_name = ActionView::Base.full_sanitizer.sanitize(nutrients_name)
+          .gsub(/\s+/, "")
         nutrient = Nutrient.find_by!(name: nutrients_name)
         puts "#{column_index}, #{nutrient.name}"
         nutrient_id_by_column_index[column_index] = nutrient
         # 食材ごとに持っている栄養素nutrientの単位情報のbuild( xmg/100g)
         nutrients_unit_entity = NutrientsUnitEntity.parse_and_build(sheet.cell(8, column_index))
         units_by_column_index[column_index] = nutrients_unit_entity
+      rescue ActiveRecord::RecordNotFound => e
+        raise ActiveRecord::RecordNotFound, "栄養素名「#{nutrients_name}」に対応するレコードが見つかりません。"
       end
 
       # debug
