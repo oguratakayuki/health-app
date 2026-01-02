@@ -11,7 +11,7 @@ namespace :csv_import do
     puts path
     list = []
     CSV.foreach(path, headers: true) do |row|
-      nutrient_id = Nutrient.find_or_create_by!(name: row['nutrients_name']).id
+      nutrient_id = Nutrient.find_or_create_by!(name: row['nutrients_name'].strip).id
       unit = row['unit']
       unless /(?<age_from>\d+)～(?<age_to>\d+)\((?<age_type>.+)\)/ =~ row['age']
         raise ApplicationError::InvalidNutrientsAgeRangeError, row['age']
