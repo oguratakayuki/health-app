@@ -2,23 +2,8 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  CircularProgress,
-  InputAdornment,
-  Link,
-} from '@mui/material';
-import {
-  Email,
-  VpnKey,
-  VerifiedUser,
-  ArrowBack,
-} from '@mui/icons-material';
+import Link from "next/link";
+import { Mail, Key, CheckCircle, ArrowLeft } from "lucide-react";
 
 export default function ConfirmPage() {
   const router = useRouter();
@@ -66,172 +51,151 @@ export default function ConfirmPage() {
   };
 
   return (
-    <Box
-      component="main"
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 0,
-        margin: 0,
-        width: '100vw',
-        maxWidth: '100% !important',
-        backgroundColor: 'background.default',
-        '&.MuiContainer-root': {
-          maxWidth: '100% !important',
-          paddingLeft: '0 !important',
-          paddingRight: '0 !important',
-          marginLeft: '0 !important',
-          marginRight: '0 !important',
-        }
-      }}
-    >
-      <Paper
-        elevation={8}
-        sx={{
-          padding: {
-            xs: 3,
-            md: 4,
-          },
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: '95%',
-          maxWidth: '500px',
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-          margin: {
-            xs: 1,
-            sm: 2,
-          }
-        }}
-      >
-        {/* ヘッダー */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            mb: 1,
-          }}
-        >
-          <VerifiedUser color="primary" sx={{ fontSize: 32 }} />
-          <Typography component="h1" variant="h4" fontWeight="bold">
-            確認コード入力
-          </Typography>
-        </Box>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md">
+        {/* 確認コード入力フォームカード */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+          {/* ヘッダー */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="bg-green-100 p-3 rounded-full mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">確認コード入力</h1>
+            <p className="text-gray-600 text-sm mt-2 text-center">
+              メールアドレスに送信された確認コードを入力してください
+            </p>
+          </div>
 
-        <Typography 
-          variant="body2" 
-          color="text.secondary" 
-          textAlign="center" 
-          sx={{ mb: 1.5 }}
-        >
-          メールアドレスに送信された確認コードを入力してください
-        </Typography>
+          {/* 確認フォーム */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* メールアドレス入力（読み取り専用推奨） */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                メールアドレス
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition bg-gray-50"
+                  placeholder="example@example.com"
+                  readOnly={!!searchParams.get("email")}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                サインアップ時に使用したメールアドレス
+              </p>
+            </div>
 
-        {/* 確認コード入力フォーム */}
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', mt: 1 }}>
-          {/* メールアドレスフィールド */}
-          <TextField
-            margin="dense"
-            required
-            fullWidth
-            id="email"
-            label="メールアドレス"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Email color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ 
-              mb: 1.5,
-            }}
-            helperText="サインアップ時に使用したメールアドレス"
-          />
+            {/* 確認コード入力 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                確認コード
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Key className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="code"
+                  name="code"
+                  autoComplete="one-time-code"
+                  required
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-center tracking-widest"
+                  placeholder="123456"
+                  maxLength={6}
+                  pattern="[0-9]{6}"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                6桁の数字で送信された確認コードを入力
+              </p>
+            </div>
 
-          {/* 確認コードフィールド */}
-          <TextField
-            margin="dense"
-            required
-            fullWidth
-            id="code"
-            label="確認コード"
-            name="code"
-            autoComplete="one-time-code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <VpnKey color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ 
-              mb: 2,
-            }}
-            helperText="6桁の数字で送信された確認コードを入力"
-            placeholder="123456"
-          />
+            {/* 確認ボタン */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  確認中...
+                </div>
+              ) : (
+                "確認する"
+              )}
+            </button>
+          </form>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={loading}
-            sx={{
-              py: 1,
-              borderRadius: 2,
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              mt: 1,
-            }}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              '確認する'
+          {/* メッセージ表示 */}
+          <div className="mt-4 space-y-2">
+            {message && (
+              <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                {message}
+              </div>
             )}
-          </Button>
-        </Box>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+          </div>
 
-        {/* メッセージ表示 */}
-        <Box sx={{ width: '100%', mt: 1.5 }}>
-          {message && (
-            <Alert severity="success" sx={{ mb: 1 }}>
-              {message}
-            </Alert>
-          )}
-          {error && (
-            <Alert severity="error" sx={{ mb: 1 }}>
-              {error}
-            </Alert>
-          )}
-        </Box>
+          {/* 注意事項 */}
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+            <p className="text-xs text-blue-800 font-medium mb-1">
+              💡 確認コードが見つからない場合:
+            </p>
+            <ul className="text-xs text-blue-700 space-y-0.5">
+              <li>• メールの受信トレイと迷惑メールフォルダを確認</li>
+              <li>• 数分待っても届かない場合はメールアドレスを確認</li>
+            </ul>
+          </div>
 
-        {/* フッターリンク */}
-        <Box sx={{ mt: 2, textAlign: 'center', width: '100%' }}>
-          <Button
-            startIcon={<ArrowBack />}
-            onClick={() => router.push('/signup')}
-            sx={{
-              textTransform: 'none',
-              color: 'text.secondary',
-            }}
-          >
-            サインアップ画面に戻る
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
+          {/* フッターリンク */}
+          <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+            <button
+              onClick={() => router.push("/signup")}
+              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              サインアップ画面に戻る
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

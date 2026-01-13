@@ -1,170 +1,110 @@
 "use client";
 
-import {
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Avatar,
-  Chip,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-} from '@mui/material';
-import {
-  Email,
-  Person,
-  Security,
-  CheckCircle,
-  AccountCircle,
-} from '@mui/icons-material';
+import { Mail, User, Shield, CheckCircle, User as UserIcon } from "lucide-react";
 
 export default function UserInfo({ user }: { user: any }) {
   if (!user) {
     return (
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Card>
-          <CardContent sx={{ textAlign: 'center', py: 4 }}>
-            <Typography variant="h6" color="error">
-              ユーザー情報を取得できませんでした
-            </Typography>
-          </CardContent>
-        </Card>
-      </Container>
+      <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="bg-white rounded-xl shadow p-8 text-center">
+          <h2 className="text-xl font-semibold text-red-600">
+            ユーザー情報を取得できませんでした
+          </h2>
+        </div>
+      </div>
     );
   }
 
-  console.log(user);
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <div className="max-w-4xl mx-auto py-8 px-4">
       {/* ヘッダーカード */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box display="flex" alignItems="center" gap={3} mb={2}>
-            <Avatar
-              sx={{
-                width: 64,
-                height: 64,
-                bgcolor: 'primary.main',
-                fontSize: '1.5rem',
-              }}
-            >
-              <AccountCircle fontSize="large" />
-            </Avatar>
-            <Box>
-              <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-                ユーザー情報
-              </Typography>
-              <Box display="flex" alignItems="center" gap={1}>
-                <CheckCircle color="success" fontSize="small" />
-                <Typography variant="body1" color="text.secondary">
-                  認証済みアカウント
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-          <Typography variant="body1" color="text.secondary">
-            このページはログインユーザーのみ閲覧できます。あなたのアカウント情報は安全に管理されています。
-          </Typography>
-        </CardContent>
-      </Card>
+      <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="flex items-start gap-4">
+          <div className="bg-blue-100 p-3 rounded-full">
+            <UserIcon className="w-12 h-12 text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+              ユーザー情報
+            </h1>
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span className="text-gray-600">認証済みアカウント</span>
+            </div>
+            <p className="text-gray-600">
+              このページはログインユーザーのみ閲覧できます。あなたのアカウント情報は安全に管理されています。
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* ユーザー情報カード */}
-      <Card sx={{ boxShadow: 2 }}>
-        <CardContent sx={{ p: 0 }}>
-          {/* セクションヘッダー */}
-          <Box sx={{ p: 3, pb: 2 }}>
-            <Typography variant="h6" component="h2" fontWeight="bold" gutterBottom>
-              アカウント詳細
-            </Typography>
-            <Divider />
-          </Box>
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">アカウント詳細</h2>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {/* メールアドレス */}
+          <div className="p-6">
+            <div className="flex items-start">
+              <div className="mr-4 mt-1">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Mail className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-medium text-gray-900">メールアドレス</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                    認証済み
+                  </span>
+                </div>
+                <p className="text-lg text-gray-800">{user.email}</p>
+              </div>
+            </div>
+          </div>
 
-          {/* ユーザー情報リスト */}
-          <List sx={{ p: 0 }}>
-            {/* メールアドレス */}
-            <ListItem sx={{ px: 3, py: 2 }}>
-              <ListItemIcon>
-                <Email color="primary" />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <Typography variant="body1" fontWeight="medium">
-                      メールアドレス
-                    </Typography>
-                    <Chip
-                      label="認証済み"
-                      color="success"
-                      size="small"
-                      variant="outlined"
-                    />
-                  </Box>
-                }
-                secondary={
-                  <Typography variant="body2" color="text.primary" sx={{ mt: 0.5, fontSize: '1.1rem' }}>
-                    {user.email}
-                  </Typography>
-                }
-              />
-            </ListItem>
+          {/* ユーザーID */}
+          <div className="p-6">
+            <div className="flex items-start">
+              <div className="mr-4 mt-1">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 mb-1">ユーザーID (sub)</h3>
+                <code className="text-sm font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">
+                  {user.sub}
+                </code>
+              </div>
+            </div>
+          </div>
 
-            <Divider variant="inset" component="li" />
+          {/* 発行者 */}
+          <div className="p-6">
+            <div className="flex items-start">
+              <div className="mr-4 mt-1">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Shield className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 mb-1">発行者 (iss)</h3>
+                <p className="text-sm text-gray-800 break-all">{user.iss}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* ユーザーID */}
-            <ListItem sx={{ px: 3, py: 2 }}>
-              <ListItemIcon>
-                <Person color="primary" />
-              </ListItemIcon>
-              <ListItemText
-                primary="ユーザーID (sub)"
-                secondary={
-                  <Typography variant="body2" color="text.primary" sx={{ mt: 0.5, fontFamily: 'monospace' }}>
-                    {user.sub}
-                  </Typography>
-                }
-              />
-            </ListItem>
-
-            <Divider variant="inset" component="li" />
-
-            {/* 発行者 */}
-            <ListItem sx={{ px: 3, py: 2 }}>
-              <ListItemIcon>
-                <Security color="primary" />
-              </ListItemIcon>
-              <ListItemText
-                primary="発行者 (iss)"
-                secondary={
-                  <Typography variant="body2" color="text.primary" sx={{ mt: 0.5, wordBreak: 'break-all' }}>
-                    {user.iss}
-                  </Typography>
-                }
-              />
-            </ListItem>
-          </List>
-        </CardContent>
-      </Card>
-
-      {/* 追加情報カード */}
-      <Paper 
-        variant="outlined" 
-        sx={{ 
-          mt: 3, 
-          p: 3, 
-          backgroundColor: 'action.hover',
-          borderColor: 'divider'
-        }}
-      >
-        <Typography variant="body2" color="text.secondary" align="center">
-          <Box component="span" fontWeight="medium">最終更新:</Box> {new Date().toLocaleDateString('ja-JP')}
-        </Typography>
-      </Paper>
-    </Container>
+      {/* 追加情報 */}
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <p className="text-sm text-gray-600 text-center">
+          <span className="font-medium">最終更新:</span> {new Date().toLocaleDateString('ja-JP')}
+        </p>
+      </div>
+    </div>
   );
 }

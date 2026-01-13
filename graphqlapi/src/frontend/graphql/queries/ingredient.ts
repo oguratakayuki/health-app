@@ -5,10 +5,6 @@ export const GET_INGREDIENTS = gql`
     ingredients {
       id
       name
-      nutrients {
-        id
-        name
-      }
     }
   }
 `;
@@ -51,5 +47,3 @@ export const DELETE_INGREDIENT = gql`
     deleteIngredient(id: $id)
   }
 `;
-
-

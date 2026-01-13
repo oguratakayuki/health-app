@@ -1,19 +1,18 @@
+import "./globals.css";
 import { Providers } from "./providers";
-import { Inter } from 'next/font/google';
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ 
+export default function RootLayout({
   children,
-}: { 
+}: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="ja">
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

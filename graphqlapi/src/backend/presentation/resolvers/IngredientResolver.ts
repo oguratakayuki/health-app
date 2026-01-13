@@ -21,6 +21,7 @@ export class IngredientResolver {
   async ingredients(
     @Ctx() ctx: GraphQLContext,
   ): Promise<IngredientWithRelations[]> {
+    console.log("ingredient service !!!!!!!!!!");
     try {
       const ingredientService = this.getIngredientService(ctx);
       const ingredients = await ingredientService.getAllIngredients();

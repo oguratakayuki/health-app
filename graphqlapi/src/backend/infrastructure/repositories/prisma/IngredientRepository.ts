@@ -33,6 +33,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
         orderBy: { id: "asc" },
       });
+      console.log("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
       return ingredients.map((ingredient) =>
         this.mapToIngredientWithRelations(ingredient),

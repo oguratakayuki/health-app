@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PostCSSテスト */
+.test-autoprefixer {
+  display: flex;
+  transition: all 0.3s;
+}
+
+.test-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
