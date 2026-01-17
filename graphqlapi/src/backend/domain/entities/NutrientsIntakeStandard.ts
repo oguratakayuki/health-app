@@ -28,6 +28,13 @@ export interface NutrientsIntakeStandard {
   updatedAt: Date;
 }
 
+export interface GetStandardsOptions {
+  gender?: string;
+  age?: number;
+  // 将来的に追加
+  // userId?: string;
+}
+
 export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeStandard {
   nutrient?: any;
 }

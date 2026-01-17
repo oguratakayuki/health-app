@@ -4,6 +4,7 @@ import {
   NutrientsIntakeStandardWithRelations,
   CreateNutrientsIntakeStandardInput,
   UpdateNutrientsIntakeStandardInput,
+  GetStandardsOptions,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { INutrientsIntakeStandardRepository } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 
@@ -21,6 +22,15 @@ export class NutrientsIntakeStandardService implements INutrientsIntakeStandardS
         `Failed to get standard: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
+  }
+
+  /**
+   * 性別・年齢でフィルタリングした栄養摂取基準を取得
+   */
+  async findAllWithFilters(
+    options: GetStandardsOptions,
+  ): Promise<NutrientsIntakeStandard[]> {
+    return this.standardRepository.findAllWithFilters(options);
   }
 
   async getAllStandards(): Promise<NutrientsIntakeStandard[]> {

@@ -1,5 +1,25 @@
 import { gql } from "@apollo/client";
 
+// フィルター付きの栄養摂取基準取得クエリ
+export const NUTRIENTS_INTAKE_STANDARDS_WITH_FILTERS_QUERY = gql`
+  query GetNutrientsIntakeStandardsWithFilters($gender: String, $age: Int) {
+    nutrientsIntakeStandardsWithFilters(gender: $gender, age: $age) {
+      id
+      content
+      unit
+      gender
+      ageFrom
+      ageTo
+      createdAt
+      updatedAt
+      nutrient {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const NUTRIENTS_INTAKE_STANDARDS_QUERY = gql`
   query GetNutrientsIntakeStandards {
     nutrientsIntakeStandards {
@@ -134,6 +154,7 @@ export const NUTRIENTS_INTAKE_STANDARD_QUERIES = {
   GET_ALL: NUTRIENTS_INTAKE_STANDARDS_QUERY,
   GET_BY_ID: NUTRIENTS_INTAKE_STANDARD_BY_ID_QUERY,
   GET_BY_NUTRIENT: NUTRIENTS_INTAKE_STANDARDS_BY_NUTRIENT_QUERY,
+  GET_WITH_FILTERS: NUTRIENTS_INTAKE_STANDARDS_WITH_FILTERS_QUERY,
   CREATE: CREATE_NUTRIENTS_INTAKE_STANDARD_MUTATION,
   UPDATE: UPDATE_NUTRIENTS_INTAKE_STANDARD_MUTATION,
   DELETE: DELETE_NUTRIENTS_INTAKE_STANDARD_MUTATION,

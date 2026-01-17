@@ -1,10 +1,9 @@
-// graphqlapi/src/backend/infrastructure/repositories/prisma/NutrientsIntakeStandardRepository.ts
-
 import { PrismaClient } from "@prisma/client";
 import {
   INutrientsIntakeStandardRepository,
   CreateNutrientsIntakeStandardInput,
   UpdateNutrientsIntakeStandardInput,
+  FindAllWithFiltersOptions,
 } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 import {
   NutrientsIntakeStandard,
@@ -19,6 +18,42 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
     if (!prismaClient) {
       throw new Error("PrismaClient is required");
     }
+  }
+
+  async findAllWithFilters(
+    options: FindAllWithFiltersOptions,
+  ): Promise<NutrientsIntakeStandard[]> {
+    const where: any = {};
+    // 性別フィルター
+    if (options.gender) {
+      const genderIndex = GENDER_LABELS.indexOf(options.gender as any);
+      if (genderIndex !== -1) {
+        where.gender = genderIndex;
+      }
+    }
+    // 年齢フィルター（指定年齢を含む基準を検索）
+    if (options.age !== undefined) {
+      where.OR = [
+        // 年齢範囲がない（全年代）
+        { ageFrom: null, ageTo: null },
+        // 下限のみ（指定年齢以上）
+        { ageFrom: { lte: options.age }, ageTo: null },
+        // 上限のみ（指定年齢以下）
+        { ageFrom: null, ageTo: { gte: options.age } },
+        // 範囲内（指定年齢が範囲内）
+        {
+          ageFrom: { lte: options.age },
+          ageTo: { gte: options.age },
+        },
+      ];
+    }
+    console.log("Generated WHERE clause:", JSON.stringify(where, null, 2));
+    const records = await this.prismaClient.nutrientsIntakeStandard.findMany({
+      where,
+      include: { nutrient: true },
+      orderBy: { id: "asc" },
+    });
+    return records.map((record) => this.mapToEntityWithRelations(record));
   }
 
   async findAll(): Promise<NutrientsIntakeStandardWithRelations[]> {

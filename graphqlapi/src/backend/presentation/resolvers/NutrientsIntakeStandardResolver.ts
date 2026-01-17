@@ -36,6 +36,33 @@ export class NutrientsIntakeStandardResolver {
     }
   }
 
+  @Query(() => [NutrientsIntakeStandard], {
+    name: "nutrientsIntakeStandardsWithFilters",
+    description: "性別・年齢でフィルタリングした栄養摂取基準を取得",
+  })
+  async getNutrientsIntakeStandardsWithFilters(
+    @Ctx() ctx: GraphQLContext,
+    @Arg("gender", () => String, { nullable: true }) gender?: string,
+    @Arg("age", () => Int, { nullable: true }) age?: number,
+  ): Promise<NutrientsIntakeStandard[]> {
+    console.log(`gender ${gender}`);
+    console.log(`age ${age}`);
+    try {
+      const service = this.getService(ctx);
+      const standards = await service.findAllWithFilters({ gender, age });
+      return standards as NutrientsIntakeStandard[];
+    } catch (error) {
+      console.error(
+        `Error in getNutrientsIntakeStandardsWithFilters query: ${error}`,
+      );
+      throw new Error(
+        `Failed to fetch standards: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
+    }
+  }
+
   @Query(() => [NutrientsIntakeStandard])
   async nutrientsIntakeStandards(
     @Ctx() ctx: GraphQLContext,

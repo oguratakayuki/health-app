@@ -3,6 +3,11 @@ import {
   NutrientsIntakeStandardWithRelations,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 
+export interface FindAllWithFiltersOptions {
+  gender?: string;
+  age?: number;
+}
+
 // 作成・更新用の入力型定義
 export interface CreateNutrientsIntakeStandardInput {
   nutrientId: number;
@@ -36,4 +41,8 @@ export interface INutrientsIntakeStandardRepository {
   delete(id: string): Promise<boolean>;
   // count(): Promise<number>;
   findAllWithRelations(): Promise<NutrientsIntakeStandardWithRelations[]>;
+  // フィルター付きの全件取得メソッドを追加
+  findAllWithFilters(
+    options: FindAllWithFiltersOptions,
+  ): Promise<NutrientsIntakeStandard[]>;
 }

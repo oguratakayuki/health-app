@@ -22,7 +22,25 @@ let prismaInstance: PrismaClient | null = null;
 function getPrismaClient(): PrismaClient {
   if (!prismaInstance) {
     console.log("🔄 Creating new PrismaClient instance");
-    prismaInstance = new PrismaClient();
+    // prismaInstance = new PrismaClient();
+    prismaInstance = new PrismaClient({
+      log: [
+        { emit: "event", level: "query" },
+        { emit: "event", level: "info" },
+        { emit: "event", level: "warn" },
+        { emit: "event", level: "error" },
+      ],
+    });
+    prismaInstance.$on("query" as any, (e: any) => {
+      console.log("=== Prisma Query ===");
+      console.log("Query:", e.query);
+      console.log("Params:", e.params);
+      console.log("Duration:", e.duration, "ms");
+      console.log("Timestamp:", e.timestamp);
+      console.log("Target:", e.target);
+      console.log("===================\n");
+    });
+
     // 開発環境での接続確認
     if (process.env.NODE_ENV !== "production") {
       prismaInstance
