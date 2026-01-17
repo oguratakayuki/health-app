@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_01_02_050536) do
+ActiveRecord::Schema.define(version: 2026_01_17_085034) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 2026_01_02_050536) do
   end
 
   create_table "ingredient_tags", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.bigint "ingredient_id"
-    t.bigint "tag_id"
+    t.integer "ingredient_id"
+    t.integer "tag_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -106,15 +106,15 @@ ActiveRecord::Schema.define(version: 2026_01_02_050536) do
   end
 
   create_table "nutrients_relations", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.bigint "parent_id"
-    t.bigint "child_id"
+    t.integer "parent_id"
+    t.integer "child_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tag_categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.bigint "tag_id"
-    t.bigint "category_id"
+    t.integer "tag_id"
+    t.integer "category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -132,6 +132,8 @@ ActiveRecord::Schema.define(version: 2026_01_02_050536) do
     t.string "name"
     t.string "cognito_sub"
     t.boolean "is_admin", default: false, null: false
+    t.integer "gender"
+    t.integer "age"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
