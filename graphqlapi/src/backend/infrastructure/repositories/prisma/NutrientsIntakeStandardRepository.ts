@@ -215,7 +215,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   private mapToEntity(prismaData: any): NutrientsIntakeStandard {
     return {
       id: prismaData.id.toString(), // bigintをstringに変換
-      nutrientId: Number(prismaData.nutrientId),
+      nutrientId: prismaData.nutrientId.toString(),
       content: prismaData.content,
       // 数値(index)をラベルに変換 (Railsのenum挙動の再現)
       unit:
@@ -224,8 +224,8 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         prismaData.gender !== null ? GENDER_LABELS[prismaData.gender] : null,
       ageFrom: prismaData.ageFrom ? prismaData.ageFrom.toNumber() : null,
       ageTo: prismaData.ageTo ? prismaData.ageTo.toNumber() : null,
-      createdAt: prismaData.created_at,
-      updatedAt: prismaData.updated_at,
+      createdAt: prismaData.createdAt,
+      updatedAt: prismaData.updatedAt,
     };
   }
 
@@ -236,7 +236,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       ...this.mapToEntity(prismaData),
       nutrient: prismaData.nutrient
         ? {
-            id: prismaData.nutrient.id,
+            id: prismaData.nutrient.id.toString(),
             name: prismaData.nutrient.name,
           }
         : undefined,

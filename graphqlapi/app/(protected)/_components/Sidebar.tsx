@@ -33,6 +33,11 @@ const menuItems = [
     path: "/ingredient-nutrients",
   },
   {
+    text: "年齢別基準値",
+    icon: <Restaurant />,
+    path: "/nutrients-intake-standards",
+  },
+  {
     text: "ユーザー情報",
     icon: <Person />,
     path: "/user",
