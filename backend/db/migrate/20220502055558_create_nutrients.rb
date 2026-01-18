@@ -2,7 +2,7 @@
 
 class CreateNutrients < ActiveRecord::Migration[6.1]
   def change
-    create_table :nutrients do |t|
+    create_table :nutrients, comment: '栄養素マスタ(炭水化物,脂質など)'  do |t|
       t.string :name
 
       t.timestamps

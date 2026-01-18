@@ -1,0 +1,2 @@
+class RadarChart < ApplicationRecord
+end

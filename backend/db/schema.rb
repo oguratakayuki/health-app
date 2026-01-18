@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_01_17_085034) do
+ActiveRecord::Schema.define(version: 2026_01_17_114351) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -36,13 +36,13 @@ ActiveRecord::Schema.define(version: 2026_01_17_085034) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "ingredient_nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "ingredient_nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食材に含まれる栄養素マスタ", force: :cascade do |t|
     t.bigint "ingredient_id"
     t.bigint "nutrient_id"
-    t.integer "content_quantity"
-    t.string "content_unit"
-    t.integer "content_unit_per"
-    t.string "content_unit_per_unit"
+    t.integer "content_quantity", comment: "含有量（例: 30mgの「30」）"
+    t.string "content_unit", comment: "含有量の単位（例: 30mgの「mg」）"
+    t.integer "content_unit_per", comment: "基準量（例: 100gあたりの「100」）"
+    t.string "content_unit_per_unit", comment: "基準量の単位（例: 100gあたりの「g」）"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["ingredient_id"], name: "index_ingredient_nutrients_on_ingredient_id"
@@ -50,15 +50,15 @@ ActiveRecord::Schema.define(version: 2026_01_17_085034) do
   end
 
   create_table "ingredient_tags", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "ingredient_id"
-    t.integer "tag_id"
+    t.bigint "ingredient_id"
+    t.bigint "tag_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食材マスター(ジャガイモなど)", force: :cascade do |t|
     t.string "name"
-    t.text "remarks"
+    t.text "remarks", comment: "備考"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "original_name"
@@ -74,18 +74,18 @@ ActiveRecord::Schema.define(version: 2026_01_17_085034) do
     t.index ["meal_id"], name: "index_meal_dishes_on_meal_id"
   end
 
-  create_table "meals", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "meals", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食事履歴", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.date "meal_date", null: false
-    t.string "category", null: false
-    t.time "start_time"
-    t.time "end_time"
+    t.date "meal_date", null: false, comment: "食事した日付"
+    t.string "category", null: false, comment: "食事分類 enum(朝食、昼食、晩飯)"
+    t.time "start_time", comment: "食事の開始時刻"
+    t.time "end_time", comment: "食事の終了時刻"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_meals_on_user_id"
   end
 
-  create_table "nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+  create_table "nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "栄養素マスタ(炭水化物,脂質など)", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -106,15 +106,34 @@ ActiveRecord::Schema.define(version: 2026_01_17_085034) do
   end
 
   create_table "nutrients_relations", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "parent_id"
-    t.integer "child_id"
+    t.bigint "parent_id"
+    t.bigint "child_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "radar_chart_items", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "どのチャートにどの栄養素を表示するかを管理する中間テーブル", force: :cascade do |t|
+    t.bigint "radar_chart_id", null: false, comment: "関連するチャートID"
+    t.bigint "nutrient_id", null: false, comment: "表示する栄養素ID"
+    t.integer "position", default: 0, comment: "チャート内での表示順（時計回り）"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["nutrient_id"], name: "index_radar_chart_items_on_nutrient_id"
+    t.index ["radar_chart_id"], name: "index_radar_chart_items_on_radar_chart_id"
+  end
+
+  create_table "radar_charts", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "レーダーチャートの定義（器）を管理するテーブル", force: :cascade do |t|
+    t.string "name", null: false, comment: "チャートの表示名（例：ビタミンバランス）"
+    t.string "slug", null: false, comment: "プログラムから参照するための識別子（例：vitamins）"
+    t.integer "display_order", default: 0, comment: "アプリ内での表示順"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_radar_charts_on_slug", unique: true
+  end
+
   create_table "tag_categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "tag_id"
-    t.integer "category_id"
+    t.bigint "tag_id"
+    t.bigint "category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -143,4 +162,6 @@ ActiveRecord::Schema.define(version: 2026_01_17_085034) do
   add_foreign_key "meal_dishes", "meals"
   add_foreign_key "meals", "users"
   add_foreign_key "nutrients", "nutrients", column: "parent_id"
+  add_foreign_key "radar_chart_items", "nutrients"
+  add_foreign_key "radar_chart_items", "radar_charts"
 end
