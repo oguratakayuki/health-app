@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_01_17_114351) do
+ActiveRecord::Schema.define(version: 2026_01_21_135405) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -26,25 +26,27 @@ ActiveRecord::Schema.define(version: 2026_01_17_114351) do
     t.string "content_unit", null: false, comment: "量の単位"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["dish_id", "ingredient_id"], name: "index_dish_ingredients_on_dish_id_and_ingredient_id_unique", unique: true
     t.index ["dish_id"], name: "index_dish_ingredients_on_dish_id"
     t.index ["ingredient_id"], name: "index_dish_ingredients_on_ingredient_id"
   end
 
   create_table "dishes", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.string "name", comment: "料理名"
+    t.string "name", null: false, comment: "料理名"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "ingredient_nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食材に含まれる栄養素マスタ", force: :cascade do |t|
-    t.bigint "ingredient_id"
-    t.bigint "nutrient_id"
+    t.bigint "ingredient_id", null: false
+    t.bigint "nutrient_id", null: false
     t.integer "content_quantity", comment: "含有量（例: 30mgの「30」）"
     t.string "content_unit", comment: "含有量の単位（例: 30mgの「mg」）"
     t.integer "content_unit_per", comment: "基準量（例: 100gあたりの「100」）"
     t.string "content_unit_per_unit", comment: "基準量の単位（例: 100gあたりの「g」）"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["ingredient_id", "nutrient_id"], name: "index_ingredient_nutrients_on_ingredient_and_nutrient", unique: true
     t.index ["ingredient_id"], name: "index_ingredient_nutrients_on_ingredient_id"
     t.index ["nutrient_id"], name: "index_ingredient_nutrients_on_nutrient_id"
   end
@@ -57,11 +59,12 @@ ActiveRecord::Schema.define(version: 2026_01_17_114351) do
   end
 
   create_table "ingredients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食材マスター(ジャガイモなど)", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.text "remarks", comment: "備考"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "original_name"
+    t.index ["name"], name: "index_ingredients_on_name", unique: true
   end
 
   create_table "meal_dishes", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "食事の各料理", force: :cascade do |t|
@@ -82,11 +85,12 @@ ActiveRecord::Schema.define(version: 2026_01_17_114351) do
     t.time "end_time", comment: "食事の終了時刻"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "meal_date", "category"], name: "index_meals_on_user_id_meal_date_category_unique", unique: true
     t.index ["user_id"], name: "index_meals_on_user_id"
   end
 
   create_table "nutrients", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "栄養素マスタ(炭水化物,脂質など)", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "parent_id"
@@ -97,12 +101,12 @@ ActiveRecord::Schema.define(version: 2026_01_17_114351) do
   create_table "nutrients_intake_standards", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.bigint "nutrient_id"
     t.integer "content"
-    t.integer "unit"
     t.integer "gender"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.decimal "age_from", precision: 10
     t.decimal "age_to", precision: 10
+    t.string "unit", null: false
   end
 
   create_table "nutrients_relations", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
@@ -158,6 +162,8 @@ ActiveRecord::Schema.define(version: 2026_01_17_114351) do
 
   add_foreign_key "dish_ingredients", "dishes"
   add_foreign_key "dish_ingredients", "ingredients"
+  add_foreign_key "ingredient_nutrients", "ingredients"
+  add_foreign_key "ingredient_nutrients", "nutrients"
   add_foreign_key "meal_dishes", "dishes"
   add_foreign_key "meal_dishes", "meals"
   add_foreign_key "meals", "users"

@@ -8,98 +8,218 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Dish {
-  id              BigInt           @id @default(autoincrement())
-  name            String?
-  createdAt       DateTime         @map("created_at")
-  updatedAt       DateTime         @map("updated_at")
-  dishIngredients DishIngredient[]
+model User {
+  id         BigInt   @id @default(autoincrement())
+  email      String   @unique
+  name       String?
+  cognitoSub String?  @map("cognito_sub")
+  isAdmin    Boolean  @default(false) @map("is_admin")
+  gender     Int?
+  age        Int?
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
 
+  meals Meal[]
+  @@map("users")
+}
+
+model Meal {
+  id        BigInt    @id @default(autoincrement())
+  mealDate  DateTime  @map("meal_date")
+  category  String
+  startTime DateTime? @map("start_time")
+  endTime   DateTime? @map("end_time")
+  createdAt DateTime  @map("created_at")
+  updatedAt DateTime  @map("updated_at")
+
+  userId BigInt @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  mealDishes MealDish[]
+  @@unique([userId, mealDate, category], map: "index_meals_on_user_id_meal_date_category_unique")
+  @@map("meals")
+}
+
+
+model MealDish {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  mealId BigInt @map("meal_id")
+  dishId BigInt @map("dish_id")
+
+  meal Meal @relation(fields: [mealId], references: [id])
+  dish Dish @relation(fields: [dishId], references: [id])
+
+  @@unique([mealId, dishId])
+  @@map("meal_dishes")
+}
+
+model Dish {
+  id        BigInt   @id @default(autoincrement())
+  name      String @unique
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  dishIngredients DishIngredient[]
+  mealDishes      MealDish[]
   @@map("dishes")
 }
 
 model DishIngredient {
-  id              BigInt     @id @default(autoincrement())
-  dishId          BigInt     @map("dish_id")
-  ingredientId    BigInt     @map("ingredient_id")
-  contentQuantity Float      @default(0) @map("content_quantity")
-  contentUnit     String     @map("content_unit")
-  createdAt       DateTime   @map("created_at")
-  updatedAt       DateTime   @map("updated_at")
-  dish            Dish       @relation(fields: [dishId], references: [id])
-  ingredient      Ingredient @relation(fields: [ingredientId], references: [id])
+  id              BigInt   @id @default(autoincrement())
+  contentQuantity Float    @map("content_quantity")
+  contentUnit     String   @map("content_unit")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
+  dishId       BigInt @map("dish_id")
+  ingredientId BigInt @map("ingredient_id")
+
+  dish       Dish       @relation(fields: [dishId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  // 複合ユニーク制約を追加
+  @@unique([dishId, ingredientId], map: "index_dish_ingredients_on_dish_id_and_ingredient_id_unique")
+  @@index([dishId], map: "index_dish_ingredients_on_dish_id")
+  @@index([ingredientId], map: "index_dish_ingredients_on_ingredient_id")
   @@map("dish_ingredients")
 }
 
 model Ingredient {
-  id                  BigInt               @id @default(autoincrement())
-  name                String?
-  remarks             String?
-  originalName        String?              @map("original_name")
-  createdAt           DateTime             @map("created_at")
-  updatedAt           DateTime             @map("updated_at")
-  dishIngredients     DishIngredient[]
-  ingredientNutrients IngredientNutrient[]
+  id           BigInt   @id @default(autoincrement())
+  name         String   @unique
+  originalName String?  @map("original_name")
+  remarks      String?
+  createdAt    DateTime @map("created_at")
+  updatedAt    DateTime @map("updated_at")
 
+  dishIngredients      DishIngredient[]
+  ingredientNutrients  IngredientNutrient[]
+  ingredientTags       IngredientTag[]
   @@map("ingredients")
 }
 
 model Nutrient {
-  id                       BigInt                    @id @default(autoincrement())
-  name                     String?
-  createdAt                DateTime                  @map("created_at")
-  updatedAt                DateTime                  @map("updated_at")
-  parentId                 BigInt?                   @map("parent_id")
-  // リレーション
-  ingredientNutrients      IngredientNutrient[]
-  children                 Nutrient[]                @relation("NutrientToNutrient")
-  parent                   Nutrient?                 @relation("NutrientToNutrient", fields: [parentId], references: [id])
-  nutrientsIntakeStandards NutrientsIntakeStandard[]
+  id        BigInt   @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
 
+  parentId BigInt? @map("parent_id")
+  parent   Nutrient?  @relation("NutrientTree", fields: [parentId], references: [id])
+  children Nutrient[] @relation("NutrientTree")
+
+  ingredientNutrients      IngredientNutrient[]
+  nutrientsIntakeStandards NutrientsIntakeStandard[]
+  radarChartItems          RadarChartItem[]
   @@map("nutrients")
 }
 
-model NutrientsIntakeStandard {
-  id         BigInt    @id @default(autoincrement())
-  nutrientId BigInt?   @map("nutrient_id")
-  content    Int?
-  unit       Int?
-  gender     Int?
-  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(6)
-  ageFrom    Decimal?  @map("age_from") @db.Decimal(10, 0)
-  ageTo      Decimal?  @map("age_to") @db.Decimal(10, 0)
-  nutrient   Nutrient? @relation(fields: [nutrientId], references: [id])
-
-  @@map("nutrients_intake_standards")
-}
-
 model IngredientNutrient {
-  id                 BigInt      @id @default(autoincrement())
-  ingredientId       BigInt?     @map("ingredient_id")
-  nutrientId         BigInt?     @map("nutrient_id")
-  contentQuantity    Int?        @map("content_quantity")
-  contentUnit        String?     @map("content_unit")
-  contentUnitPer     Int?        @map("content_unit_per")
-  contentUnitPerUnit String?     @map("content_unit_per_unit")
-  createdAt          DateTime    @map("created_at")
-  updatedAt          DateTime    @map("updated_at")
-  // リレーション
-  ingredient         Ingredient? @relation(fields: [ingredientId], references: [id])
-  nutrient           Nutrient?   @relation(fields: [nutrientId], references: [id])
+  id                 BigInt   @id @default(autoincrement())
+  contentQuantity    Int?     @map("content_quantity")
+  contentUnit        String?  @map("content_unit")
+  contentUnitPer     Int?     @map("content_unit_per")
+  contentUnitPerUnit String?  @map("content_unit_per_unit")
+  createdAt          DateTime @map("created_at")
+  updatedAt          DateTime @map("updated_at")
 
+  ingredientId BigInt @map("ingredient_id")
+  nutrientId   BigInt @map("nutrient_id")
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  nutrient   Nutrient   @relation(fields: [nutrientId], references: [id])
+
+  @@unique([ingredientId, nutrientId])
   @@map("ingredient_nutrients")
 }
 
-model User {
-  id         BigInt   @id @default(autoincrement())
-  email      String   @unique @db.VarChar(255)
-  name       String?  @db.VarChar(255)
-  cognitoSub String?  @unique @map("cognito_sub") @db.VarChar(255)
-  isAdmin    Boolean  @default(false) @map("is_admin")
-  createdAt  DateTime @map("created_at")
-  updatedAt  DateTime @map("updated_at")
+model NutrientsIntakeStandard {
+  id        BigInt   @id @default(autoincrement())
+  content   Int?
+  unit      String?  @map("content_unit")
+  gender    Int?
+  ageFrom   Decimal? @map("age_from")
+  ageTo     Decimal? @map("age_to")
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
 
-  @@map("users")
+  nutrientId BigInt? @map("nutrient_id")
+  nutrient   Nutrient? @relation(fields: [nutrientId], references: [id])
+  @@map("nutrients_intake_standards")
+}
+
+model RadarChart {
+  id           BigInt   @id @default(autoincrement())
+  name         String
+  slug         String   @unique
+  displayOrder Int?     @map("display_order")
+  createdAt    DateTime @map("created_at")
+  updatedAt    DateTime @map("updated_at")
+
+  items RadarChartItem[]
+  @@map("radar_charts")
+}
+
+model RadarChartItem {
+  id           BigInt   @id @default(autoincrement())
+  position     Int?
+  createdAt    DateTime @map("created_at")
+  updatedAt    DateTime @map("updated_at")
+
+  radarChartId BigInt @map("radar_chart_id")
+  nutrientId   BigInt @map("nutrient_id")
+
+  radarChart RadarChart @relation(fields: [radarChartId], references: [id])
+  nutrient   Nutrient   @relation(fields: [nutrientId], references: [id])
+  @@map("radar_chart_items")
+}
+
+model Tag {
+  id        BigInt   @id @default(autoincrement())
+  name      String?
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  ingredientTags IngredientTag[]
+  tagCategories  TagCategory[]
+  @@map("tags")
+}
+
+model IngredientTag {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  ingredientId BigInt? @map("ingredient_id")
+  tagId        BigInt? @map("tag_id")
+
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
+  tag        Tag?        @relation(fields: [tagId], references: [id])
+  @@map("ingredient_tags")
+}
+
+model Category {
+  id          BigInt   @id @default(autoincrement())
+  name        String?
+  displayName String?  @map("display_name")
+  createdAt   DateTime @map("created_at")
+  updatedAt   DateTime @map("updated_at")
+
+  tagCategories TagCategory[]
+  @@map("categories")
+}
+
+model TagCategory {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  tagId      BigInt? @map("tag_id")
+  categoryId BigInt? @map("category_id")
+
+  tag      Tag?      @relation(fields: [tagId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
+  @@map("tag_categories")
 }

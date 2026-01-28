@@ -1,15 +1,29 @@
 # frozen_string_literal: true
 
 # --- 1. 単位定義 ---
-UNIT_KCAL = 0; UNIT_G = 1; UNIT_MG = 2; UNIT_UG = 3; UNIT_PCT = 4
+UNIT_KCAL = "kcal"
+UNIT_G    = "g"
+UNIT_MG   = "mg"
+UNIT_UG   = "μg"
+UNIT_PCT  = "energy_percent" # "％エネルギー"
 
 # --- 2. 栄養素マスタの作成 ---
+# --- 2. 栄養素マスタの作成 ---
 nutrients_list = {
-  "エネルギー" => UNIT_KCAL, "たんぱく質" => UNIT_G, "脂質" => UNIT_PCT,
-  "炭水化物" => UNIT_PCT, "食物繊維" => UNIT_G, "ビタミンA" => UNIT_UG,
-  "ビタミンC" => UNIT_MG, "ビタミンD" => UNIT_UG, "カルシウム" => UNIT_MG,
-  "鉄" => UNIT_MG, "亜鉛" => UNIT_MG, "カリウム" => UNIT_MG
+  "エネルギー"   => UNIT_KCAL,
+  "たんぱく質"   => UNIT_G,
+  "脂質"         => UNIT_PCT,
+  "炭水化物"     => UNIT_PCT,
+  "食物繊維"     => UNIT_G,
+  "ビタミンA"    => UNIT_UG,
+  "ビタミンC"    => UNIT_MG,
+  "ビタミンD"    => UNIT_UG,
+  "カルシウム"   => UNIT_MG,
+  "鉄"           => UNIT_MG,
+  "亜鉛"         => UNIT_MG,
+  "カリウム"     => UNIT_MG
 }
+
 
 nutrients_list.each do |name, unit|
   Nutrient.find_or_create_by!(name: name)

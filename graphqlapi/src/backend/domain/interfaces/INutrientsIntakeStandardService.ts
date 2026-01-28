@@ -3,6 +3,7 @@ import {
   NutrientsIntakeStandardWithRelations,
   CreateNutrientsIntakeStandardInput,
   UpdateNutrientsIntakeStandardInput,
+  GetStandardsOptions,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 
 export interface INutrientsIntakeStandardService {
@@ -22,4 +23,7 @@ export interface INutrientsIntakeStandardService {
   getAllStandardsWithRelations(): Promise<
     NutrientsIntakeStandardWithRelations[]
   >;
+  findAllWithFilters(
+    options: GetStandardsOptions,
+  ): Promise<NutrientsIntakeStandard[]>;
 }

@@ -9,7 +9,7 @@ export default defineConfig({
       "src/backend/**/Repository/**/*.spec.ts",
       "src/backend/**/repositories/**/__tests__/**/*.spec.ts",
     ],
-    setupFiles: ["./setupEnv.js"],
+    setupFiles: ["./vitest.setup.ts"],
   },
   resolve: {
     alias: {
