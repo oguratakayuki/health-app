@@ -1,9 +1,9 @@
 // src/backend/domain/entities/Meal.ts
-export interface IMeal {
+export interface Meal {
   id: number;
   userId: number;
   mealDate: Date;
-  mealType: string; // 'breakfast', 'lunch', 'dinner', 'snack'
+  category: string; // 'breakfast', 'lunch', 'dinner', 'snack'
   createdAt: Date;
   updatedAt: Date;
   // 関連エンティティ（オプション、循環参照を避ける）
@@ -14,12 +14,12 @@ export interface IMeal {
 export interface CreateMealInput {
   userId: number;
   mealDate: Date;
-  mealType: string;
+  category: string;
   dishIds: number[];
 }
 
 export interface UpdateMealInput {
   mealDate?: Date;
-  mealType?: string;
+  category?: string;
   dishIds?: number[];
 }

@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
+import { Meal } from "@backend/domain/entities/Meal";
 
 export class MealRepository implements IMealRepository {
   constructor(private prisma: PrismaClient) {}
@@ -57,6 +58,43 @@ export class MealRepository implements IMealRepository {
       nutrientId: item.nutrient_id,
       rdiPercentage: undefined,
       createdAt: new Date(),
+    }));
+  }
+  async findByUserAndDate(userId: string, date: Date): Promise<Meal[]> {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    const meals = await this.prisma.meal.findMany({
+      where: {
+        userId: BigInt(userId),
+        startTime: {
+          gte: start,
+          lte: end,
+        },
+      },
+      include: {
+        mealDishes: true,
+      },
+    });
+    return meals.map((m) => ({
+      id: Number(m.id),
+      mealDate: m.mealDate,
+      category: m.category,
+      startTime: m.startTime,
+      endTime: m.endTime,
+      createdAt: m.createdAt,
+      updatedAt: m.updatedAt,
+      userId: Number(m.userId),
+      mealDishes: m.mealDishes.map((md) => ({
+        id: Number(md.id),
+        mealId: Number(md.mealId),
+        dishId: Number(md.dishId),
+        createdAt: md.createdAt,
+        updatedAt: md.updatedAt,
+      })),
     }));
   }
 }

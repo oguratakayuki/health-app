@@ -17,7 +17,7 @@ export interface WeeklyNutrientSummary extends DailyNutrientSummary {
 export interface MealWithDetails {
   id: number;
   mealDate: Date;
-  mealType: string;
+  category: string;
   dishes: Array<{
     id: number;
     name: string;
@@ -53,8 +53,8 @@ export interface DailyNutrientSummary {
 /**
  * 食事タイプ別の栄養素集計
  */
-export interface DailyNutrientSummaryByMealType extends DailyNutrientSummary {
-  mealType: string; // 'breakfast', 'lunch', 'dinner', 'snack'
+export interface DailyNutrientSummaryByCategory extends DailyNutrientSummary {
+  category: string; // 'breakfast', 'lunch', 'dinner', 'snack'
 }
 
 /**

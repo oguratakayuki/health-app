@@ -15,10 +15,10 @@ import {
 const prisma = new PrismaClient();
 
 beforeAll(async () => {
-  await seedTestIngredients(prisma);
+  // await seedTestIngredients(prisma);
 });
 
 afterAll(async () => {
-  await cleanupTestIngredients(prisma);
+  // await cleanupTestIngredients(prisma);
   await prisma.$disconnect();
 });

@@ -8,6 +8,8 @@ export default defineConfig({
     include: [
       "src/backend/**/Repository/**/*.spec.ts",
       "src/backend/**/repositories/**/__tests__/**/*.spec.ts",
+      "src/backend/domain/entities/__tests__/**/*.spec.ts",
+      "src/backend/application/services/calculators/__tests__/**/*.spec.ts",
     ],
     setupFiles: ["./vitest.setup.ts"],
   },

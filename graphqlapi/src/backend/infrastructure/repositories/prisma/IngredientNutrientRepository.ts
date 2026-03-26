@@ -1,10 +1,66 @@
 import { PrismaClient } from "@prisma/client";
 import { IIngredientNutrientRepository } from "@/backend/domain/interfaces/IIngredientNutrientRepository";
 import { IngredientNutrient } from "@/backend/domain/entities/IngredientNutrient";
+import { Nutrient } from "@/backend/domain/entities/Nutrient";
 import { IngredientNutrientWithRelations } from "@/backend/domain/entities/IngredientNutrient";
+import { NutrientCode } from "@/backend/domain/types/NutrientCode";
+
+function mapNutrientCode(name: string): NutrientCode {
+  switch (name) {
+    case "protein":
+      return NutrientCode.Protein;
+    case "fat":
+      return NutrientCode.Fat;
+    case "carbohydrate":
+      return NutrientCode.Carbohydrate;
+    default:
+      throw new Error(`Unknown nutrient name: ${name}`);
+  }
+}
 
 export class IngredientNutrientRepository implements IIngredientNutrientRepository {
   constructor(private prismaClient: PrismaClient) {}
+
+  async findByIngredientId(
+    ingredientId: string,
+  ): Promise<IngredientNutrient[]> {
+    const results = await this.prismaClient.ingredientNutrient.findMany({
+      where: {
+        ingredientId: BigInt(ingredientId),
+      },
+      include: {
+        ingredient: true,
+        nutrient: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    return results.map((r) => ({
+      id: BigInt(r.id),
+      ingredientId: BigInt(r.ingredientId),
+      nutrientId: BigInt(r.nutrientId),
+      contentQuantity: r.contentQuantity,
+      contentUnit: r.contentUnit,
+      contentUnitPer: r.contentUnitPer,
+      contentUnitPerUnit: r.contentUnitPerUnit,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      ingredient: {
+        id: r.ingredient.id.toString(),
+        name: r.ingredient.name,
+        remarks: r.ingredient.remarks,
+        originalName: r.ingredient.originalName,
+        createdAt: r.ingredient.createdAt,
+        updatedAt: r.ingredient.updatedAt,
+      },
+      nutrient:
+        r.contentQuantity === null
+          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.name))
+          : Nutrient.of(mapNutrientCode(r.nutrient.name), r.contentQuantity),
+    }));
+  }
 
   async findById(id: bigint): Promise<IngredientNutrient | null> {
     const ingredientNutrient =
@@ -103,5 +159,45 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
     }
 
     return result;
+  }
+
+  async findByIngredientIds(
+    ingredientIds: bigint[],
+  ): Promise<IngredientNutrient[]> {
+    const records = await this.prismaClient.ingredientNutrient.findMany({
+      where: {
+        ingredientId: {
+          in: ingredientIds.map((id) => Number(id)),
+        },
+      },
+      include: {
+        ingredient: true,
+        nutrient: true,
+      },
+    });
+
+    return records.map((r) => ({
+      id: BigInt(r.id),
+      ingredientId: BigInt(r.ingredientId),
+      nutrientId: BigInt(r.nutrientId),
+      contentQuantity: r.contentQuantity,
+      contentUnit: r.contentUnit,
+      contentUnitPer: r.contentUnitPer,
+      contentUnitPerUnit: r.contentUnitPerUnit,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      ingredient: {
+        id: r.ingredient.id.toString(),
+        name: r.ingredient.name,
+        remarks: r.ingredient.remarks,
+        originalName: r.ingredient.originalName,
+        createdAt: r.ingredient.createdAt,
+        updatedAt: r.ingredient.updatedAt,
+      },
+      nutrient:
+        r.contentQuantity === null
+          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.name))
+          : Nutrient.of(mapNutrientCode(r.nutrient.name), r.contentQuantity),
+    }));
   }
 }
