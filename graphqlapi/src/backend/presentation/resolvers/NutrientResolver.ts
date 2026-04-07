@@ -157,4 +157,24 @@ export class NutrientResolver {
       );
     }
   }
+
+  @Query(() => String) // 最初は簡易でOK（あとでDTO化）
+  async dailyNutrition(
+    @Arg("date") date: string,
+    @Ctx() ctx: GraphQLContext,
+  ): Promise<string> {
+    try {
+      if (!ctx.calculateDailyNutritionUseCase) {
+        throw new Error("UseCase is not available in context");
+      }
+      console.log(date);
+
+      const result = ctx.calculateDailyNutritionUseCase.execute();
+
+      return JSON.stringify(result); // 一旦これで動かす
+    } catch (error) {
+      console.error(`Error in dailyNutrition query: ${error}`);
+      throw new Error("Failed to calculate daily nutrition");
+    }
+  }
 }

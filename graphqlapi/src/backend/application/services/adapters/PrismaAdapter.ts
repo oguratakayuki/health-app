@@ -12,6 +12,12 @@ import { PrismaIngredientRepository } from "@/backend/infrastructure/repositorie
 import { IngredientNutrientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientNutrientRepository";
 import { UserRepository } from "@/backend/infrastructure/repositories/prisma/UserRepository";
 import { PrismaClient } from "@prisma/client";
+import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
+import { DailyNutritionQueryService } from "@/backend/application/services/DailyNutritionQueryService";
+import { DailyNutrientAggregatorService } from "@/backend/application/services/calculators/DailyNutrientAggregatorService";
+import { PfcCalculatorService } from "@/backend/application/services/calculators/PfcCalculatorService";
+
+import { MealRepository } from "@/backend/infrastructure/repositories/prisma/MealRepository";
 
 /**
  * Prisma用のサービスアダプター
@@ -70,6 +76,30 @@ export function createNutrientsIntakeStandardService(): NutrientsIntakeStandardS
   const prisma = getPrismaClient();
   const repository = new NutrientsIntakeStandardRepository(prisma);
   return new NutrientsIntakeStandardService(repository);
+}
+
+export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionUseCase {
+  const prisma = getPrismaClient();
+
+  // Repository
+  const mealRepository = new MealRepository(prisma);
+  const ingredientNutrientRepository = new IngredientNutrientRepository(prisma);
+
+  // QueryService
+  const queryService = new DailyNutritionQueryService(
+    mealRepository,
+    ingredientNutrientRepository,
+  );
+
+  // Calculator
+  const aggregator = new DailyNutrientAggregatorService();
+  const pfcCalculator = new PfcCalculatorService();
+
+  return new CalculateDailyNutritionUseCase(
+    queryService,
+    aggregator,
+    pfcCalculator,
+  );
 }
 
 export function createPrismaIngredientService(): IngredientService {

@@ -15,6 +15,7 @@ import {
   createUserService,
   createIngredientNutrientService,
   createNutrientsIntakeStandardService,
+  createCalculateDailyNutritionUseCase,
 } from "./PrismaAdapter";
 
 /**
@@ -47,6 +48,15 @@ export class ServiceFactory {
       return context.nutrientsIntakeStandardService;
     }
     return createNutrientsIntakeStandardService();
+  }
+
+  static createCalculateDailyNutritionUseCase(
+    context?: any,
+  ): calculateDailyNutritionUseCase {
+    if (context?.calculateDailyNutritionUseCase) {
+      return context.calculateDailyNutritionUseCase;
+    }
+    return createCalculateDailyNutritionUseCase();
   }
 
   static createIngredientService(context?: any): IngredientService {
@@ -96,6 +106,9 @@ export class ServiceFactory {
       nutrientsIntakeStandardService:
         context?.nutrientsIntakeStandard ||
         this.createNutrientsIntakeStandardService(context),
+      calculateDailyNutritionUseCase:
+        context?.calculateDailyNutritionUseCase ||
+        this.createCalculateDailyNutritionUseCase(context),
     };
   }
 

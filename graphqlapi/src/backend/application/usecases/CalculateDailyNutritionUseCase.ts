@@ -2,20 +2,30 @@ import { DailyNutrientAggregatorService } from "../services/calculators/DailyNut
 import { PfcCalculatorService } from "../services/calculators/PfcCalculatorService";
 
 import { IDailyNutrientAggregationItem } from "../../domain/interfaces/calculators/IDailyNutrientAggregationItem";
-import { NutrientCode } from "../../domain/types/NutrientCode";
-import { DailyNutrientTotal } from "../../domain/entities/DailyNutrientTotal";
-import { PfcBalance } from "../../domain/entities/PfcBalance";
 
-export interface CalculateDailyNutritionResult {
+import { DailyNutrientTotal } from "@/backend/domain/entities/DailyNutrientTotal";
+import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
+import { NutrientCode } from "@/backend/domain/types/NutrientCode";
+import { ICalculateDailyNutritionUseCase } from "@/backend/domain/interfaces/usecases/ICalculateDailyNutritionUseCase";
+import { IDailyNutrientAggregator } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregator";
+import { IPfcCalculator } from "@/backend/domain/interfaces/calculators/IPfcCalculator";
+import { DailyNutritionQueryService } from "@/backend/application/services/DailyNutritionQueryService";
+
+export type CalculateDailyNutritionResult = {
   totals: Map<NutrientCode, DailyNutrientTotal>;
   pfc: PfcBalance;
-}
+};
 
-export class CalculateDailyNutritionUseCase {
-  private aggregator = new DailyNutrientAggregatorService();
-  private pfcCalculator = new PfcCalculatorService();
-
-  execute(): CalculateDailyNutritionResult {
+export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionUseCase {
+  constructor(
+    private readonly queryService: DailyNutritionQueryService,
+    private readonly aggregator: IDailyNutrientAggregator,
+    private readonly pfcCalculator: IPfcCalculator,
+  ) {}
+  async execute(
+    userId: string,
+    date: Date
+  ): Promise<CalculateDailyNutritionResult> {
     const items: IDailyNutrientAggregationItem[] = [
       {
         nutrientCode: NutrientCode.Protein,
