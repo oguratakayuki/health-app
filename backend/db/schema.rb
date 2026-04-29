@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_01_21_135405) do
+ActiveRecord::Schema.define(version: 2026_04_12_101945) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -94,6 +94,8 @@ ActiveRecord::Schema.define(version: 2026_01_21_135405) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "parent_id"
+    t.string "code", null: false
+    t.index ["code"], name: "index_nutrients_on_code", unique: true
     t.index ["name"], name: "index_nutrients_on_name", unique: true
     t.index ["parent_id"], name: "fk_rails_687edf74d9"
   end

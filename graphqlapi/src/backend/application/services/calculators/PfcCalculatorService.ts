@@ -7,6 +7,7 @@ import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
 export class PfcCalculatorService implements IPfcCalculator {
   calculate(totals: Map<NutrientCode, DailyNutrientTotal>): PfcBalance {
+    // TODO 単位がg前提だが、ingredient_nutrientsのcontent_unit次第である
     const protein = totals.get(NutrientCode.Protein)?.value ?? null;
     const fat = totals.get(NutrientCode.Fat)?.value ?? null;
     const carbohydrate = totals.get(NutrientCode.Carbohydrate)?.value ?? null;

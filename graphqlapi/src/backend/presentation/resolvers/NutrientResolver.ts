@@ -167,11 +167,16 @@ export class NutrientResolver {
       if (!ctx.calculateDailyNutritionUseCase) {
         throw new Error("UseCase is not available in context");
       }
-      console.log(date);
 
-      const result = ctx.calculateDailyNutritionUseCase.execute();
+      const result = await ctx.calculateDailyNutritionUseCase.execute(
+        "1",
+        new Date(date),
+      );
 
-      return JSON.stringify(result); // 一旦これで動かす
+      return JSON.stringify({
+        totals: Object.fromEntries(result.totals),
+        pfc: result.pfc,
+      });
     } catch (error) {
       console.error(`Error in dailyNutrition query: ${error}`);
       throw new Error("Failed to calculate daily nutrition");

@@ -5,16 +5,46 @@ import { Nutrient } from "@/backend/domain/entities/Nutrient";
 import { IngredientNutrientWithRelations } from "@/backend/domain/entities/IngredientNutrient";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
-function mapNutrientCode(name: string): NutrientCode {
-  switch (name) {
-    case "protein":
+function mapNutrientCode(code: string): NutrientCode {
+  switch (code) {
+    case "energy_kcal":
+      return NutrientCode.Energy;
+
+    case "protein_g":
       return NutrientCode.Protein;
-    case "fat":
+
+    case "fat_g":
       return NutrientCode.Fat;
-    case "carbohydrate":
+
+    case "carbohydrate_g":
       return NutrientCode.Carbohydrate;
+
+    case "fiber_g":
+      return NutrientCode.Fiber;
+
+    case "vitamin_a_ug":
+      return NutrientCode.VitaminA;
+
+    case "vitamin_c_mg":
+      return NutrientCode.VitaminC;
+
+    case "vitamin_d_ug":
+      return NutrientCode.VitaminD;
+
+    case "calcium_mg":
+      return NutrientCode.Calcium;
+
+    case "iron_mg":
+      return NutrientCode.Iron;
+
+    case "zinc_mg":
+      return NutrientCode.Zinc;
+
+    case "potassium_mg":
+      return NutrientCode.Potassium;
+
     default:
-      throw new Error(`Unknown nutrient name: ${name}`);
+      throw new Error(`Unknown nutrient code: ${code}`);
   }
 }
 
@@ -57,8 +87,8 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
       nutrient:
         r.contentQuantity === null
-          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.name))
-          : Nutrient.of(mapNutrientCode(r.nutrient.name), r.contentQuantity),
+          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.code))
+          : Nutrient.of(mapNutrientCode(r.nutrient.code), r.contentQuantity),
     }));
   }
 

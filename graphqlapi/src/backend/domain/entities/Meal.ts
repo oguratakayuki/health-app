@@ -23,3 +23,11 @@ export interface UpdateMealInput {
   category?: string;
   dishIds?: number[];
 }
+
+export interface MealWithDishes extends Meal {
+  mealDishes: MealDishWithDish[];
+}
+
+export interface MealDishWithDish {
+  dish: DishWithIngredients;
+}

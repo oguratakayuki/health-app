@@ -24,37 +24,17 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
   ) {}
   async execute(
     userId: string,
-    date: Date
+    date: Date,
   ): Promise<CalculateDailyNutritionResult> {
-    const items: IDailyNutrientAggregationItem[] = [
-      {
-        nutrientCode: NutrientCode.Protein,
-        ingredientAmountGram: 100,
-        nutrientPer100g: 20,
-      },
-
-      {
-        nutrientCode: NutrientCode.Protein,
-        ingredientAmountGram: 50,
-        nutrientPer100g: 10,
-      },
-
-      {
-        nutrientCode: NutrientCode.Fat,
-        ingredientAmountGram: 100,
-        nutrientPer100g: 10,
-      },
-
-      {
-        nutrientCode: NutrientCode.Carbohydrate,
-        ingredientAmountGram: 200,
-        nutrientPer100g: 30,
-      },
-    ];
-
+    // 1日の栄養素ごとの摂取量
+    const items: IDailyNutrientAggregationItem[] =
+      await this.queryService.fetchAggregationItems("1", new Date(2026, 0, 17));
+    console.log(items);
     const totals = this.aggregator.aggregate(items);
+    console.log(totals);
 
     const pfc = this.pfcCalculator.calculate(totals);
+    console.log(pfc);
 
     return {
       totals,

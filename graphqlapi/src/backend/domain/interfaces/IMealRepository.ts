@@ -1,6 +1,6 @@
 // src/backend/domain/interfaces/IMealRepository.ts
 import { DailyNutrientSummary } from "@/backend/domain/entities/NutrientSummary";
-import { Meal } from "@/backend/domain/entities/Meal";
+import { MealWithDishes } from "@/backend/domain/entities/Meal";
 export interface IMealRepository {
   // 既存のメソッド（例）
   // findById(id: number): Promise<Meal | null>;
@@ -18,5 +18,5 @@ export interface IMealRepository {
   //   startDate: Date,
   //   endDate: Date
   // ): Promise<MealWithDetails[]>;
-  findByUserAndDate(userId: string, date: Date): Promise<Meal[]>;
+  findByUserAndDate(userId: string, date: Date): Promise<MealWithDishes[]>;
 }

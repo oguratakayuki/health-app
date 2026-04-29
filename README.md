@@ -10,6 +10,7 @@ docker compose up db -d
 docker compose run web rails csv_import:nutrients['./common_data/nutrients.csv']
 docker compose run web rails csv_import:nutrients_intake_standards['./common_data/nutrients_intake_standards.csv']
 docker compose run web bundle exec rails csv_import:ingredients_nutrients
+docker compose run web bundle exec rails db:migrate
 ```
 
 # DEVELOPMENT MEMO

@@ -1,0 +1,29 @@
+dist
+build
+.git
+
+# Next.js ビルド成果物とキャッシュ
+.next/
+out/
+
+# パッケージマネージャーのキャッシュ
+node_modules/
+.npm/
+.yarn/
+.pnp*
+
+# 環境変数（セキュリティのため絶対除外！）
+.env*
+!.env.example
+
+# ログファイル
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS固有のファイル
+.DS_Store
+Thumbs.db
+
+# テストのレポートやカバレッジ
+coverage/

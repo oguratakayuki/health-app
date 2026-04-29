@@ -16,10 +16,11 @@ model User {
   isAdmin    Boolean  @default(false) @map("is_admin")
   gender     Int?
   age        Int?
-  createdAt DateTime @map("created_at")
-  updatedAt DateTime @map("updated_at")
+  createdAt  DateTime @map("created_at")
+  updatedAt  DateTime @map("updated_at")
 
   meals Meal[]
+
   @@map("users")
 }
 
@@ -36,10 +37,10 @@ model Meal {
   user   User   @relation(fields: [userId], references: [id])
 
   mealDishes MealDish[]
+
   @@unique([userId, mealDate, category], map: "index_meals_on_user_id_meal_date_category_unique")
   @@map("meals")
 }
-
 
 model MealDish {
   id        BigInt   @id @default(autoincrement())
@@ -58,12 +59,13 @@ model MealDish {
 
 model Dish {
   id        BigInt   @id @default(autoincrement())
-  name      String @unique
+  name      String   @unique
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
 
   dishIngredients DishIngredient[]
   mealDishes      MealDish[]
+
   @@map("dishes")
 }
 
@@ -79,6 +81,7 @@ model DishIngredient {
 
   dish       Dish       @relation(fields: [dishId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
   // 複合ユニーク制約を追加
   @@unique([dishId, ingredientId], map: "index_dish_ingredients_on_dish_id_and_ingredient_id_unique")
   @@index([dishId], map: "index_dish_ingredients_on_dish_id")
@@ -94,25 +97,28 @@ model Ingredient {
   createdAt    DateTime @map("created_at")
   updatedAt    DateTime @map("updated_at")
 
-  dishIngredients      DishIngredient[]
-  ingredientNutrients  IngredientNutrient[]
-  ingredientTags       IngredientTag[]
+  dishIngredients     DishIngredient[]
+  ingredientNutrients IngredientNutrient[]
+  ingredientTags      IngredientTag[]
+
   @@map("ingredients")
 }
 
 model Nutrient {
   id        BigInt   @id @default(autoincrement())
   name      String   @unique
+  code      String   @unique
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
 
-  parentId BigInt? @map("parent_id")
+  parentId BigInt?    @map("parent_id")
   parent   Nutrient?  @relation("NutrientTree", fields: [parentId], references: [id])
   children Nutrient[] @relation("NutrientTree")
 
   ingredientNutrients      IngredientNutrient[]
   nutrientsIntakeStandards NutrientsIntakeStandard[]
   radarChartItems          RadarChartItem[]
+
   @@map("nutrients")
 }
 
@@ -145,8 +151,9 @@ model NutrientsIntakeStandard {
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
 
-  nutrientId BigInt? @map("nutrient_id")
+  nutrientId BigInt?   @map("nutrient_id")
   nutrient   Nutrient? @relation(fields: [nutrientId], references: [id])
+
   @@map("nutrients_intake_standards")
 }
 
@@ -159,20 +166,22 @@ model RadarChart {
   updatedAt    DateTime @map("updated_at")
 
   items RadarChartItem[]
+
   @@map("radar_charts")
 }
 
 model RadarChartItem {
-  id           BigInt   @id @default(autoincrement())
-  position     Int?
-  createdAt    DateTime @map("created_at")
-  updatedAt    DateTime @map("updated_at")
+  id        BigInt   @id @default(autoincrement())
+  position  Int?
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
 
   radarChartId BigInt @map("radar_chart_id")
   nutrientId   BigInt @map("nutrient_id")
 
   radarChart RadarChart @relation(fields: [radarChartId], references: [id])
   nutrient   Nutrient   @relation(fields: [nutrientId], references: [id])
+
   @@map("radar_chart_items")
 }
 
@@ -184,6 +193,7 @@ model Tag {
 
   ingredientTags IngredientTag[]
   tagCategories  TagCategory[]
+
   @@map("tags")
 }
 
@@ -197,6 +207,7 @@ model IngredientTag {
 
   ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
   tag        Tag?        @relation(fields: [tagId], references: [id])
+
   @@map("ingredient_tags")
 }
 
@@ -208,6 +219,7 @@ model Category {
   updatedAt   DateTime @map("updated_at")
 
   tagCategories TagCategory[]
+
   @@map("categories")
 }
 
@@ -221,5 +233,6 @@ model TagCategory {
 
   tag      Tag?      @relation(fields: [tagId], references: [id])
   category Category? @relation(fields: [categoryId], references: [id])
+
   @@map("tag_categories")
 }

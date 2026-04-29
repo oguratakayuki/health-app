@@ -9,24 +9,29 @@ UNIT_PCT  = "energy_percent" # "％エネルギー"
 
 # --- 2. 栄養素マスタの作成 ---
 # --- 2. 栄養素マスタの作成 ---
+
+
 nutrients_list = {
-  "エネルギー"   => UNIT_KCAL,
-  "たんぱく質"   => UNIT_G,
-  "脂質"         => UNIT_PCT,
-  "炭水化物"     => UNIT_PCT,
-  "食物繊維"     => UNIT_G,
-  "ビタミンA"    => UNIT_UG,
-  "ビタミンC"    => UNIT_MG,
-  "ビタミンD"    => UNIT_UG,
-  "カルシウム"   => UNIT_MG,
-  "鉄"           => UNIT_MG,
-  "亜鉛"         => UNIT_MG,
-  "カリウム"     => UNIT_MG
+  "エネルギー" => { code: "energy_kcal", unit: UNIT_KCAL },
+  "たんぱく質" => { code: "protein_g", unit: UNIT_G },
+  "脂質"       => { code: "fat_g", unit: UNIT_PCT },
+  "炭水化物"   => { code: "carbohydrate_g", unit: UNIT_PCT },
+  "食物繊維"   => { code: "fiber_g", unit: UNIT_G },
+  "ビタミンA"  => { code: "vitamin_a_ug", unit: UNIT_UG },
+  "ビタミンC"  => { code: "vitamin_c_mg", unit: UNIT_MG },
+  "ビタミンD"  => { code: "vitamin_d_ug", unit: UNIT_UG },
+  "カルシウム" => { code: "calcium_mg", unit: UNIT_MG },
+  "鉄"         => { code: "iron_mg", unit: UNIT_MG },
+  "亜鉛"       => { code: "zinc_mg", unit: UNIT_MG },
+  "カリウム"   => { code: "potassium_mg", unit: UNIT_MG }
 }
 
+nutrients = {}
 
-nutrients_list.each do |name, unit|
-  Nutrient.find_or_create_by!(name: name)
+nutrients_list.each do |name, data|
+  nutrients[name] = Nutrient.find_or_create_by!(code: data[:code]) do |n|
+    n.name = name
+  end
 end
 
 # --- 3. レーダーチャート定義の作成 ---
@@ -43,7 +48,7 @@ charts.each_with_index do |c, idx|
     rc.display_order = idx
   end
   c[:items].each_with_index do |n_name, pos|
-    nutrient = Nutrient.find_by(name: n_name)
+    nutrient = nutrients[n_name]
     RadarChartItem.find_or_create_by!(radar_chart: chart, nutrient: nutrient) do |item|
       item.position = pos
     end
@@ -62,9 +67,9 @@ intake_standards = [
 
 intake_standards.each do |gender, a_from, a_to, values|
   values.each do |n_name, val|
-    nutrient = Nutrient.find_by(name: n_name)
+    nutrient = nutrients[n_name]
     NutrientsIntakeStandard.find_or_create_by!(
-      nutrient: nutrient, gender: gender, age_from: a_from, age_to: a_to, content: val, unit: nutrients_list[n_name]
+      nutrient: nutrient, gender: gender, age_from: a_from, age_to: a_to, content: val, unit: nutrients_list[n_name][:unit]
     )
   end
 end
@@ -105,7 +110,7 @@ nutrient_values = {
 nutrient_values.each do |ing_name, nuts|
   ing = ingredients[ing_name]
   nuts.each do |n_name, val|
-    nutrient = Nutrient.find_by(name: n_name)
+    nutrient = nutrients[n_name]
     next unless nutrient
 
     # 単位の自動判別ロジック
@@ -155,10 +160,10 @@ dish_recipe.each do |item|
 end
 
 # --- 4. 食事履歴の作成 ---
-meal_1 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 17), category: :dinner)
+meal_1 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 17), category: :dinner, start_time: "19:00", end_time: "19:30")
 MealDish.find_or_create_by!(meal: meal_1, dish: curry)
 
-meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch)
+meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch, start_time: "11:30", end_time: "12:30")
 MealDish.find_or_create_by!(meal: meal_2, dish: yakisoba)
 
 puts "Seeds created successfully with fixed units and ingredients."

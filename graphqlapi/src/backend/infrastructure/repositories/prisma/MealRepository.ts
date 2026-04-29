@@ -76,7 +76,15 @@ export class MealRepository implements IMealRepository {
         },
       },
       include: {
-        mealDishes: true,
+        mealDishes: {
+          include: {
+            dish: {
+              include: {
+                dishIngredients: true,
+              },
+            },
+          },
+        },
       },
     });
     return meals.map((m) => ({
@@ -94,6 +102,21 @@ export class MealRepository implements IMealRepository {
         dishId: Number(md.dishId),
         createdAt: md.createdAt,
         updatedAt: md.updatedAt,
+        dish: {
+          id: Number(md.dish.id),
+          name: md.dish.name,
+          createdAt: md.dish.createdAt,
+          updatedAt: md.dish.updatedAt,
+          dishIngredients: md.dish.dishIngredients.map((di) => ({
+            id: Number(di.id),
+            dishId: Number(di.dishId),
+            ingredientId: Number(di.ingredientId),
+            contentQuantity: di.contentQuantity,
+            contentUnit: di.contentUnit,
+            createdAt: di.createdAt,
+            updatedAt: di.updatedAt,
+          })),
+        },
       })),
     }));
   }
