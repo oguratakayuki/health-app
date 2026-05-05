@@ -69,6 +69,23 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
     }
   }
 
+  async findByGenderAndAge(
+    gender: number,
+    age: number,
+  ): Promise<NutrientsIntakeStandard[]> {
+    const records = await this.prismaClient.nutrientsIntakeStandard.findMany({
+      where: {
+        gender,
+        ageFrom: { lte: age },
+        ageTo: { gte: age },
+      },
+      include: {
+        nutrient: true,
+      },
+    });
+    return records.map((record) => this.mapToEntityWithRelations(record));
+  }
+
   /**
    * 栄養素情報を含めて全ての摂取基準を取得
    */

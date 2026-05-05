@@ -27,3 +27,8 @@ Thumbs.db
 
 # テストのレポートやカバレッジ
 coverage/
+
+# データベース (Prisma)
+# migrationsの中身は巨大なので、schema.prismaだけ見れば十分なことが多いです
+prisma/migrations/
+*.db

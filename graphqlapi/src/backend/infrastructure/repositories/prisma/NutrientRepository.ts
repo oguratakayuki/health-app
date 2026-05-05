@@ -48,7 +48,8 @@ export class PrismaNutrientRepository implements INutrientRepository {
       const nutrient = await this.prismaClient.nutrient.create({
         data: {
           name: input.name,
-          parentId: input.parentId ? BigInt(input.parentId) : null,
+          code: input.code,
+          // parentId: input.parentId ? BigInt(input.parentId) : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

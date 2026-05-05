@@ -1,9 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { IIngredientNutrientRepository } from "@/backend/domain/interfaces/IIngredientNutrientRepository";
-import { IngredientNutrient } from "@/backend/domain/entities/IngredientNutrient";
+import {
+  IngredientNutrient,
+  IngredientNutrientWithRelations,
+  CreateIngredientNutrientInput,
+} from "@/backend/domain/entities/IngredientNutrient";
 import { Nutrient } from "@/backend/domain/entities/Nutrient";
-import { IngredientNutrientWithRelations } from "@/backend/domain/entities/IngredientNutrient";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
+import { RepositoryError } from "@/backend/domain/entities/Common";
 
 function mapNutrientCode(code: string): NutrientCode {
   switch (code) {
@@ -67,6 +71,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
     });
 
+    console.log(results);
     return results.map((r) => ({
       id: BigInt(r.id),
       ingredientId: BigInt(r.ingredientId),
@@ -85,10 +90,13 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
         createdAt: r.ingredient.createdAt,
         updatedAt: r.ingredient.updatedAt,
       },
-      nutrient:
-        r.contentQuantity === null
-          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.code))
-          : Nutrient.of(mapNutrientCode(r.nutrient.code), r.contentQuantity),
+      nutrient: {
+        id: r.ingredient.id.toString(),
+        name: r.nutrient.name,
+        code: r.nutrient.code,
+        createdAt: r.nutrient.createdAt,
+        updatedAt: r.nutrient.updatedAt,
+      },
     }));
   }
 
@@ -129,8 +137,30 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
     }
   }
 
-  async create(data: Partial<IngredientNutrient>): Promise<IngredientNutrient> {
-    throw new Error("Method not implemented.");
+  async create(input: CreateIngredientNutrientInput): Promise<IngredientNutrient> {
+    try {
+      const ingredientNutrient = await this.prismaClient.ingredientNutrient.create({
+        data: {
+          ingredientId: input.ingredientId,
+          nutrientId: input.nutrientId,
+          contentQuantity: input.contentQuantity,
+          contentUnit: input.contentUnit,
+          contentUnitPer: input.contentUnitPer,
+          contentUnitPerUnit: input.contentUnitPerUnit,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        include: {
+          ingredient: true,
+          nutrient: true,
+        },
+      });
+
+      return this.mapToDomain(ingredientNutrient);
+    } catch (error) {
+      console.error("IngredientNutrientRepository.create error:", error);
+      throw this.handleError(error);
+    }
   }
 
   async update(
@@ -173,11 +203,13 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       );
     }
 
+    console.log(`code is ${prismaItem.nutrient.code}`);
     // nutrientが存在する場合のみ追加（null安全）
     if (prismaItem.nutrient && prismaItem.nutrient.id) {
       result.nutrient = {
         id: prismaItem.nutrient.id.toString(),
         name: prismaItem.nutrient.name,
+        code: prismaItem.nutrient.code,
         parentId: prismaItem.nutrient.parentId,
         createdAt: prismaItem.nutrient.createdAt,
         updatedAt: prismaItem.nutrient.updatedAt,
@@ -224,10 +256,35 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
         createdAt: r.ingredient.createdAt,
         updatedAt: r.ingredient.updatedAt,
       },
-      nutrient:
-        r.contentQuantity === null
-          ? Nutrient.uncalculated(mapNutrientCode(r.nutrient.name))
-          : Nutrient.of(mapNutrientCode(r.nutrient.name), r.contentQuantity),
+      nutrient: {
+        id: r.ingredient.id.toString(),
+        name: r.nutrient.name,
+        code: r.nutrient.code,
+        createdAt: r.nutrient.createdAt,
+        updatedAt: r.nutrient.updatedAt,
+      },
     }));
+  }
+
+  private handleError(error: any): RepositoryError {
+    const prismaError = error as { code?: string; message: string };
+    if (prismaError.code === "P2025") {
+      return {
+        code: "NOT_FOUND",
+        message: "Record not found",
+      };
+    }
+    if (prismaError.code === "P2002") {
+      return {
+        code: "DUPLICATE",
+        message: "Duplicate record found",
+      };
+    }
+
+    return {
+      code: "UNKNOWN_ERROR",
+      message: prismaError.message || "Unknown database error",
+      details: error,
+    };
   }
 }
