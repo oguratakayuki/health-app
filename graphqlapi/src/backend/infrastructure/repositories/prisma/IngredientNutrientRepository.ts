@@ -5,59 +5,15 @@ import {
   IngredientNutrientWithRelations,
   CreateIngredientNutrientInput,
 } from "@/backend/domain/entities/IngredientNutrient";
-import { Nutrient } from "@/backend/domain/entities/Nutrient";
-import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 import { RepositoryError } from "@/backend/domain/entities/Common";
-
-function mapNutrientCode(code: string): NutrientCode {
-  switch (code) {
-    case "energy_kcal":
-      return NutrientCode.Energy;
-
-    case "protein_g":
-      return NutrientCode.Protein;
-
-    case "fat_g":
-      return NutrientCode.Fat;
-
-    case "carbohydrate_g":
-      return NutrientCode.Carbohydrate;
-
-    case "fiber_g":
-      return NutrientCode.Fiber;
-
-    case "vitamin_a_ug":
-      return NutrientCode.VitaminA;
-
-    case "vitamin_c_mg":
-      return NutrientCode.VitaminC;
-
-    case "vitamin_d_ug":
-      return NutrientCode.VitaminD;
-
-    case "calcium_mg":
-      return NutrientCode.Calcium;
-
-    case "iron_mg":
-      return NutrientCode.Iron;
-
-    case "zinc_mg":
-      return NutrientCode.Zinc;
-
-    case "potassium_mg":
-      return NutrientCode.Potassium;
-
-    default:
-      throw new Error(`Unknown nutrient code: ${code}`);
-  }
-}
+import { NutrientsIntakeStandardMapper } from "@/backend/infrastructure/repositories/prisma/mappers/NutrientsIntakeStandardMapper";
 
 export class IngredientNutrientRepository implements IIngredientNutrientRepository {
   constructor(private prismaClient: PrismaClient) {}
 
   async findByIngredientId(
     ingredientId: string,
-  ): Promise<IngredientNutrient[]> {
+  ): Promise<IngredientNutrientWithRelations[]> {
     const results = await this.prismaClient.ingredientNutrient.findMany({
       where: {
         ingredientId: BigInt(ingredientId),
@@ -71,36 +27,10 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
     });
 
-    console.log(results);
-    return results.map((r) => ({
-      id: BigInt(r.id),
-      ingredientId: BigInt(r.ingredientId),
-      nutrientId: BigInt(r.nutrientId),
-      contentQuantity: r.contentQuantity,
-      contentUnit: r.contentUnit,
-      contentUnitPer: r.contentUnitPer,
-      contentUnitPerUnit: r.contentUnitPerUnit,
-      createdAt: r.createdAt,
-      updatedAt: r.updatedAt,
-      ingredient: {
-        id: r.ingredient.id.toString(),
-        name: r.ingredient.name,
-        remarks: r.ingredient.remarks,
-        originalName: r.ingredient.originalName,
-        createdAt: r.ingredient.createdAt,
-        updatedAt: r.ingredient.updatedAt,
-      },
-      nutrient: {
-        id: r.ingredient.id.toString(),
-        name: r.nutrient.name,
-        code: r.nutrient.code,
-        createdAt: r.nutrient.createdAt,
-        updatedAt: r.nutrient.updatedAt,
-      },
-    }));
+    return results.map((r) => NutrientsIntakeStandardMapper.mapToDomain(r));
   }
 
-  async findById(id: bigint): Promise<IngredientNutrient | null> {
+  async findById(id: bigint): Promise<IngredientNutrientWithRelations | null> {
     const ingredientNutrient =
       await this.prismaClient.ingredientNutrient.findUnique({
         where: { id },
@@ -114,7 +44,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       return null;
     }
 
-    return this.mapToDomain(ingredientNutrient);
+    return NutrientsIntakeStandardMapper.mapToDomain(ingredientNutrient);
   }
 
   async findAll(limit?: number): Promise<IngredientNutrientWithRelations[]> {
@@ -130,33 +60,38 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
         },
       });
 
-      return results.map((item) => this.mapToDomain(item));
+      return results.map((item) =>
+        NutrientsIntakeStandardMapper.mapToDomain(item),
+      );
     } catch (error) {
       console.error("Error in IngredientNutrientRepository.findAll:", error);
       throw error;
     }
   }
 
-  async create(input: CreateIngredientNutrientInput): Promise<IngredientNutrient> {
+  async create(
+    input: CreateIngredientNutrientInput,
+  ): Promise<IngredientNutrientWithRelations> {
     try {
-      const ingredientNutrient = await this.prismaClient.ingredientNutrient.create({
-        data: {
-          ingredientId: input.ingredientId,
-          nutrientId: input.nutrientId,
-          contentQuantity: input.contentQuantity,
-          contentUnit: input.contentUnit,
-          contentUnitPer: input.contentUnitPer,
-          contentUnitPerUnit: input.contentUnitPerUnit,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        include: {
-          ingredient: true,
-          nutrient: true,
-        },
-      });
+      const ingredientNutrient =
+        await this.prismaClient.ingredientNutrient.create({
+          data: {
+            ingredientId: input.ingredientId,
+            nutrientId: input.nutrientId,
+            contentQuantity: input.contentQuantity,
+            contentUnit: input.contentUnit,
+            contentUnitPer: input.contentUnitPer,
+            contentUnitPerUnit: input.contentUnitPerUnit,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          include: {
+            ingredient: true,
+            nutrient: true,
+          },
+        });
 
-      return this.mapToDomain(ingredientNutrient);
+      return NutrientsIntakeStandardMapper.mapToDomain(ingredientNutrient);
     } catch (error) {
       console.error("IngredientNutrientRepository.create error:", error);
       throw this.handleError(error);
@@ -173,59 +108,10 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
   async delete(id: bigint): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  // src/infrastructure/repositories/prisma/IngredientNutrientRepository.ts
-  private mapToDomain(prismaItem: any): IngredientNutrientWithRelations {
-    const result: IngredientNutrientWithRelations = {
-      id: prismaItem.id.toString(),
-      ingredientId: prismaItem.ingredientId,
-      nutrientId: prismaItem.nutrientId,
-      contentQuantity: prismaItem.contentQuantity,
-      contentUnit: prismaItem.contentUnit,
-      contentUnitPer: prismaItem.contentUnitPer?.toString(),
-      contentUnitPerUnit: prismaItem.contentUnitPerUnit,
-      createdAt: prismaItem.createdAt,
-      updatedAt: prismaItem.updatedAt,
-    };
-
-    // ingredientが存在する場合のみ追加（null安全）
-    if (prismaItem.ingredient && prismaItem.ingredient.id) {
-      result.ingredient = {
-        id: prismaItem.ingredient.id.toString(),
-        name: prismaItem.ingredient.name,
-        originalName: prismaItem.ingredient.originalName,
-        remarks: prismaItem.ingredient.remarks,
-        createdAt: prismaItem.ingredient.createdAt,
-        updatedAt: prismaItem.ingredient.updatedAt,
-      };
-    } else {
-      console.warn(
-        `IngredientNutrient ${prismaItem.id}: ingredient is null or missing id`,
-      );
-    }
-
-    console.log(`code is ${prismaItem.nutrient.code}`);
-    // nutrientが存在する場合のみ追加（null安全）
-    if (prismaItem.nutrient && prismaItem.nutrient.id) {
-      result.nutrient = {
-        id: prismaItem.nutrient.id.toString(),
-        name: prismaItem.nutrient.name,
-        code: prismaItem.nutrient.code,
-        parentId: prismaItem.nutrient.parentId,
-        createdAt: prismaItem.nutrient.createdAt,
-        updatedAt: prismaItem.nutrient.updatedAt,
-      };
-    } else {
-      console.warn(
-        `IngredientNutrient ${prismaItem.id}: nutrient is null or missing id`,
-      );
-    }
-
-    return result;
-  }
 
   async findByIngredientIds(
     ingredientIds: bigint[],
-  ): Promise<IngredientNutrient[]> {
+  ): Promise<IngredientNutrientWithRelations[]> {
     const records = await this.prismaClient.ingredientNutrient.findMany({
       where: {
         ingredientId: {
@@ -238,32 +124,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
     });
 
-    return records.map((r) => ({
-      id: BigInt(r.id),
-      ingredientId: BigInt(r.ingredientId),
-      nutrientId: BigInt(r.nutrientId),
-      contentQuantity: r.contentQuantity,
-      contentUnit: r.contentUnit,
-      contentUnitPer: r.contentUnitPer,
-      contentUnitPerUnit: r.contentUnitPerUnit,
-      createdAt: r.createdAt,
-      updatedAt: r.updatedAt,
-      ingredient: {
-        id: r.ingredient.id.toString(),
-        name: r.ingredient.name,
-        remarks: r.ingredient.remarks,
-        originalName: r.ingredient.originalName,
-        createdAt: r.ingredient.createdAt,
-        updatedAt: r.ingredient.updatedAt,
-      },
-      nutrient: {
-        id: r.ingredient.id.toString(),
-        name: r.nutrient.name,
-        code: r.nutrient.code,
-        createdAt: r.nutrient.createdAt,
-        updatedAt: r.nutrient.updatedAt,
-      },
-    }));
+    return records.map((r) => NutrientsIntakeStandardMapper.mapToDomain(r));
   }
 
   private handleError(error: any): RepositoryError {
