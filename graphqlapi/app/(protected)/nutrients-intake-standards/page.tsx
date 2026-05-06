@@ -279,9 +279,6 @@ export default function NutrientsIntakeStandardsPage() {
                               <span className="text-gray-900 font-medium">
                                 {standard.content || "0"}
                               </span>
-                              <span className="text-sm text-gray-500 ml-1">
-                                {standard.unit}
-                              </span>
                             </div>
                           </div>
                         </td>

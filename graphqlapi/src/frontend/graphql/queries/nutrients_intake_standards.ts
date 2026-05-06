@@ -6,7 +6,6 @@ export const NUTRIENTS_INTAKE_STANDARDS_WITH_FILTERS_QUERY = gql`
     nutrientsIntakeStandardsWithFilters(gender: $gender, age: $age) {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -25,7 +24,6 @@ export const NUTRIENTS_INTAKE_STANDARDS_QUERY = gql`
     nutrientsIntakeStandards {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -44,7 +42,6 @@ export const NUTRIENTS_INTAKE_STANDARD_BY_ID_QUERY = gql`
     nutrientsIntakeStandard(id: $id) {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -63,7 +60,6 @@ export const NUTRIENTS_INTAKE_STANDARDS_BY_NUTRIENT_QUERY = gql`
     nutrientsIntakeStandardsByNutrient(nutrientId: $nutrientId) {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -84,7 +80,6 @@ export const CREATE_NUTRIENTS_INTAKE_STANDARD_MUTATION = gql`
     createNutrientsIntakeStandard(input: $input) {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -106,7 +101,6 @@ export const UPDATE_NUTRIENTS_INTAKE_STANDARD_MUTATION = gql`
     updateNutrientsIntakeStandard(id: $id, input: $input) {
       id
       content
-      unit
       gender
       ageFrom
       ageTo
@@ -131,7 +125,6 @@ export const CREATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
   fragment CreateNutrientsIntakeStandardInputFields on CreateNutrientsIntakeStandardInput {
     nutrientId
     content
-    unit
     gender
     ageFrom
     ageTo
@@ -142,7 +135,6 @@ export const UPDATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
   fragment UpdateNutrientsIntakeStandardInputFields on UpdateNutrientsIntakeStandardInput {
     nutrientId
     content
-    unit
     gender
     ageFrom
     ageTo
