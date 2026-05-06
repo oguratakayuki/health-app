@@ -7,6 +7,7 @@ import {
 } from "@/backend/domain/entities/Nutrient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
+import { NutrientMapper } from "./mappers/NutrientMapper";
 
 export class PrismaNutrientRepository implements INutrientRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -23,7 +24,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
 
       if (!nutrient) return null;
 
-      return this.mapToNutrient(nutrient);
+      return NutrientMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.findById error:", error);
       throw this.handleError(error);
@@ -36,7 +37,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => this.mapToNutrient(nutrient));
+      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
     } catch (error) {
       console.error("PrismaNutrientRepository.findAll error:", error);
       throw this.handleError(error);
@@ -49,13 +50,13 @@ export class PrismaNutrientRepository implements INutrientRepository {
         data: {
           name: input.name,
           code: input.code,
-          // parentId: input.parentId ? BigInt(input.parentId) : null,
+          parentId: input.parentId ? BigInt(input.parentId) : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
       });
 
-      return this.mapToNutrient(nutrient);
+      return NutrientMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.create error:", error);
       throw this.handleError(error);
@@ -75,7 +76,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         },
       });
 
-      return this.mapToNutrient(nutrient);
+      return NutrientMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.update error:", error);
       throw this.handleError(error);
@@ -105,7 +106,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => this.mapToNutrient(nutrient));
+      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
     } catch (error) {
       console.error("PrismaNutrientRepository.findByName error:", error);
       throw this.handleError(error);
@@ -121,7 +122,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => this.mapToNutrient(nutrient));
+      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
     } catch (error) {
       console.error("PrismaNutrientRepository.findByParentId error:", error);
       throw this.handleError(error);
@@ -138,18 +139,6 @@ export class PrismaNutrientRepository implements INutrientRepository {
   }
 
   // ==================== プライベートメソッド ====================
-
-  private mapToNutrient(prismaNutrient: any): Nutrient {
-    return {
-      id: prismaNutrient.id.toString(),
-      name: prismaNutrient.name,
-      parentId: prismaNutrient.parentId
-        ? prismaNutrient.parentId.toString()
-        : null,
-      createdAt: prismaNutrient.createdAt,
-      updatedAt: prismaNutrient.updatedAt,
-    };
-  }
 
   private handleError(error: any): RepositoryError {
     const prismaError = error as { code?: string; message: string };

@@ -7,6 +7,7 @@ import {
   CreateNutrientInput,
   UpdateNutrientInput,
 } from "@/backend/domain/entities/Nutrient";
+import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
 describe("PrismaNutrientRepository", () => {
   describe("#create", () => {
@@ -17,6 +18,7 @@ describe("PrismaNutrientRepository", () => {
         const input: CreateNutrientInput = {
           name: `Test Nutrient ${Date.now()}`,
           parentId: null,
+          code: NutrientCode.Energy,
         };
 
         const created = await repo.create(input);
@@ -36,11 +38,13 @@ describe("PrismaNutrientRepository", () => {
         const parent = await repo.create({
           name: `Parent ${Date.now()}`,
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         const child = await repo.create({
           name: `Child ${Date.now()}`,
           parentId: parent.id,
+          code: NutrientCode.Protein,
         });
 
         expect(child.parentId).toBe(parent.id);
@@ -56,6 +60,7 @@ describe("PrismaNutrientRepository", () => {
         const created = await repo.create({
           name: `Find ${Date.now()}`,
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         const found = await repo.findById(created.id);
@@ -80,8 +85,16 @@ describe("PrismaNutrientRepository", () => {
       await runInTransaction(async (tx) => {
         const repo = new PrismaNutrientRepository(tx);
 
-        await repo.create({ name: "N1", parentId: null });
-        await repo.create({ name: "N2", parentId: null });
+        await repo.create({
+          name: "N1",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+        await repo.create({
+          name: "N2",
+          parentId: null,
+          code: NutrientCode.Fat,
+        });
 
         const all = await repo.findAll();
         expect(all.length).toBe(2);
@@ -99,6 +112,7 @@ describe("PrismaNutrientRepository", () => {
         const created = await repo.create({
           name: "Before Update",
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         const input: UpdateNutrientInput = {
@@ -124,6 +138,7 @@ describe("PrismaNutrientRepository", () => {
         const created = await repo.create({
           name: "To Delete",
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         const result = await repo.delete(created.id);
@@ -140,8 +155,16 @@ describe("PrismaNutrientRepository", () => {
       await runInTransaction(async (tx) => {
         const repo = new PrismaNutrientRepository(tx);
 
-        await repo.create({ name: "Vitamin A", parentId: null });
-        await repo.create({ name: "Vitamin C", parentId: null });
+        await repo.create({
+          name: "Vitamin A",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+        await repo.create({
+          name: "Vitamin C",
+          parentId: null,
+          code: NutrientCode.Fat,
+        });
 
         const results = await repo.findByName("Vitamin");
 
@@ -159,16 +182,19 @@ describe("PrismaNutrientRepository", () => {
         const parent = await repo.create({
           name: "Parent",
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         await repo.create({
           name: "Child 1",
           parentId: parent.id,
+          code: NutrientCode.Fat,
         });
 
         await repo.create({
           name: "Child 2",
           parentId: parent.id,
+          code: NutrientCode.Carbohydrate,
         });
 
         const results = await repo.findByParentId(parent.id);
@@ -182,8 +208,16 @@ describe("PrismaNutrientRepository", () => {
       await runInTransaction(async (tx) => {
         const repo = new PrismaNutrientRepository(tx);
 
-        await repo.create({ name: "Root1", parentId: null });
-        await repo.create({ name: "Root2", parentId: null });
+        await repo.create({
+          name: "Root1",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+        await repo.create({
+          name: "Root2",
+          parentId: null,
+          code: NutrientCode.Carbohydrate,
+        });
 
         const results = await repo.findByParentId(null);
 
@@ -198,8 +232,16 @@ describe("PrismaNutrientRepository", () => {
       await runInTransaction(async (tx) => {
         const repo = new PrismaNutrientRepository(tx);
 
-        await repo.create({ name: "N1", parentId: null });
-        await repo.create({ name: "N2", parentId: null });
+        await repo.create({
+          name: "N1",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+        await repo.create({
+          name: "N2",
+          parentId: null,
+          code: NutrientCode.Carbohydrate,
+        });
 
         const count = await repo.count();
         expect(count).toBe(2);

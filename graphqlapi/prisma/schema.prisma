@@ -12,7 +12,7 @@ model User {
   id         BigInt   @id @default(autoincrement())
   email      String   @unique
   name       String?
-  cognitoSub String?  @map("cognito_sub")
+  cognitoSub String   @unique @map("cognito_sub")
   isAdmin    Boolean  @default(false) @map("is_admin")
   gender     Int?
   age        Int?
