@@ -20,7 +20,7 @@ export interface NutrientsIntakeStandard {
   id: string;
   nutrientId: number | null;
   content: number | null;
-  unit: string;
+  unit: NutrientUnit | null;
   gender: Gender | null;
   ageFrom: number | null;
   ageTo: number | null;
@@ -45,7 +45,7 @@ export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeSta
 export interface CreateNutrientsIntakeStandardInput {
   nutrientId: number;
   content: number;
-  unit: string;
+  unit: NutrientUnit | null;
   gender: Gender | string;
   ageFrom?: number | null;
   ageTo?: number | null;
@@ -57,7 +57,7 @@ export interface CreateNutrientsIntakeStandardInput {
 export interface UpdateNutrientsIntakeStandardInput {
   nutrientId?: number;
   content?: number;
-  unit: string;
+  unit: NutrientUnit | null;
   gender?: Gender | string;
   ageFrom?: number | null;
   ageTo?: number | null;

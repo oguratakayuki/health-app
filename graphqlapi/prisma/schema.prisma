@@ -144,7 +144,7 @@ model IngredientNutrient {
 model NutrientsIntakeStandard {
   id        BigInt   @id @default(autoincrement())
   content   Int?
-  unit      String?  @map("content_unit")
+  unit      Int?
   gender    Int?
   ageFrom   Decimal? @map("age_from")
   ageTo     Decimal? @map("age_to")

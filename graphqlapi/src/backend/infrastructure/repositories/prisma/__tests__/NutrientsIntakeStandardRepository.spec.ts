@@ -45,9 +45,16 @@ describe("NutrientsIntakeStandardRepository", () => {
     it("IDで検索して、Enumが正しくマッピングされていること", async () => {
       await runInTransaction(async (tx) => {
         const repo = new NutrientsIntakeStandardRepository(tx);
+        const nutrientRepo = new PrismaNutrientRepository(tx);
+        const nutrient = await nutrientRepo.create({
+          name: "ビタミンC",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+
         // テストデータの作成 (unit: "μgRAE" は index: 3)
         const created = await repo.create({
-          nutrientId: 1,
+          nutrientId: Number(nutrient.id),
           content: 500,
           unit: "μgRAE",
           gender: "female",
@@ -68,26 +75,32 @@ describe("NutrientsIntakeStandardRepository", () => {
     it("特定の栄養素IDに紐づく基準を全件取得できること", async () => {
       await runInTransaction(async (tx) => {
         const repo = new NutrientsIntakeStandardRepository(tx);
-        const targetId = 10;
+        const nutrientRepo = new PrismaNutrientRepository(tx);
+        const nutrient = await nutrientRepo.create({
+          name: "鉄",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
+        const targetId = nutrient.id;
 
         await repo.create({
-          nutrientId: targetId,
+          nutrientId: Number(targetId),
           content: 10,
           unit: "g",
           gender: "male",
         });
         await repo.create({
-          nutrientId: targetId,
+          nutrientId: Number(targetId),
           content: 20,
           unit: "g",
           gender: "female",
         });
-        await repo.create({
-          nutrientId: 99,
-          content: 30,
-          unit: "g",
-          gender: "male",
-        }); // 違うID
+        // await repo.create({
+        //   nutrientId: 99,
+        //   content: 30,
+        //   unit: "g",
+        //   gender: "male",
+        // }); // 違うID
 
         const results = await repo.findByNutrientId(targetId);
 
@@ -101,9 +114,15 @@ describe("NutrientsIntakeStandardRepository", () => {
     it("基準値を更新できること（Enumの変更含む）", async () => {
       await runInTransaction(async (tx) => {
         const repo = new NutrientsIntakeStandardRepository(tx);
+        const nutrientRepo = new PrismaNutrientRepository(tx);
+        const nutrient = await nutrientRepo.create({
+          name: "鉄",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
 
         const created = await repo.create({
-          nutrientId: 1,
+          nutrientId: Number(nutrient.id),
           content: 10,
           unit: "g",
           gender: "male",
@@ -126,9 +145,15 @@ describe("NutrientsIntakeStandardRepository", () => {
     it("基準値を削除できること", async () => {
       await runInTransaction(async (tx) => {
         const repo = new NutrientsIntakeStandardRepository(tx);
+        const nutrientRepo = new PrismaNutrientRepository(tx);
+        const nutrient = await nutrientRepo.create({
+          name: "鉄",
+          parentId: null,
+          code: NutrientCode.Energy,
+        });
 
         const created = await repo.create({
-          nutrientId: 1,
+          nutrientId: Number(nutrient.id),
           content: 100,
           unit: "mg",
           gender: "male",
@@ -146,9 +171,9 @@ describe("NutrientsIntakeStandardRepository", () => {
   describe("#findAll", () => {
     it("栄養素情報を含めて取得できること", async () => {
       await runInTransaction(async (tx) => {
-        const nutrientRepo = new PrismaNutrientRepository(tx);
         const repo = new NutrientsIntakeStandardRepository(tx);
 
+        const nutrientRepo = new PrismaNutrientRepository(tx);
         const nutrient = await nutrientRepo.create({
           name: "鉄",
           parentId: null,

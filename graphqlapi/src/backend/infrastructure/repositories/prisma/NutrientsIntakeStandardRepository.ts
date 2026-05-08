@@ -7,6 +7,7 @@ import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
   GENDER_LABELS,
+  NUTRIENT_UNIT_LABELS,
   CreateNutrientsIntakeStandardInput,
   UpdateNutrientsIntakeStandardInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
@@ -224,7 +225,6 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         data.gender !== undefined
           ? GENDER_LABELS.indexOf(data.gender as any)
           : undefined;
-
       const record = await this.prismaClient.nutrientsIntakeStandard.update({
         where: { id: BigInt(id) },
         data: {
