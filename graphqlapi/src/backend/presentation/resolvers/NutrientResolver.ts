@@ -1,4 +1,4 @@
-// src/presentation/resolvers/prisma/NutrientResolver.ts
+// src/backend/presentation/resolvers/prisma/NutrientResolver.ts
 import {
   Query,
   Resolver,

@@ -7,6 +7,7 @@ import {
 } from "@/backend/domain/entities/Dish";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
+import { DishMapper } from "./mappers/DishMapper";
 
 export class PrismaDishRepository implements IDishRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -33,7 +34,7 @@ export class PrismaDishRepository implements IDishRepository {
 
       if (!dish) return null;
 
-      return this.mapToDishWithIngredients(dish);
+      return DishMapper.mapToDishWithIngredients(dish as any);
     } catch (error) {
       console.error("PrismaDishRepository.findById error:", error);
       throw this.handleError(error);
@@ -49,7 +50,7 @@ export class PrismaDishRepository implements IDishRepository {
         orderBy: { id: "asc" },
       });
 
-      return dishes.map((dish) => this.mapToDish(dish));
+      return dishes.map((dish) => DishMapper.mapToDish(dish));
     } catch (error) {
       console.error("PrismaDishRepository.findAll error:", error);
       throw this.handleError(error);
@@ -69,7 +70,7 @@ export class PrismaDishRepository implements IDishRepository {
         },
       });
 
-      return this.mapToDish(dish);
+      return DishMapper.mapToDish(dish);
     } catch (error) {
       console.error("PrismaDishRepository.create error:", error);
       throw this.handleError(error);
@@ -89,7 +90,7 @@ export class PrismaDishRepository implements IDishRepository {
         },
       });
 
-      return this.mapToDish(dish);
+      return DishMapper.mapToDish(dish);
     } catch (error) {
       console.error("PrismaDishRepository.update error:", error);
       throw this.handleError(error);
@@ -126,7 +127,7 @@ export class PrismaDishRepository implements IDishRepository {
         orderBy: { id: "asc" },
       });
 
-      return dishes.map((dish) => this.mapToDish(dish));
+      return dishes.map((dish) => DishMapper.mapToDish(dish));
     } catch (error) {
       console.error("PrismaDishRepository.findByName error:", error);
       throw this.handleError(error);
@@ -169,7 +170,7 @@ export class PrismaDishRepository implements IDishRepository {
         orderBy: { id: "asc" },
       });
 
-      return dishes.map((dish) => this.mapToDishWithIngredients(dish));
+      return dishes.map((dish) => DishMapper.mapToDishWithIngredients(dish as any));
     } catch (error) {
       console.error(
         "PrismaDishRepository.findAllWithIngredients error:",
@@ -180,44 +181,6 @@ export class PrismaDishRepository implements IDishRepository {
   }
 
   // ==================== プライベートメソッド ====================
-
-  /**
-   * PrismaのDishをDish型にマッピング
-   */
-  private mapToDish(prismaDish: any): Dish {
-    return {
-      id: prismaDish.id.toString(),
-      name: prismaDish.name,
-      createdAt: prismaDish.createdAt,
-      updatedAt: prismaDish.updatedAt,
-    };
-  }
-
-  /**
-   * PrismaのDishをDishWithIngredients型にマッピング
-   */
-  private mapToDishWithIngredients(prismaDish: any): DishWithIngredients {
-    return {
-      ...this.mapToDish(prismaDish),
-      dishIngredients: prismaDish.dishIngredients.map((di: any) => ({
-        id: di.id.toString(),
-        dishId: di.dishId.toString(),
-        ingredientId: di.ingredientId.toString(),
-        contentQuantity: di.contentQuantity,
-        contentUnit: di.contentUnit,
-        createdAt: di.createdAt,
-        updatedAt: di.updatedAt,
-        ingredient: {
-          id: di.ingredient.id.toString(),
-          name: di.ingredient.name,
-          remarks: di.ingredient.remarks,
-          originalName: di.ingredient.originalName,
-          createdAt: di.ingredient.createdAt,
-          updatedAt: di.ingredient.updatedAt,
-        },
-      })),
-    };
-  }
 
   /**
    * エラーハンドリング

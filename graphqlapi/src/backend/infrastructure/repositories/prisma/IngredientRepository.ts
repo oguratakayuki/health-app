@@ -5,6 +5,7 @@ import {
 } from "@/backend/domain/entities/Ingredient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
+import { IngredientMapper } from "./mappers/IngredientMapper";
 
 export class PrismaIngredientRepository implements IIngredientRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -36,7 +37,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
       console.log("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
       return ingredients.map((ingredient) =>
-        this.mapToIngredientWithRelations(ingredient),
+        IngredientMapper.mapToIngredientWithRelations(ingredient),
       );
     } catch (error) {
       console.error("PrismaIngredientRepository.findAll error:", error);
@@ -67,7 +68,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
 
       if (!ingredient) return null;
 
-      return this.mapToIngredientWithRelations(ingredient);
+      return IngredientMapper.mapToIngredientWithRelations(ingredient);
     } catch (error) {
       console.error("PrismaIngredientRepository.findById error:", error);
       throw this.handleError(error);
@@ -91,7 +92,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
       });
 
-      return this.mapToIngredient(ingredient);
+      return IngredientMapper.mapToIngredient(ingredient);
     } catch (error) {
       console.error("PrismaIngredientRepository.create error:", error);
       throw this.handleError(error);
@@ -118,7 +119,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
       });
 
-      return this.mapToIngredient(ingredient);
+      return IngredientMapper.mapToIngredient(ingredient);
     } catch (error) {
       console.error("PrismaIngredientRepository.update error:", error);
       throw this.handleError(error);
@@ -153,7 +154,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         orderBy: { id: "asc" },
       });
 
-      return ingredients.map((ingredient) => this.mapToIngredient(ingredient));
+      return ingredients.map((ingredient) => IngredientMapper.mapToIngredient(ingredient));
     } catch (error) {
       console.error("PrismaIngredientRepository.findByName error:", error);
       throw this.handleError(error);
@@ -172,67 +173,8 @@ export class PrismaIngredientRepository implements IIngredientRepository {
     }
   }
 
-  // ==================== プライベートメソッド ====================
 
-  /**
-   * PrismaのIngredientをIngredient型にマッピング
-   */
-  private mapToIngredient(prismaIngredient: any): Ingredient {
-    return {
-      id: prismaIngredient.id,
-      name: prismaIngredient.name,
-      remarks: prismaIngredient.remarks,
-      originalName: prismaIngredient.originalName,
-      createdAt: prismaIngredient.createdAt,
-      updatedAt: prismaIngredient.updatedAt,
-    };
-  }
 
-  /**
-   * PrismaのIngredientをIngredientWithRelations型にマッピング
-   */
-  private mapToIngredientWithRelations(
-    prismaIngredient: any,
-  ): IngredientWithRelations {
-    const baseIngredient = this.mapToIngredient(prismaIngredient);
-    return {
-      ...baseIngredient,
-      // ingredientNutrientsから栄養素情報を抽出
-      nutrients: prismaIngredient.ingredientNutrients?.map(
-        (inNutrient: any) => ({
-          id: inNutrient.nutrient.id,
-          name: inNutrient.nutrient.name,
-          parentId: inNutrient.nutrient.parentId,
-          createdAt: inNutrient.nutrient.createdAt,
-          updatedAt: inNutrient.nutrient.updatedAt,
-          // 栄養素情報に関連する追加フィールド
-          contentQuantity: inNutrient.contentQuantity,
-          contentUnit: inNutrient.contentUnit,
-          contentUnitPer: inNutrient.contentUnitPer,
-          contentUnitPerUnit: inNutrient.contentUnitPerUnit,
-        }),
-      ),
-      dishes: prismaIngredient.dishIngredients?.map((di: any) => ({
-        id: di.dish.id,
-        name: di.dish.name,
-        createdAt: di.dish.createdAt,
-        updatedAt: di.dish.updatedAt,
-      })),
-      ingredientNutrients: prismaIngredient.ingredientNutrients?.map(
-        (inNutrient: any) => ({
-          id: inNutrient.id,
-          ingredientId: inNutrient.ingredientId,
-          nutrientId: inNutrient.nutrientId,
-          contentQuantity: inNutrient.contentQuantity,
-          contentUnit: inNutrient.contentUnit,
-          contentUnitPer: inNutrient.contentUnitPer,
-          contentUnitPerUnit: inNutrient.contentUnitPerUnit,
-          createdAt: inNutrient.createdAt,
-          updatedAt: inNutrient.updatedAt,
-        }),
-      ),
-    };
-  }
 
   /**
    * エラーハンドリング

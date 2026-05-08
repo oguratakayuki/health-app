@@ -1,4 +1,3 @@
-// src/shared/interfaces/INutrientRepository.ts
 import {
   Nutrient,
   CreateNutrientInput,

@@ -6,7 +6,7 @@ import {
   CreateIngredientNutrientInput,
 } from "@/backend/domain/entities/IngredientNutrient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
-import { NutrientsIntakeStandardMapper } from "@/backend/infrastructure/repositories/prisma/mappers/NutrientsIntakeStandardMapper";
+import { IngredientNutrientMapper } from "@/backend/infrastructure/repositories/prisma/mappers/IngredientNutrientMapper";
 
 export class IngredientNutrientRepository implements IIngredientNutrientRepository {
   constructor(private prismaClient: PrismaClient) {}
@@ -27,7 +27,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
     });
 
-    return results.map((r) => NutrientsIntakeStandardMapper.mapToDomain(r));
+    return results.map((r) => IngredientNutrientMapper.mapToDomain(r));
   }
 
   async findById(id: bigint): Promise<IngredientNutrientWithRelations | null> {
@@ -44,7 +44,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       return null;
     }
 
-    return NutrientsIntakeStandardMapper.mapToDomain(ingredientNutrient);
+    return IngredientNutrientMapper.mapToDomain(ingredientNutrient);
   }
 
   async findAll(limit?: number): Promise<IngredientNutrientWithRelations[]> {
@@ -60,9 +60,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
         },
       });
 
-      return results.map((item) =>
-        NutrientsIntakeStandardMapper.mapToDomain(item),
-      );
+      return results.map((item) => IngredientNutrientMapper.mapToDomain(item));
     } catch (error) {
       console.error("Error in IngredientNutrientRepository.findAll:", error);
       throw error;
@@ -91,7 +89,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
           },
         });
 
-      return NutrientsIntakeStandardMapper.mapToDomain(ingredientNutrient);
+      return IngredientNutrientMapper.mapToDomain(ingredientNutrient);
     } catch (error) {
       console.error("IngredientNutrientRepository.create error:", error);
       throw this.handleError(error);
@@ -124,7 +122,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
       },
     });
 
-    return records.map((r) => NutrientsIntakeStandardMapper.mapToDomain(r));
+    return records.map((r) => IngredientNutrientMapper.mapToDomain(r));
   }
 
   private handleError(error: any): RepositoryError {

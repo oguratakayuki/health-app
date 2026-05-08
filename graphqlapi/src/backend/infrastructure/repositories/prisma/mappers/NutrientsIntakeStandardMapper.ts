@@ -1,51 +1,44 @@
-import { IngredientNutrientWithRelations } from "@/backend/domain/entities/IngredientNutrient";
-
 import {
-  Prisma,
-  IngredientNutrient,
-  Ingredient,
-  Nutrient,
-} from "@prisma/client";
+  NutrientsIntakeStandard,
+  NutrientsIntakeStandardWithRelations,
+  GENDER_LABELS,
+} from "@/backend/domain/entities/NutrientsIntakeStandard";
+import { Prisma } from "@prisma/client";
 
-type PrismaItemWithRelations = Prisma.IngredientNutrientGetPayload<{
-  include: {
-    ingredient: true;
-    nutrient: true;
-  };
+type PrismaNutrientsIntakeStandard = Prisma.NutrientsIntakeStandardGetPayload<{}>;
+type PrismaNutrientsIntakeStandardWithRelations = Prisma.NutrientsIntakeStandardGetPayload<{
+  include: { nutrient: true };
 }>;
 
 export class NutrientsIntakeStandardMapper {
-  static mapToDomain(
-    prismaItem: PrismaItemWithRelations,
-  ): IngredientNutrientWithRelations {
+  /**
+   * Railsの整数Enumを文字列に変換してマッピング
+   */
+  static mapToEntity(prismaData: PrismaNutrientsIntakeStandard): NutrientsIntakeStandard {
     return {
-      id: prismaItem.id.toString(),
-      ingredientId: prismaItem.ingredientId.toString(),
-      nutrientId: prismaItem.nutrientId.toString(),
-      contentQuantity: prismaItem.contentQuantity,
-      contentUnit: prismaItem.contentUnit,
-      contentUnitPer: prismaItem.contentUnitPer ?? null,
-      contentUnitPerUnit: prismaItem.contentUnitPerUnit,
-      createdAt: prismaItem.createdAt,
-      updatedAt: prismaItem.updatedAt,
+      id: prismaData.id.toString(), // bigintをstringに変換
+      nutrientId: prismaData.nutrientId.toString(),
+      content: prismaData.content,
+      gender:
+        prismaData.gender !== null ? GENDER_LABELS[prismaData.gender] : null,
+      ageFrom: prismaData.ageFrom ? prismaData.ageFrom.toNumber() : null,
+      ageTo: prismaData.ageTo ? prismaData.ageTo.toNumber() : null,
+      createdAt: prismaData.createdAt,
+      updatedAt: prismaData.updatedAt,
+    };
+  }
 
-      ingredient: {
-        id: prismaItem.ingredient.id.toString(),
-        name: prismaItem.ingredient.name,
-        originalName: prismaItem.ingredient.originalName,
-        remarks: prismaItem.ingredient.remarks,
-        createdAt: prismaItem.ingredient.createdAt,
-        updatedAt: prismaItem.ingredient.updatedAt,
-      },
-
-      nutrient: {
-        id: prismaItem.nutrient.id.toString(),
-        name: prismaItem.nutrient.name,
-        code: prismaItem.nutrient.code,
-        parentId: prismaItem.nutrient.parentId,
-        createdAt: prismaItem.nutrient.createdAt,
-        updatedAt: prismaItem.nutrient.updatedAt,
-      },
+  static mapToEntityWithRelations(
+    prismaData: PrismaNutrientsIntakeStandardWithRelations,
+  ): NutrientsIntakeStandardWithRelations {
+    return {
+      ...this.mapToEntity(prismaData),
+      nutrient: prismaData.nutrient
+        ? {
+            id: prismaData.nutrient.id.toString(),
+            name: prismaData.nutrient.name,
+          }
+        : undefined,
     };
   }
 }

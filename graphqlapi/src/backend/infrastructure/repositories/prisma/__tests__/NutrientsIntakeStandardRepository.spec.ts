@@ -5,6 +5,7 @@ import {
   CreateNutrientsIntakeStandardInput,
   UpdateNutrientsIntakeStandardInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
+import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
 describe("NutrientsIntakeStandardRepository", () => {
   describe("#create", () => {
@@ -17,6 +18,7 @@ describe("NutrientsIntakeStandardRepository", () => {
         const nutrient = await nutrientRepo.create({
           name: "ビタミンC",
           parentId: null,
+          code: NutrientCode.Energy,
         });
 
         const input: CreateNutrientsIntakeStandardInput = {
@@ -150,6 +152,7 @@ describe("NutrientsIntakeStandardRepository", () => {
         const nutrient = await nutrientRepo.create({
           name: "鉄",
           parentId: null,
+          code: NutrientCode.Energy,
         });
         await repo.create({
           nutrientId: Number(nutrient.id),

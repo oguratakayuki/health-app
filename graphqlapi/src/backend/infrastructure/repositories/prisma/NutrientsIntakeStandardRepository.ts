@@ -1,17 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import {
   INutrientsIntakeStandardRepository,
-  CreateNutrientsIntakeStandardInput,
-  UpdateNutrientsIntakeStandardInput,
   FindAllWithFiltersOptions,
 } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
-  NUTRIENT_UNIT_LABELS,
   GENDER_LABELS,
+  CreateNutrientsIntakeStandardInput,
+  UpdateNutrientsIntakeStandardInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { RepositoryError } from "@/backend/domain/entities/Common";
+import { NutrientsIntakeStandardMapper } from "./mappers/NutrientsIntakeStandardMapper";
 
 export class NutrientsIntakeStandardRepository implements INutrientsIntakeStandardRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -53,7 +53,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       include: { nutrient: true },
       orderBy: { id: "asc" },
     });
-    return records.map((record) => this.mapToEntityWithRelations(record));
+    return records.map((record) =>
+      NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+    );
   }
 
   async findAll(): Promise<NutrientsIntakeStandardWithRelations[]> {
@@ -63,7 +65,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         orderBy: { id: "asc" },
       });
 
-      return records.map((record) => this.mapToEntityWithRelations(record));
+      return records.map((record) =>
+        NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+      );
     } catch (error) {
       throw this.handleError(error);
     }
@@ -83,7 +87,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         nutrient: true,
       },
     });
-    return records.map((record) => this.mapToEntityWithRelations(record));
+    return records.map((record) =>
+      NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+    );
   }
 
   /**
@@ -100,7 +106,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         orderBy: [{ nutrientId: "asc" }, { gender: "asc" }, { ageFrom: "asc" }],
       });
 
-      return records.map((record) => this.mapToEntityWithRelations(record));
+      return records.map((record) =>
+        NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+      );
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.findAllWithRelations error:",
@@ -125,16 +133,20 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       // indexOf が -1 (見つからない) の場合は undefined/null などのハンドリングが必要
       const record = await this.prismaClient.nutrientsIntakeStandard.create({
         data: {
-          nutrientId: data.nutrientId,
+          nutrient: {
+            connect: { id: BigInt(data.nutrientId) },
+          },
           content: data.content,
+          unit: data.unit,
           gender: genderIndex !== -1 ? genderIndex : null,
           ageFrom: data.ageFrom,
           ageTo: data.ageTo,
-          // created_at, updated_at は Prisma の @default(now()) / @updatedAt で自動処理
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       });
 
-      return this.mapToEntity(record);
+      return NutrientsIntakeStandardMapper.mapToEntity(record);
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.create error:",
@@ -159,7 +171,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       );
 
       if (!record) return null;
-      return this.mapToEntityWithRelations(record);
+      return NutrientsIntakeStandardMapper.mapToEntityWithRelations(
+        record as any,
+      );
     } catch (error) {
       throw this.handleError(error);
     }
@@ -179,7 +193,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         orderBy: [{ gender: "asc" }, { ageFrom: "asc" }],
       });
 
-      return records.map((record) => this.mapToEntity(record));
+      return records.map((record) =>
+        NutrientsIntakeStandardMapper.mapToEntity(record),
+      );
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.findByNutrientId error:",
@@ -217,7 +233,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         },
       });
 
-      return this.mapToEntity(record);
+      return NutrientsIntakeStandardMapper.mapToEntity(record);
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.update error:",
@@ -248,37 +264,6 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         return false;
       }
     }
-  }
-
-  /**
-   * Railsの整数Enumを文字列に変換してマッピング
-   */
-  private mapToEntity(prismaData: any): NutrientsIntakeStandard {
-    return {
-      id: prismaData.id.toString(), // bigintをstringに変換
-      nutrientId: prismaData.nutrientId.toString(),
-      content: prismaData.content,
-      gender:
-        prismaData.gender !== null ? GENDER_LABELS[prismaData.gender] : null,
-      ageFrom: prismaData.ageFrom ? prismaData.ageFrom.toNumber() : null,
-      ageTo: prismaData.ageTo ? prismaData.ageTo.toNumber() : null,
-      createdAt: prismaData.createdAt,
-      updatedAt: prismaData.updatedAt,
-    };
-  }
-
-  private mapToEntityWithRelations(
-    prismaData: any,
-  ): NutrientsIntakeStandardWithRelations {
-    return {
-      ...this.mapToEntity(prismaData),
-      nutrient: prismaData.nutrient
-        ? {
-            id: prismaData.nutrient.id.toString(),
-            name: prismaData.nutrient.name,
-          }
-        : undefined,
-    };
   }
 
   private handleError(error: any): RepositoryError {
