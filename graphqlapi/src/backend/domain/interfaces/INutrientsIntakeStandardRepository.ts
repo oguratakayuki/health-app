@@ -12,6 +12,7 @@ export interface FindAllWithFiltersOptions {
 export interface CreateNutrientsIntakeStandardInput {
   nutrientId: number;
   content: number;
+  unit: string; // "g", "mg" などの文字列
   gender: string; // "male", "female" などの文字列
   ageFrom?: number;
   ageTo?: number;
@@ -20,6 +21,7 @@ export interface CreateNutrientsIntakeStandardInput {
 export interface UpdateNutrientsIntakeStandardInput {
   nutrientId?: number;
   content?: number;
+  unit?: string;
   gender?: string;
   ageFrom?: number;
   ageTo?: number;

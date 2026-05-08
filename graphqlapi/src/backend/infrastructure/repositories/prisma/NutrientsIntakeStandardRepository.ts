@@ -126,6 +126,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   ): Promise<NutrientsIntakeStandard> {
     try {
       // 文字列からRails形式のIndex(整数)に変換
+      const unitIndex = data.unit
+        ? NUTRIENT_UNIT_LABELS.indexOf(data.unit as any)
+        : null;
       const genderIndex = data.gender
         ? GENDER_LABELS.indexOf(data.gender as any)
         : null;
@@ -137,7 +140,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
             connect: { id: BigInt(data.nutrientId) },
           },
           content: data.content,
-          unit: data.unit,
+          unit: unitIndex !== -1 ? unitIndex : null,
           gender: genderIndex !== -1 ? genderIndex : null,
           ageFrom: data.ageFrom,
           ageTo: data.ageTo,
@@ -213,6 +216,10 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   ): Promise<NutrientsIntakeStandard> {
     try {
       // 更新データがある場合のみIndex変換を行う
+      const unitIndex =
+        data.unit !== undefined
+          ? NUTRIENT_UNIT_LABELS.indexOf(data.unit as any)
+          : undefined;
       const genderIndex =
         data.gender !== undefined
           ? GENDER_LABELS.indexOf(data.gender as any)
@@ -225,6 +232,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
             nutrientId: BigInt(data.nutrientId),
           }),
           ...(data.content !== undefined && { content: data.content }),
+          ...(unitIndex !== undefined && {
+            unit: unitIndex !== -1 ? unitIndex : null,
+          }),
           ...(genderIndex !== undefined && {
             gender: genderIndex !== -1 ? genderIndex : null,
           }),
