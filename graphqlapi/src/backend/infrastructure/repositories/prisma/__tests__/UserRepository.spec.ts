@@ -53,6 +53,7 @@ describe("UserRepository", () => {
         const input: CreateUserInput = {
           email: `new_${Date.now()}@example.com`,
           name: "New User",
+          cognitoSub: "i",
         };
 
         const result = await repository.create(input);
@@ -126,10 +127,12 @@ describe("UserRepository", () => {
         await repository.create({
           email: `user1_${Date.now()}@example.com`,
           name: "User 1",
+          cognitoSub: "aa",
         });
         await repository.create({
           email: `user2_${Date.now()}@example.com`,
           name: "User 2",
+          cognitoSub: "aa",
         });
 
         const users = await repository.findAll();

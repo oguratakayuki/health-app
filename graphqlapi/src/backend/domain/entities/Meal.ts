@@ -1,4 +1,5 @@
 // src/backend/domain/entities/Meal.ts
+import { DishWithIngredients } from "src/backend/domain/entities/Dish";
 export interface Meal {
   id: number;
   userId: number;

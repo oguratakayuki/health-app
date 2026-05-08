@@ -2,7 +2,8 @@
 import { PrismaClient } from "@prisma/client";
 import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
-import { Meal } from "@backend/domain/entities/Meal";
+import { Meal, MealDishWithDish } from "@backend/domain/entities/Meal";
+import { MealMapper } from "./mappers/MealMapper";
 
 export class MealRepository implements IMealRepository {
   constructor(private prisma: PrismaClient) {}
@@ -60,7 +61,10 @@ export class MealRepository implements IMealRepository {
       createdAt: new Date(),
     }));
   }
-  async findByUserAndDate(userId: string, date: Date): Promise<Meal[]> {
+  async findByUserAndDate(
+    userId: string,
+    date: Date,
+  ): Promise<MealDishWithDish[]> {
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
 
@@ -87,37 +91,6 @@ export class MealRepository implements IMealRepository {
         },
       },
     });
-    return meals.map((m) => ({
-      id: Number(m.id),
-      mealDate: m.mealDate,
-      category: m.category,
-      startTime: m.startTime,
-      endTime: m.endTime,
-      createdAt: m.createdAt,
-      updatedAt: m.updatedAt,
-      userId: Number(m.userId),
-      mealDishes: m.mealDishes.map((md) => ({
-        id: Number(md.id),
-        mealId: Number(md.mealId),
-        dishId: Number(md.dishId),
-        createdAt: md.createdAt,
-        updatedAt: md.updatedAt,
-        dish: {
-          id: Number(md.dish.id),
-          name: md.dish.name,
-          createdAt: md.dish.createdAt,
-          updatedAt: md.dish.updatedAt,
-          dishIngredients: md.dish.dishIngredients.map((di) => ({
-            id: Number(di.id),
-            dishId: Number(di.dishId),
-            ingredientId: Number(di.ingredientId),
-            contentQuantity: di.contentQuantity,
-            contentUnit: di.contentUnit,
-            createdAt: di.createdAt,
-            updatedAt: di.updatedAt,
-          })),
-        },
-      })),
-    }));
+    return meals.map((m) => MealMapper.mapToMeal(m as any));
   }
 }
