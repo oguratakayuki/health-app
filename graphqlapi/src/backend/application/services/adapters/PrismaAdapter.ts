@@ -22,6 +22,8 @@ import { MealRepository } from "@/backend/infrastructure/repositories/prisma/Mea
 
 import { NutritionTargetService } from "@/backend/application/services/NutritionTargetService";
 
+import { RdiEvaluatorService } from "@/backend/application/services/calculators/RdiEvaluatorService";
+
 /**
  * Prisma用のサービスアダプター
  */
@@ -102,12 +104,14 @@ export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionU
   // Calculator
   const aggregator = new DailyNutrientAggregatorService();
   const pfcCalculator = new PfcCalculatorService();
+  const rdiEvaluatorService = new RdiEvaluatorService();
 
   return new CalculateDailyNutritionUseCase(
     queryService,
     aggregator,
     pfcCalculator,
     nutritionTargetService,
+    rdiEvaluatorService,
   );
 }
 

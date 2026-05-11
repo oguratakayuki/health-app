@@ -1,15 +1,13 @@
-import { NutrientCode } from '../../types/NutrientCode';
-
-export interface IRdiEvaluationResult {
-  nutrientCode: NutrientCode;
-  intake: number | null;
-  rdi: number;
-  ratio: number | null; // intake / rdi
-}
+import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
+import { DailyNutrientTarget } from "@/backend/domain/entities/valueObjects/DailyNutrientTarget";
+import { NutrientComparison } from "@/backend/domain/entities/valueObjects/NutrientComparison";
+import { NutrientCode } from "@/backend/domain/types/NutrientCode";
+import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
 
 export interface IRdiEvaluator {
   evaluate(
-    userId: string,
-    date: string
-  ): Promise<IRdiEvaluationResult[]>;
+    totals: Map<NutrientCode, DailyNutrientTotal>,
+    targets: DailyNutrientTarget[],
+    pfc: PfcBalance,
+  ): NutrientComparison[];
 }

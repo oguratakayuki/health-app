@@ -11,10 +11,7 @@ export class NutritionTargetService {
     gender: Gender,
     age: number,
   ): Promise<DailyNutrientTarget[]> {
-    console.log("here 1!!!!!!!!!!!!!!!1");
     const standards = await this.repository.findByGenderAndAge(gender, age);
-    console.log(standards);
-    console.log("here 2!!!!!!!!!!!!!!!2");
 
     return standards.map(
       (standard) =>

@@ -13,6 +13,7 @@ import type { NutrientService } from "@/backend/application/services/NutrientSer
 import { Nutrient } from "@/backend/infrastructure/graphql/types/Nutrient";
 import { CreateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateNutrientInput";
 import { UpdateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientInput";
+import { DailyNutritionType } from "@/backend/infrastructure/graphql/types/DailyNutrition";
 
 @ObjectType()
 class NutrientsResponse {
@@ -158,11 +159,11 @@ export class NutrientResolver {
     }
   }
 
-  @Query(() => String) // 最初は簡易でOK（あとでDTO化）
+  @Query(() => DailyNutritionType)
   async dailyNutrition(
     @Arg("date") date: string,
     @Ctx() ctx: GraphQLContext,
-  ): Promise<string> {
+  ): Promise<DailyNutritionType> {
     try {
       if (!ctx.calculateDailyNutritionUseCase) {
         throw new Error("UseCase is not available in context");
@@ -173,10 +174,11 @@ export class NutrientResolver {
         new Date(date),
       );
 
-      return JSON.stringify({
-        totals: Object.fromEntries(result.totals),
+      return {
+        totals: Array.from(result.totals.values()),
         pfc: result.pfc,
-      });
+        comparisons: result.comparisons,
+      };
     } catch (error) {
       console.error(`Error in dailyNutrition query: ${error}`);
       throw new Error("Failed to calculate daily nutrition");

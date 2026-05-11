@@ -2,7 +2,7 @@
 
 import { IDailyNutrientAggregator } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregator";
 import { IDailyNutrientAggregationItem } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregationItem";
-import { DailyNutrientTotal } from "@/backend/domain/entities/DailyNutrientTotal";
+import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
 export class DailyNutrientAggregatorService implements IDailyNutrientAggregator {

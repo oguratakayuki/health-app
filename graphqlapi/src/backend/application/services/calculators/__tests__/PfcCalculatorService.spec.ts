@@ -2,7 +2,7 @@
 
 import { describe, it, expect } from "vitest";
 import { PfcCalculatorService } from "@/backend/application/services/calculators/PfcCalculatorService";
-import { DailyNutrientTotal } from "@/backend/domain/entities/DailyNutrientTotal";
+import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
 describe("PfcCalculatorService", () => {

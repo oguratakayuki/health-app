@@ -1,7 +1,7 @@
 // backend/application/services/calculators/PfcCalculatorService.ts
 
 import { IPfcCalculator } from "@/backend/domain/interfaces/calculators/IPfcCalculator";
-import { DailyNutrientTotal } from "@/backend/domain/entities/DailyNutrientTotal";
+import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
 import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 
