@@ -42,6 +42,11 @@ const menuItems = [
     icon: <Person />,
     path: "/user",
   },
+  {
+    text: "radar chart",
+    icon: <Restaurant />,
+    path: "/daily-nutrition",
+  },
 ];
 
 // 管理者のみ表示するメニュー
