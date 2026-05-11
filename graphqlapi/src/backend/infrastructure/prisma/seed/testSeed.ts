@@ -93,7 +93,7 @@ export async function seedTestIngredients(prisma: PrismaClient) {
       ingredient: "にんじん",
       nutrient: "ビタミンA",
       quantity: 720,
-      unit: "μg",
+      unit: "ug",
     },
     { ingredient: "白米", nutrient: "エネルギー", quantity: 168, unit: "kcal" },
     { ingredient: "白米", nutrient: "炭水化物", quantity: 37, unit: "g" },

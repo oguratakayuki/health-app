@@ -45,7 +45,7 @@ export interface DailyNutrientSummary {
   nutrientId: number;
   nutrientName: string;
   totalAmount: number; // 合計摂取量
-  unit: string; // 単位（g, mg, μgなど）
+  unit: string; // 単位（g, mg, ug(μg)など）
   rdiPercentage?: number; // 1日の推奨摂取量に対する割合（%）
   createdAt?: Date; // 集計日時
 }

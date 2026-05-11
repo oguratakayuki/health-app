@@ -5,7 +5,7 @@ export const NUTRIENT_UNIT_LABELS = [
   "mg",
   "mgNE",
   "μgRAE",
-  "μg",
+  "ug",
   "kcal",
   "％エネルギー",
 ] as const;
