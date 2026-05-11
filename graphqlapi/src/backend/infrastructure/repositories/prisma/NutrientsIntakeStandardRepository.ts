@@ -13,6 +13,7 @@ import {
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { NutrientsIntakeStandardMapper } from "./mappers/NutrientsIntakeStandardMapper";
+import { Gender, toGenderDbValue } from "@/backend/domain/types/Gender";
 
 export class NutrientsIntakeStandardRepository implements INutrientsIntakeStandardRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -75,12 +76,12 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   }
 
   async findByGenderAndAge(
-    gender: number,
+    gender: Gender,
     age: number,
-  ): Promise<NutrientsIntakeStandard[]> {
+  ): Promise<NutrientsIntakeStandardWithRelations[]> {
     const records = await this.prismaClient.nutrientsIntakeStandard.findMany({
       where: {
-        gender,
+        gender: toGenderDbValue(gender),
         ageFrom: { lte: age },
         ageTo: { gte: age },
       },

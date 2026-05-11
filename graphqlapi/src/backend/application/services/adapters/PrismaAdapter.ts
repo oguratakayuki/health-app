@@ -6,6 +6,7 @@ import { NutrientsIntakeStandardService } from "../NutrientsIntakeStandardServic
 import { IngredientService } from "../IngredientService";
 import { IngredientNutrientService } from "../IngredientNutrientService";
 import { PrismaDishRepository } from "@/backend/infrastructure/repositories/prisma/DishRepository";
+
 import { PrismaNutrientRepository } from "@/backend/infrastructure/repositories/prisma/NutrientRepository";
 import { NutrientsIntakeStandardRepository } from "@/backend/infrastructure/repositories/prisma/NutrientsIntakeStandardRepository";
 import { PrismaIngredientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientRepository";
@@ -18,6 +19,8 @@ import { DailyNutrientAggregatorService } from "@/backend/application/services/c
 import { PfcCalculatorService } from "@/backend/application/services/calculators/PfcCalculatorService";
 
 import { MealRepository } from "@/backend/infrastructure/repositories/prisma/MealRepository";
+
+import { NutritionTargetService } from "@/backend/application/services/NutritionTargetService";
 
 /**
  * Prisma用のサービスアダプター
@@ -84,6 +87,11 @@ export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionU
   // Repository
   const mealRepository = new MealRepository(prisma);
   const ingredientNutrientRepository = new IngredientNutrientRepository(prisma);
+  const nutrientsIntakeStandardRepository =
+    new NutrientsIntakeStandardRepository(prisma);
+  const nutritionTargetService = new NutritionTargetService(
+    nutrientsIntakeStandardRepository,
+  );
 
   // QueryService
   const queryService = new DailyNutritionQueryService(
@@ -99,6 +107,7 @@ export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionU
     queryService,
     aggregator,
     pfcCalculator,
+    nutritionTargetService,
   );
 }
 

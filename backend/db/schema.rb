@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_06_072625) do
+ActiveRecord::Schema.define(version: 2026_05_11_045338) do
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -101,13 +101,13 @@ ActiveRecord::Schema.define(version: 2026_05_06_072625) do
   end
 
   create_table "nutrients_intake_standards", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.bigint "nutrient_id"
-    t.integer "content"
-    t.integer "gender"
+    t.bigint "nutrient_id", null: false
+    t.integer "content", null: false
+    t.integer "gender", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.decimal "age_from", precision: 10
-    t.decimal "age_to", precision: 10
+    t.decimal "age_from", precision: 10, null: false
+    t.decimal "age_to", precision: 10, null: false
     t.string "unit", null: false
   end
 

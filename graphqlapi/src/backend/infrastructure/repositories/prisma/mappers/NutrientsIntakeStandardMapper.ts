@@ -26,8 +26,7 @@ export class NutrientsIntakeStandardMapper {
       content: prismaData.content,
       gender:
         prismaData.gender !== null ? GENDER_LABELS[prismaData.gender] : null,
-      unit:
-        prismaData.unit !== null ? NUTRIENT_UNIT_LABELS[prismaData.unit] : null,
+      unit: prismaData.unit,
       ageFrom: prismaData.ageFrom ? prismaData.ageFrom.toNumber() : null,
       ageTo: prismaData.ageTo ? prismaData.ageTo.toNumber() : null,
       createdAt: prismaData.createdAt,
@@ -44,6 +43,7 @@ export class NutrientsIntakeStandardMapper {
         ? {
             id: prismaData.nutrient.id.toString(),
             name: prismaData.nutrient.name,
+            code: prismaData.nutrient.code,
           }
         : undefined,
     };

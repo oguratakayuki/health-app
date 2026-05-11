@@ -19,18 +19,18 @@ export type Gender = (typeof GENDER_LABELS)[number];
 export interface NutrientsIntakeStandard {
   id: string;
   nutrientId: number | null;
-  content: number | null;
-  unit: NutrientUnit | null;
-  gender: Gender | null;
-  ageFrom: number | null;
-  ageTo: number | null;
+  content: number;
+  unit: NutrientUnit;
+  gender: Gender;
+  ageFrom: number;
+  ageTo: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface GetStandardsOptions {
-  gender?: string;
-  age?: number;
+  gender: string;
+  age: number;
   // 将来的に追加
   // userId?: string;
 }
@@ -56,9 +56,9 @@ export interface CreateNutrientsIntakeStandardInput {
  */
 export interface UpdateNutrientsIntakeStandardInput {
   nutrientId?: number;
-  content?: number;
-  unit: NutrientUnit | null;
-  gender?: Gender | string;
-  ageFrom?: number | null;
-  ageTo?: number | null;
+  content: number;
+  unit: NutrientUnit;
+  gender: Gender;
+  ageFrom: number;
+  ageTo: number;
 }

@@ -2,6 +2,7 @@ import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
+import { Gender } from "@/backend/domain/types/Gender";
 
 export interface FindAllWithFiltersOptions {
   gender?: string;
@@ -45,4 +46,8 @@ export interface INutrientsIntakeStandardRepository {
   findAllWithFilters(
     options: FindAllWithFiltersOptions,
   ): Promise<NutrientsIntakeStandard[]>;
+  findByGenderAndAge(
+    gender: Gender,
+    age: number,
+  ): Promise<NutrientsIntakeStandardWithRelations[]>;
 }
