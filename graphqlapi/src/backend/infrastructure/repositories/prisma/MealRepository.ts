@@ -65,19 +65,10 @@ export class MealRepository implements IMealRepository {
     userId: string,
     date: Date,
   ): Promise<MealDishWithDish[]> {
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-
     const meals = await this.prisma.meal.findMany({
       where: {
         userId: BigInt(userId),
-        startTime: {
-          gte: start,
-          lte: end,
-        },
+        mealDate: date,
       },
       include: {
         mealDishes: {
@@ -91,6 +82,37 @@ export class MealRepository implements IMealRepository {
         },
       },
     });
+    return meals.map((m) => MealMapper.mapToMeal(m as any));
+  }
+  async findByUserAndPeriod(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<MealDishWithDish[]> {
+    const meals = await this.prisma.meal.findMany({
+      where: {
+        userId: BigInt(userId),
+        mealDate: {
+          gte: from,
+          lte: to,
+        },
+      },
+      include: {
+        mealDishes: {
+          include: {
+            dish: {
+              include: {
+                dishIngredients: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        mealDate: "asc",
+      },
+    });
+
     return meals.map((m) => MealMapper.mapToMeal(m as any));
   }
 }

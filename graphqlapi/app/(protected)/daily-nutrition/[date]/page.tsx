@@ -1,6 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { use } from "react";
+import { useRouter } from "next/navigation";
+
+import { useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import {
   RadarChart,
@@ -22,15 +25,25 @@ import {
 
 import { DAILY_NUTRITION_QUERY } from "@/frontend/graphql/queries/daily_nutrition";
 
-export default function DailyNutritionPage() {
-  // 日付状態
-  const [selectedDate, setSelectedDate] = useState("2026-01-17");
+type Props = {
+  params: {
+    date: string;
+  };
+};
+
+export default function DailyNutritionPage({ params }: Props) {
+  const { date } = params;
+  const router = useRouter();
 
   const { data, loading, error } = useQuery(DAILY_NUTRITION_QUERY, {
     variables: {
-      date: selectedDate,
+      date,
     },
   });
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    router.push(`/daily-nutrition/${e.target.value}`);
+  };
 
   const dailyNutrition = data?.dailyNutrition;
 
@@ -111,8 +124,8 @@ export default function DailyNutritionPage() {
           <div className="max-w-sm">
             <input
               type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
+              value={date}
+              onChange={handleDateChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white"
             />
           </div>

@@ -1,6 +1,6 @@
-import { IDailyNutrientAggregationItem } from "../../domain/interfaces/calculators/IDailyNutrientAggregationItem";
-import { IMealRepository } from "../../domain/interfaces/IMealRepository";
-import { IIngredientNutrientRepository } from "../../domain/interfaces/IIngredientNutrientRepository";
+import { IDailyNutrientAggregationItem } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregationItem";
+import { IMealRepository } from "@/backend/domain/interfaces/IMealRepository";
+import { IIngredientNutrientRepository } from "@backend/domain/interfaces/IIngredientNutrientRepository";
 
 export class DailyNutritionQueryService {
   constructor(
@@ -44,6 +44,41 @@ export class DailyNutritionQueryService {
         }
       }
     }
+    return items;
+  }
+  async fetchAggregationItemsByPeriod(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<IDailyNutrientAggregationItem[]> {
+    const meals = await this.mealRepository.findByUserAndPeriod(
+      userId,
+      from,
+      to,
+    );
+
+    const items: IDailyNutrientAggregationItem[] = [];
+
+    for (const meal of meals) {
+      for (const mealDish of meal.mealDishes) {
+        for (const dishIngredient of mealDish.dish.dishIngredients) {
+          const ingredientNutrients =
+            await this.ingredientNutrientRepository.findByIngredientId(
+              dishIngredient.ingredientId,
+            );
+
+          for (const ingredientNutrient of ingredientNutrients) {
+            items.push({
+              eatenAt: meal.mealDate,
+              nutrientCode: ingredientNutrient.nutrient.code,
+              ingredientAmountGram: dishIngredient.contentQuantity,
+              nutrientPer100g: ingredientNutrient.contentQuantity,
+            });
+          }
+        }
+      }
+    }
+
     return items;
   }
 }

@@ -4,4 +4,9 @@ import { CalculateDailyNutritionResult } from "@/backend/application/usecases/Ca
 
 export interface ICalculateDailyNutritionUseCase {
   execute(userId: string, date: Date): Promise<CalculateDailyNutritionResult>;
+  executeMonthly(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<CalculateDailyNutritionResult>;
 }

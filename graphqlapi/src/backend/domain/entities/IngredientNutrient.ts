@@ -43,7 +43,7 @@ export interface IngredientNutrientWithRelations extends IngredientNutrient {
     parentId?: bigint | null;
     createdAt: Date;
     updatedAt: Date;
-  } | null;
+  };
 }
 
 /**

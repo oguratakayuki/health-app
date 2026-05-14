@@ -29,6 +29,6 @@ export interface MealWithDishes extends Meal {
   mealDishes: MealDishWithDish[];
 }
 
-export interface MealDishWithDish {
+export interface MealDishWithDish extends Meal {
   dish: DishWithIngredients;
 }

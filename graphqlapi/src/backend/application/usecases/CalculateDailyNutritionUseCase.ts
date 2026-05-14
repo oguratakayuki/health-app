@@ -1,9 +1,5 @@
-import { DailyNutrientAggregatorService } from "../services/calculators/DailyNutrientAggregatorService";
-import { PfcCalculatorService } from "../services/calculators/PfcCalculatorService";
 import { Gender } from "@/backend/domain/types/Gender";
-
 import { IDailyNutrientAggregationItem } from "../../domain/interfaces/calculators/IDailyNutrientAggregationItem";
-import { INutrientsIntakeStandardService } from "@/backend/domain/interfaces/INutrientsIntakeStandardService";
 
 import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
 import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
@@ -37,36 +33,42 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     // TODO
     const age = 44;
     const gender = Gender.Male;
+    // const date = new Date(2026, 0, 17);
 
     // 1日の栄養素ごとの摂取量
     const items: IDailyNutrientAggregationItem[] =
-      await this.queryService.fetchAggregationItems("1", new Date(2026, 0, 17));
+      await this.queryService.fetchAggregationItems("1", date);
     const totals = this.aggregator.aggregate(items);
     const pfc = this.pfcCalculator.calculate(totals);
     const targets = await this.nutrientionTargetService.findTargets(
       gender,
       age,
     );
-    console.log("items start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(items);
-    console.log("items end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log("totals start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(totals);
-    console.log("totals end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log("pfc start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(pfc);
-    console.log("pfc end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(targets);
-    console.log("targets end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     const comparisons = this.rdiEvaluator.evaluate(totals, targets, pfc);
-    console.log("comparisons start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(comparisons);
-    console.log("comparisons end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
     return {
       totals,
       pfc,
       comparisons,
+    };
+  }
+  async executeMonthly(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<CalculateDailyNutritionResult> {
+    // TODO
+    const age = 44;
+    const gender = Gender.Male;
+    // const date = new Date(2026, 0, 17);
+
+    // 栄養素ごとの摂取量
+    const items: IDailyNutrientAggregationItem[] =
+      await this.queryService.fetchAggregationItemsByPeriod("1", from, to);
+    console.log(items);
+    return {
+      totals: [],
+      pfc: [],
+      comparisons: [],
     };
   }
 }

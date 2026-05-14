@@ -19,4 +19,9 @@ export interface IMealRepository {
   //   endDate: Date
   // ): Promise<MealWithDetails[]>;
   findByUserAndDate(userId: string, date: Date): Promise<MealDishWithDish[]>;
+  findByUserAndPeriod(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<MealDishWithDish[]>;
 }

@@ -150,6 +150,7 @@ dish_recipe = [
   { dish: yakisoba, ing: "ソース", qty: 30 }  # ソースを追加
 ]
 
+# どの料理(dish)にどの食材がどれだけ使われているかを登録
 dish_recipe.each do |item|
   DishIngredient.find_or_create_by!(
     dish: item[:dish],

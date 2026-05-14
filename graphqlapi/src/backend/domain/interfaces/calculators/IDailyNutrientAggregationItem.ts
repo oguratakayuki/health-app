@@ -4,4 +4,5 @@ export interface IDailyNutrientAggregationItem {
   nutrientCode: NutrientCode;
   ingredientAmountGram: number | null;
   nutrientPer100g: number | null;
+  eatenAt?: Date | null;
 }
