@@ -2,21 +2,18 @@ import { Gender } from "@/backend/domain/types/Gender";
 import { IDailyNutrientAggregationItem } from "../../domain/interfaces/calculators/IDailyNutrientAggregationItem";
 
 import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/DailyNutrientTotal";
-import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
-import { NutrientCode } from "@/backend/domain/types/NutrientCode";
 import { ICalculateDailyNutritionUseCase } from "@/backend/domain/interfaces/usecases/ICalculateDailyNutritionUseCase";
 import { IDailyNutrientAggregator } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregator";
 import { IPfcCalculator } from "@/backend/domain/interfaces/calculators/IPfcCalculator";
 import { DailyNutritionQueryService } from "@/backend/application/services/DailyNutritionQueryService";
 import { INutritionTargetService } from "@/backend/domain/interfaces/INutritionTargetService";
 import { IRdiEvaluator } from "@/backend/domain/interfaces/calculators/IRdiEvaluator";
-import { NutrientComparison } from "@/backend/domain/entities/valueObjects/NutrientComparison";
 
-export type CalculateDailyNutritionResult = {
-  totals: Map<NutrientCode, DailyNutrientTotal>;
-  pfc: PfcBalance;
-  comparisons: NutrientComparison[];
-};
+import {
+  CalculateDailyNutritionResult,
+  DailyNutritionSnapshot,
+  CalculateMonthlyNutritionResult,
+} from "@/backend/domain/interfaces/usecases/ICalculateDailyNutritionUseCase";
 
 export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionUseCase {
   constructor(
@@ -55,7 +52,7 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     userId: string,
     from: Date,
     to: Date,
-  ): Promise<CalculateDailyNutritionResult> {
+  ): Promise<CalculateMonthlyNutritionResult> {
     // TODO
     const age = 44;
     const gender = Gender.Male;
@@ -65,10 +62,39 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     const items: IDailyNutrientAggregationItem[] =
       await this.queryService.fetchAggregationItemsByPeriod("1", from, to);
     console.log(items);
+
+    // 日付ごとにgrouping
+    const grouped = new Map<string, IDailyNutrientAggregationItem[]>();
+    for (const item of items) {
+      const key = item.eatenAt.toISOString().split("T")[0];
+      const current = grouped.get(key) ?? [];
+      current.push(item);
+      grouped.set(key, current);
+    }
+    console.log(grouped);
+    const targets = await this.nutrientionTargetService.findTargets(
+      gender,
+      age,
+    );
+    const days: DailyNutritionSnapshot[] = [];
+    for (const [date, dailyItems] of grouped) {
+      const totals = this.aggregator.aggregate(dailyItems);
+
+      const pfc = this.pfcCalculator.calculate(totals);
+
+      const comparisons = this.rdiEvaluator.evaluate(totals, targets, pfc);
+
+      days.push({
+        date,
+        totals,
+        pfc,
+        comparisons,
+      });
+    }
+    days.sort((a, b) => a.date.localeCompare(b.date));
+
     return {
-      totals: [],
-      pfc: [],
-      comparisons: [],
+      days,
     };
   }
 }

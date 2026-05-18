@@ -3,7 +3,7 @@ import { DailyNutrientTotal } from "@/backend/domain/entities/valueObjects/Daily
 import { DailyNutrientTarget } from "@/backend/domain/entities/valueObjects/DailyNutrientTarget";
 import { NutrientComparison } from "@/backend/domain/entities/valueObjects/NutrientComparison";
 import { NutrientCode } from "@/backend/domain/types/NutrientCode";
-import { PfcBalance } from "@/backend/domain/entities/valueObjects/PfcBalance";
+import { PfcBalance } from "@/backend/domain/entities/PfcBalance";
 
 export class RdiEvaluatorService implements IRdiEvaluator {
   evaluate(

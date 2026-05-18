@@ -14,6 +14,7 @@ import { Nutrient } from "@/backend/infrastructure/graphql/types/Nutrient";
 import { CreateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateNutrientInput";
 import { UpdateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientInput";
 import { DailyNutritionType } from "@/backend/infrastructure/graphql/types/DailyNutrition";
+import { MonthlyNutritionType } from "@/backend/infrastructure/graphql/types/MonthlyNutritionType";
 
 @ObjectType()
 class NutrientsResponse {
@@ -182,6 +183,36 @@ export class NutrientResolver {
     } catch (error) {
       console.error(`Error in dailyNutrition query: ${error}`);
       throw new Error("Failed to calculate daily nutrition");
+    }
+  }
+  @Query(() => MonthlyNutritionType)
+  async monthlyNutrition(
+    @Arg("from") from: string,
+    @Arg("to") to: string,
+    @Ctx() ctx: GraphQLContext,
+  ): Promise<MonthlyNutritionType> {
+    try {
+      if (!ctx.calculateDailyNutritionUseCase) {
+        throw new Error("UseCase is not available in context");
+      }
+
+      const result = await ctx.calculateDailyNutritionUseCase.executeMonthly(
+        "1",
+        new Date(from),
+        new Date(to),
+      );
+
+      return {
+        days: result.days.map((day) => ({
+          date: day.date,
+          totals: Array.from(day.totals.values()),
+          pfc: day.pfc,
+          comparisons: day.comparisons,
+        })),
+      };
+    } catch (error) {
+      console.error(`Error in monthlyNutrition query: ${error}`);
+      throw new Error("Failed to calculate monthly nutrition");
     }
   }
 }
