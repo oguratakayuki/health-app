@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/YOUR_MODEL_NAME",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://<YOUR_OLLAMA_MACHINE_IP>:11434/v1"
+      }
+    }
+  },
+  "mcp": {
+    "mysql-db": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-postgres-mysql-example"],
+      "enabled": true,
+      "environment": {
+        "DB_URL": "mysql://root:PASSWORD@127.0.0.1:3307/health_development"
+      }
+    }
+  }
+}

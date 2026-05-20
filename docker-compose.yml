@@ -8,7 +8,8 @@ services:
       - "3009:3000"
   db:
     image: mysql:8.0.32
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    # command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --default-authentication-plugin=mysql_native_password
     platform: linux/x86_64
     environment:
       MYSQL_ROOT_PASSWORD: rootp
@@ -20,6 +21,7 @@ services:
       - "3307:3306"
     volumes:
       - ./backend/tmp/db:/var/lib/mysql
+      - ./backend/tmp/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test:
         [
