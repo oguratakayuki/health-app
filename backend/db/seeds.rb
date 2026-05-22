@@ -89,9 +89,6 @@ load Rails.root.join("db/seeds/meals.rb")
 puts "Seeds created successfully with split files."
 
 
-meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch, start_time: "11:30", end_time: "12:30")
-MealDish.find_or_create_by!(meal: meal_2, dish: yakisoba)
-
 puts "Seeds created successfully with split files."
 
 
@@ -154,14 +151,6 @@ end
 
 # --- 7. 料理マスターの作成 ---
 load Rails.root.join("db/seeds/dishes.rb")
-
-# --- 8. 食事履歴の作成 ---
-meal_1 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 17), category: :dinner, start_time: "19:00", end_time: "19:30")
-MealDish.find_or_create_by!(meal: meal_1, dish: curry)
-
-meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch, start_time: "11:30", end_time: "12:30")
-MealDish.find_or_create_by!(meal: meal_2, dish: yakisoba)
-
 
 nutrients = {}
 nutrients_list.each do |name, data|
@@ -245,12 +234,5 @@ dish_recipe.each do |item|
     content_unit: "g"
   )
 end
-
-# --- 8. 食事履歴の作成 ---
-meal_1 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 17), category: :dinner, start_time: "19:00", end_time: "19:30")
-MealDish.find_or_create_by!(meal: meal_1, dish: curry)
-
-meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch, start_time: "11:30", end_time: "12:30")
-MealDish.find_or_create_by!(meal: meal_2, dish: yakisoba)
 
 puts "Seeds created successfully with split nutrient files."
