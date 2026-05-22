@@ -8,9 +8,6 @@ UNIT_UG   = "μg"
 UNIT_PCT  = "energy_percent" # "％エネルギー"
 
 # --- 2. 栄養素マスタの作成 ---
-# --- 2. 栄養素マスタの作成 ---
-
-
 nutrients_list = {
   "エネルギー" => { code: "energy_kcal", unit: UNIT_KCAL },
   "たんぱく質" => { code: "protein_g", unit: UNIT_G },
@@ -27,7 +24,6 @@ nutrients_list = {
 }
 
 nutrients = {}
-
 nutrients_list.each do |name, data|
   nutrients[name] = Nutrient.find_or_create_by!(code: data[:code]) do |n|
     n.name = name
@@ -76,95 +72,45 @@ end
 
 user = User.find_or_create_by!(email: "test@example.com")
 
-# --- 1. 食材マスターの作成 (白米、植物油、ソースを追加) ---
-ingredients_data = [
-  { name: "豚肉", original_name: "豚ロース" },
-  { name: "じゃがいも", original_name: "男爵" },
-  { name: "にんじん", original_name: "にんじん" },
-  { name: "中華麺", original_name: "蒸し麺" },
-  { name: "キャベツ", original_name: "キャベツ" },
-  { name: "白米", original_name: "精白米（めし）" },
-  { name: "植物油", original_name: "サラダ油" },
-  { name: "ソース", original_name: "濃厚ソース" }
-]
+# --- 5. 食材マスターの作成 ---
+load Rails.root.join("db/seeds/ingredients.rb")
 
-ingredients = {}
-ingredients_data.each do |data|
-  ingredients[data[:name]] = Ingredient.find_or_create_by!(name: data[:name]) do |i|
-    i.original_name = data[:original_name]
-  end
+# --- 6. 栄養素データのロード (分割ファイル) ---
+Dir.glob(Rails.root.join("db/seeds/nutrients/*.rb")).sort.each do |file|
+  load file
 end
 
-# --- 2. 食材ごとの栄養素（100gあたり）の登録 ---
-nutrient_values = {
-  "豚肉" => { "エネルギー" => 263, "たんぱく質" => 19, "脂質" => 19 },
-  "じゃがいも" => { "エネルギー" => 76, "たんぱく質" => 1.6, "炭水化物" => 17 },
-  "にんじん" => { "エネルギー" => 37, "ビタミンA" => 700, "食物繊維" => 2.8 },
-  "中華麺" => { "エネルギー" => 198, "たんぱく質" => 5, "炭水化物" => 40 },
-  "キャベツ" => { "エネルギー" => 23, "ビタミンC" => 40, "食物繊維" => 1.8 },
-  "白米" => { "エネルギー" => 156, "たんぱく質" => 2.5, "炭水化物" => 37.1 },
-  "植物油" => { "エネルギー" => 921, "脂質" => 100 },
-  "ソース" => { "エネルギー" => 132, "炭水化物" => 30 }
-}
-
-nutrient_values.each do |ing_name, nuts|
-  ing = ingredients[ing_name]
-  nuts.each do |n_name, val|
-    nutrient = nutrients[n_name]
-    next unless nutrient
-
-    # 単位の自動判別ロジック
-    unit_str = case n_name
-               when "エネルギー" then "kcal"
-               when "ビタミンA" then "μg"
-               when "ビタミンC", "カルシウム", "鉄", "亜鉛", "カリウム" then "mg"
-               else "g"
-               end
-
-    IngredientNutrient.find_or_create_by!(
-      ingredient_id: ing.id,
-      nutrient_id: nutrient.id,
-      content_quantity: val,
-      content_unit: unit_str,
-      content_unit_per: 100,
-      content_unit_per_unit: "g"
-    )
-  end
-end
-
-# --- 3. 料理マスターの作成 ---
+# --- 7. 料理マスターの作成 ---
 curry = Dish.find_or_create_by!(name: "カレーライス")
 yakisoba = Dish.find_or_create_by!(name: "焼きそば")
 
-# 料理の材料を紐付け (g単位)
 dish_recipe = [
   { dish: curry, ing: "豚肉", qty: 50 },
   { dish: curry, ing: "じゃがいも", qty: 100 },
   { dish: curry, ing: "にんじん", qty: 30 },
-  { dish: curry, ing: "白米", qty: 200 }, # カレーにライスを追加
-  { dish: curry, ing: "植物油", qty: 5 },  # 調理油
+  { dish: curry, ing: "白米", qty: 200 },
+  { dish: curry, ing: "植物油", qty: 5 },
   { dish: yakisoba, ing: "中華麺", qty: 150 },
   { dish: yakisoba, ing: "豚肉", qty: 30 },
   { dish: yakisoba, ing: "キャベツ", qty: 50 },
-  { dish: yakisoba, ing: "植物油", qty: 10 }, # 焼きそばに油を追加
-  { dish: yakisoba, ing: "ソース", qty: 30 }  # ソースを追加
+  { dish: yakisoba, ing: "植物油", qty: 10 },
+  { dish: yakisoba, ing: "ソース", qty: 30 }
 ]
 
-# どの料理(dish)にどの食材がどれだけ使われているかを登録
 dish_recipe.each do |item|
   DishIngredient.find_or_create_by!(
     dish: item[:dish],
-    ingredient: ingredients[item[:ing]],
+    ingredient: Ingredient.find_by!(name: item[:ing]),
     content_quantity: item[:qty],
     content_unit: "g"
   )
 end
 
-# --- 4. 食事履歴の作成 ---
+# --- 8. 食事履歴の作成 ---
 meal_1 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 17), category: :dinner, start_time: "19:00", end_time: "19:30")
 MealDish.find_or_create_by!(meal: meal_1, dish: curry)
 
 meal_2 = Meal.find_or_create_by!(user: user, meal_date: Date.new(2026, 1, 18), category: :lunch, start_time: "11:30", end_time: "12:30")
 MealDish.find_or_create_by!(meal: meal_2, dish: yakisoba)
 
-puts "Seeds created successfully with fixed units and ingredients."
+puts "Seeds created successfully with split nutrient files."
