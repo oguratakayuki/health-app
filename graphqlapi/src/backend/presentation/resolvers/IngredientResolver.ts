@@ -3,6 +3,7 @@ import type { GraphQLContext } from "@/backend/application/types/context";
 import type { IngredientService } from "@/backend/application/services/IngredientService";
 import { Ingredient } from "@/backend/infrastructure/graphql/types/Ingredient";
 import { IngredientWithRelations } from "@/backend/domain/entities/Ingredient";
+import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver()
 export class IngredientResolver {
@@ -18,6 +19,7 @@ export class IngredientResolver {
   }
 
   @Query(() => [Ingredient])
+  @Authorized()
   async ingredients(
     @Ctx() ctx: GraphQLContext,
   ): Promise<IngredientWithRelations[]> {

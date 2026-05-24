@@ -1,3 +1,4 @@
+// src/frontend/hooks/useMe.ts
 import { useQuery } from "@apollo/client";
 import { ME_QUERY } from "@/frontend/graphql/queries/me";
 

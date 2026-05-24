@@ -15,6 +15,10 @@ import { CreateNutrientInput } from "@/backend/infrastructure/graphql/inputs/pri
 import { UpdateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientInput";
 import { DailyNutritionType } from "@/backend/infrastructure/graphql/types/DailyNutrition";
 import { MonthlyNutritionType } from "@/backend/infrastructure/graphql/types/MonthlyNutritionType";
+import {
+  Authorized,
+  RequireAdmin,
+} from "@/backend/application/auth/decorators";
 
 @ObjectType()
 class NutrientsResponse {
@@ -39,6 +43,7 @@ export class NutrientResolver {
   }
 
   @Query(() => Nutrient, { nullable: true })
+  @RequireAdmin()
   async prismaNutrient(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
@@ -54,6 +59,7 @@ export class NutrientResolver {
   }
 
   @Query(() => [Nutrient])
+  @RequireAdmin()
   async prismaNutrients(@Ctx() ctx: GraphQLContext): Promise<Nutrient[]> {
     try {
       const nutrientService = this.getNutrientService(ctx);
@@ -65,6 +71,7 @@ export class NutrientResolver {
   }
 
   @Query(() => NutrientsResponse)
+  @Authorized()
   async searchPrismaNutrients(
     @Ctx() ctx: GraphQLContext,
     @Arg("name", { nullable: true }) name?: string,
@@ -84,6 +91,7 @@ export class NutrientResolver {
   }
 
   @Query(() => [Nutrient])
+  @Authorized()
   async prismaNutrientsByParent(
     @Ctx() ctx: GraphQLContext,
     @Arg("parentId", { nullable: true }) parentId?: string,
@@ -100,6 +108,7 @@ export class NutrientResolver {
   }
 
   @Query(() => String)
+  @Authorized()
   async prismaNutrientsCount(@Ctx() ctx: GraphQLContext): Promise<string> {
     try {
       const nutrientService = this.getNutrientService(ctx);
@@ -112,6 +121,7 @@ export class NutrientResolver {
   }
 
   @Mutation(() => Nutrient)
+  @Authorized()
   async createPrismaNutrient(
     @Arg("input") input: CreateNutrientInput,
     @Ctx() ctx: GraphQLContext,
@@ -128,6 +138,7 @@ export class NutrientResolver {
   }
 
   @Mutation(() => Nutrient)
+  @Authorized()
   async updatePrismaNutrient(
     @Arg("id") id: string,
     @Arg("input") input: UpdateNutrientInput,
@@ -145,6 +156,7 @@ export class NutrientResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized()
   async deletePrismaNutrient(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
@@ -161,6 +173,7 @@ export class NutrientResolver {
   }
 
   @Query(() => DailyNutritionType)
+  @Authorized()
   async dailyNutrition(
     @Arg("date") date: string,
     @Ctx() ctx: GraphQLContext,
@@ -185,7 +198,9 @@ export class NutrientResolver {
       throw new Error("Failed to calculate daily nutrition");
     }
   }
+
   @Query(() => MonthlyNutritionType)
+  @Authorized()
   async monthlyNutrition(
     @Arg("from") from: string,
     @Arg("to") to: string,
@@ -197,7 +212,7 @@ export class NutrientResolver {
       }
 
       const result = await ctx.calculateDailyNutritionUseCase.executeMonthly(
-        "1",
+        ctx.user.id,
         new Date(from),
         new Date(to),
       );

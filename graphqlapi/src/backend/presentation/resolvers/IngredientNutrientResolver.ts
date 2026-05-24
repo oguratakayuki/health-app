@@ -3,6 +3,7 @@ import { Query, Resolver, Arg, Int, Ctx } from "type-graphql";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { IIngredientNutrientService } from "@/backend/domain/interfaces/IIngredientNutrientService";
 import { IngredientNutrient } from "@/backend/infrastructure/graphql/types/IngredientNutrient";
+import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver()
 export class IngredientNutrientResolver {
@@ -20,6 +21,7 @@ export class IngredientNutrientResolver {
   }
 
   @Query(() => [IngredientNutrient])
+  @Authorized()
   async ingredientNutrients(
     @Ctx() ctx: GraphQLContext,
     @Arg("limit", () => Int, { nullable: true }) limit?: number,

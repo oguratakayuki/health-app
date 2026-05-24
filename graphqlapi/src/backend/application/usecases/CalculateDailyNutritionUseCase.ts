@@ -60,7 +60,7 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
 
     // 栄養素ごとの摂取量
     const items: IDailyNutrientAggregationItem[] =
-      await this.queryService.fetchAggregationItemsByPeriod("1", from, to);
+      await this.queryService.fetchAggregationItemsByPeriod(userId, from, to);
     console.log(items);
 
     // 日付ごとにgrouping

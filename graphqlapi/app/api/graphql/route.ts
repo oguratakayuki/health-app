@@ -7,6 +7,7 @@ import { resolvers } from "@/backend/presentation/resolvers";
 import { verifyIdToken } from "@/backend/application/services/tokenVerifier";
 import { ServiceFactory } from "@/backend/application/services/adapters";
 import { GraphQLContext } from "@/backend/application/types/context";
+import { authChecker } from "@/backend/application/auth/authChecker";
 
 let yogaInstance: any = null;
 
@@ -17,6 +18,8 @@ async function getYoga() {
     const schema = await buildSchema({
       resolvers,
       validate: false,
+      authChecker,
+      authMode: "null",
     });
 
     yogaInstance = createYoga({
@@ -36,7 +39,7 @@ async function getYoga() {
         const services = ServiceFactory.getServicesFromContext();
         // 完全なコンテキストを作成
         const context: GraphQLContext = {
-          user,
+          user: user || undefined, // nullをundefinedに変換
           ...services,
         };
         return context;

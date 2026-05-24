@@ -6,6 +6,7 @@ import { CreateDishInput } from "@/backend/infrastructure/graphql/inputs/prisma/
 import { UpdateDishInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateDishInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { DishService } from "@/backend/application/services/DishService";
+import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver()
 export class DishResolver {
@@ -21,6 +22,7 @@ export class DishResolver {
   }
 
   @Query(() => Dish, { nullable: true, name: "prismaDish" })
+  @Authorized()
   async dish(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
@@ -36,6 +38,7 @@ export class DishResolver {
   }
 
   @Query(() => [Dish], { name: "prismaDishes" })
+  @Authorized()
   async dishes(@Ctx() ctx: GraphQLContext): Promise<Dish[]> {
     try {
       const dishService = this.getDishService(ctx);
@@ -60,6 +63,7 @@ export class DishResolver {
   }
 
   @Query(() => String, { name: "prismaDishesCount" })
+  @Authorized()
   async dishesCount(@Ctx() ctx: GraphQLContext): Promise<string> {
     try {
       const dishService = this.getDishService(ctx);
@@ -72,6 +76,7 @@ export class DishResolver {
   }
 
   @Mutation(() => Dish, { name: "createDish" })
+  @Authorized()
   async createDish(
     @Arg("input") input: CreateDishInput,
     @Ctx() ctx: GraphQLContext,
@@ -88,6 +93,7 @@ export class DishResolver {
   }
 
   @Mutation(() => Dish, { name: "updateDish" })
+  @Authorized()
   async updateDish(
     @Arg("id") id: string,
     @Arg("input") input: UpdateDishInput,
@@ -105,6 +111,7 @@ export class DishResolver {
   }
 
   @Mutation(() => Boolean, { name: "deleteDish" })
+  @Authorized()
   async deleteDish(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,

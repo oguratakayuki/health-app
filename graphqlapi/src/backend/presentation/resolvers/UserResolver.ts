@@ -3,6 +3,7 @@ import { Query, Resolver, Arg, Int, Ctx } from "type-graphql";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { IUserService } from "@/backend/domain/interfaces/IUserService";
 import { User } from "@/backend/infrastructure/graphql/types/User";
+import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver(() => User)
 export class UserResolver {
@@ -18,6 +19,7 @@ export class UserResolver {
   }
 
   @Query(() => [User])
+  @Authorized()
   async users(
     @Ctx() ctx: GraphQLContext,
     @Arg("limit", () => Int, { nullable: true }) limit?: number,

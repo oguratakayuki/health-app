@@ -4,6 +4,7 @@ import type { NutrientsIntakeStandardService } from "@/backend/application/servi
 import { NutrientsIntakeStandard } from "@/backend/infrastructure/graphql/types/NutrientsIntakeStandard";
 import { CreateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateNutrientsIntakeStandardInput";
 import { UpdateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientsIntakeStandardInput";
+import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver(() => NutrientsIntakeStandard)
 export class NutrientsIntakeStandardResolver {
@@ -22,6 +23,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Query(() => NutrientsIntakeStandard, { nullable: true })
+  @Authorized()
   async nutrientsIntakeStandard(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
@@ -40,6 +42,7 @@ export class NutrientsIntakeStandardResolver {
     name: "nutrientsIntakeStandardsWithFilters",
     description: "性別・年齢でフィルタリングした栄養摂取基準を取得",
   })
+  @Authorized()
   async getNutrientsIntakeStandardsWithFilters(
     @Ctx() ctx: GraphQLContext,
     @Arg("gender", () => String, { nullable: true }) gender?: string,
@@ -64,6 +67,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Query(() => [NutrientsIntakeStandard])
+  @Authorized()
   async nutrientsIntakeStandards(
     @Ctx() ctx: GraphQLContext,
   ): Promise<NutrientsIntakeStandard[]> {
@@ -79,6 +83,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Query(() => [NutrientsIntakeStandard])
+  @Authorized()
   async nutrientsIntakeStandardsByNutrient(
     @Arg("nutrientId", () => Int) nutrientId: number,
     @Ctx() ctx: GraphQLContext,
@@ -96,6 +101,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Mutation(() => NutrientsIntakeStandard)
+  @Authorized()
   async createNutrientsIntakeStandard(
     @Arg("input") input: CreateNutrientsIntakeStandardInput,
     @Ctx() ctx: GraphQLContext,
@@ -115,6 +121,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Mutation(() => NutrientsIntakeStandard)
+  @Authorized()
   async updateNutrientsIntakeStandard(
     @Arg("id") id: string,
     @Arg("input") input: UpdateNutrientsIntakeStandardInput,
@@ -135,6 +142,7 @@ export class NutrientsIntakeStandardResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized()
   async deleteNutrientsIntakeStandard(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
