@@ -6,8 +6,9 @@ import { IngredientService } from "@/backend/application/services/IngredientServ
 import { CognitoService } from "@/backend/application/services/CognitoService";
 import { UserService } from "@/backend/application/services/UserService";
 import { IngredientNutrientService } from "@/backend/application/services/IngredientNutrientService";
+import { MealService } from "@/backend/application/services/MealService";
 import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
-
+ 
 export interface GraphQLContext {
   user?: {
     id: string;
@@ -18,13 +19,15 @@ export interface GraphQLContext {
   };
   // サービスインスタンス
   dishService?: DishService;
-  nutrientService?: NutrientService;
+  nutrientService?: NutrientService,
   ingredientService?: IngredientService;
   cognitoService?: CognitoService;
   userService?: UserService;
   ingredientNutrientService?: IngredientNutrientService;
   nutrientsIntakeStandardService: NutrientsIntakeStandardService;
+  mealService?: MealService;
   // 後方互換性のためのPrismaクライアント
   prisma?: any;
   calculateDailyNutritionUseCase?: CalculateDailyNutritionUseCase;
 }
+

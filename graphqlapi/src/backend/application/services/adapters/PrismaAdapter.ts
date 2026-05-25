@@ -5,31 +5,32 @@ import { NutrientService } from "../NutrientService";
 import { NutrientsIntakeStandardService } from "../NutrientsIntakeStandardService";
 import { IngredientService } from "../IngredientService";
 import { IngredientNutrientService } from "../IngredientNutrientService";
+import { MealService } from "../MealService";
 import { PrismaDishRepository } from "@/backend/infrastructure/repositories/prisma/DishRepository";
-
+ 
 import { PrismaNutrientRepository } from "@/backend/infrastructure/repositories/prisma/NutrientRepository";
 import { NutrientsIntakeStandardRepository } from "@/backend/infrastructure/repositories/prisma/NutrientsIntakeStandardRepository";
 import { PrismaIngredientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientRepository";
 import { IngredientNutrientRepository } from "@/backend/infrastructure/repositories/prisma/IngredientNutrientRepository";
 import { UserRepository } from "@/backend/infrastructure/repositories/prisma/UserRepository";
+import { MealRepository } from "@/backend/infrastructure/repositories/prisma/MealRepository";
+import { MealDishRepository } from "@/backend/infrastructure/repositories/prisma/MealDishRepository";
 import { PrismaClient } from "@prisma/client";
 import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
 import { DailyNutritionQueryService } from "@/backend/application/services/DailyNutritionQueryService";
 import { DailyNutrientAggregatorService } from "@/backend/application/services/calculators/DailyNutrientAggregatorService";
 import { PfcCalculatorService } from "@/backend/application/services/calculators/PfcCalculatorService";
-
-import { MealRepository } from "@/backend/infrastructure/repositories/prisma/MealRepository";
-
+ 
 import { NutritionTargetService } from "@/backend/application/services/NutritionTargetService";
-
+ 
 import { RdiEvaluatorService } from "@/backend/application/services/calculators/RdiEvaluatorService";
-
+ 
 /**
- * Prisma用のサービスアダプター
- */
-
+  * Prisma用のサービスアダプター
+  */
+ 
 let prismaInstance: PrismaClient | null = null;
-
+ 
 function getPrismaClient(): PrismaClient {
   if (!prismaInstance) {
     console.log("🔄 Creating new PrismaClient instance");
@@ -51,7 +52,7 @@ function getPrismaClient(): PrismaClient {
       console.log("Target:", e.target);
       console.log("===================\n");
     });
-
+ 
     // 開発環境での接続確認
     if (process.env.NODE_ENV !== "production") {
       prismaInstance
@@ -64,28 +65,28 @@ function getPrismaClient(): PrismaClient {
   }
   return prismaInstance;
 }
-
+ 
 export function createPrismaDishService(): DishService {
   const prisma = getPrismaClient();
   const repository = new PrismaDishRepository(prisma);
   return new DishService(repository);
 }
-
+ 
 export function createPrismaNutrientService(): NutrientService {
   const prisma = getPrismaClient();
   const repository = new PrismaNutrientRepository(prisma);
   return new NutrientService(repository);
 }
-
+ 
 export function createNutrientsIntakeStandardService(): NutrientsIntakeStandardService {
   const prisma = getPrismaClient();
   const repository = new NutrientsIntakeStandardRepository(prisma);
   return new NutrientsIntakeStandardService(repository);
 }
-
+ 
 export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionUseCase {
   const prisma = getPrismaClient();
-
+ 
   // Repository
   const mealRepository = new MealRepository(prisma);
   const ingredientNutrientRepository = new IngredientNutrientRepository(prisma);
@@ -94,18 +95,18 @@ export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionU
   const nutritionTargetService = new NutritionTargetService(
     nutrientsIntakeStandardRepository,
   );
-
+ 
   // QueryService
   const queryService = new DailyNutritionQueryService(
     mealRepository,
     ingredientNutrientRepository,
   );
-
+ 
   // Calculator
   const aggregator = new DailyNutrientAggregatorService();
   const pfcCalculator = new PfcCalculatorService();
   const rdiEvaluatorService = new RdiEvaluatorService();
-
+ 
   return new CalculateDailyNutritionUseCase(
     queryService,
     aggregator,
@@ -114,32 +115,42 @@ export function createCalculateDailyNutritionUseCase(): CalculateDailyNutritionU
     rdiEvaluatorService,
   );
 }
-
+ 
 export function createPrismaIngredientService(): IngredientService {
   const prisma = getPrismaClient();
   const repository = new PrismaIngredientRepository(prisma);
   return new IngredientService(repository);
 }
-
+ 
 export function createIngredientNutrientService(): IngredientNutrientService {
   const prisma = getPrismaClient();
   const repository = new IngredientNutrientRepository(prisma);
   return new IngredientNutrientService(repository);
 }
-
+ 
 export function createUserService(): UserService {
   const prisma = getPrismaClient();
   const repository = new UserRepository(prisma);
   return new UserService(repository);
 }
-
+ 
 export function createCognitoService(): CognitoService {
   const userService = createUserService();
   return new CognitoService(userService);
 }
+
+export function createPrismaMealService(): MealService {
+  const prisma = getPrismaClient();
+  const mealRepository = new MealRepository(prisma);
+  const dishRepository = new PrismaDishRepository(prisma);
+  const mealDishRepository = new MealDishRepository(prisma);
+  return new MealService(prisma, mealRepository, dishRepository, mealDishRepository);
+}
+
 export function cleanupPrisma() {
   if (prismaInstance) {
     return prismaInstance.$disconnect();
   }
   return Promise.resolve();
 }
+

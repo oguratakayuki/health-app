@@ -11,12 +11,17 @@ export interface Meal {
   dishIds?: number[];
 }
 
+export interface MealDishInput {
+  id?: number;
+  name?: string;
+}
+
 // 入力用DTO
 export interface CreateMealInput {
   userId: number;
   mealDate: Date;
   category: string;
-  dishIds: number[];
+  dishes: MealDishInput[];
 }
 
 export interface UpdateMealInput {

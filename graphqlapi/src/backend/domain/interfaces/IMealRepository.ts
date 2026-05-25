@@ -1,23 +1,14 @@
-// src/backend/domain/interfaces/IMealRepository.ts
 import { DailyNutrientSummary } from "@/backend/domain/entities/NutrientSummary";
-import { MealDishWithDish } from "@/backend/domain/entities/Meal";
+import { Meal, CreateMealInput, MealDishWithDish } from "@/backend/domain/entities/Meal";
+import { Prisma } from "@prisma/client";
+
 export interface IMealRepository {
-  // 既存のメソッド（例）
-  // findById(id: number): Promise<Meal | null>;
-  // findByUserId(userId: number): Promise<Meal[]>;
-  // create(meal: CreateMealInput): Promise<Meal>;
-  // update(id: number, meal: UpdateMealInput): Promise<Meal>;
-  // delete(id: number): Promise<void>;
-  // 栄養素集計関連のメソッド
+  findById(id: number): Promise<Meal | null>;
+  createWithTx(tx: Prisma.TransactionClient, input: Omit<CreateMealInput, "dishes">): Promise<Meal>;
   getDailyNutrientSummary(
     userId: number,
     date: Date,
   ): Promise<DailyNutrientSummary[]>;
-  // getMealsWithDetailsByDateRange(
-  //   userId: number,
-  //   startDate: Date,
-  //   endDate: Date
-  // ): Promise<MealWithDetails[]>;
   findByUserAndDate(userId: string, date: Date): Promise<MealDishWithDish[]>;
   findByUserAndPeriod(
     userId: string,

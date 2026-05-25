@@ -1,12 +1,30 @@
 // src/backend/infrastructure/repositories/prisma/MealRepository.ts
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
-import { Meal, MealDishWithDish } from "@backend/domain/entities/Meal";
+import { Meal, CreateMealInput, MealDishWithDish } from "@backend/domain/entities/Meal";
 import { MealMapper } from "./mappers/MealMapper";
 
 export class MealRepository implements IMealRepository {
   constructor(private prisma: PrismaClient) {}
+
+  async findById(id: number): Promise<Meal | null> {
+    const meal = await this.prisma.meal.findUnique({
+      where: { id },
+    });
+    return meal ? MealMapper.mapToMeal(meal as any) : null;
+  }
+
+  async createWithTx(tx: Prisma.TransactionClient, input: Omit<CreateMealInput, "dishes">): Promise<Meal> {
+    const meal = await tx.meal.create({
+      data: {
+        userId: BigInt(input.userId),
+        mealDate: input.mealDate,
+        category: input.category,
+      },
+    });
+    return MealMapper.mapToMeal(meal as any);
+  }
 
   async getDailyNutrientSummary(
     userId: number,
@@ -50,17 +68,16 @@ export class MealRepository implements IMealRepository {
         n.id;
     `;
 
-    // DailyNutrientSummary型に変換
     return result.map((item) => ({
       nutrientName: item.nutrient_name,
       totalAmount: item.total_actual,
       unit: item.unit,
-      // 元のクエリには含まれていないフィールド
       nutrientId: item.nutrient_id,
       rdiPercentage: undefined,
       createdAt: new Date(),
     }));
   }
+
   async findByUserAndDate(
     userId: string,
     date: Date,
@@ -84,6 +101,7 @@ export class MealRepository implements IMealRepository {
     });
     return meals.map((m) => MealMapper.mapToMeal(m as any));
   }
+
   async findByUserAndPeriod(
     userId: string,
     from: Date,

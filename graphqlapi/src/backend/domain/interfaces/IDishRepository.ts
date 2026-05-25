@@ -4,11 +4,13 @@ import {
   CreateDishInput,
   UpdateDishInput,
 } from "@/backend/domain/entities/Dish";
+import { Prisma } from "@prisma/client";
 
 export interface IDishRepository {
   findById(id: string): Promise<DishWithIngredients | null>;
   findAll(): Promise<Dish[]>;
   create(dish: CreateDishInput): Promise<Dish>;
+  createWithTx(tx: Prisma.TransactionClient, dish: CreateDishInput): Promise<Dish>;
   update(id: string, dish: UpdateDishInput): Promise<Dish>;
   delete(id: string): Promise<boolean>;
   findByName(name: string): Promise<Dish[]>;

@@ -58,6 +58,26 @@ export class PrismaDishRepository implements IDishRepository {
   }
 
   /**
+   * 料理を作成 (トランザクション内)
+   */
+  async createWithTx(tx: Prisma.TransactionClient, input: CreateDishInput): Promise<Dish> {
+    try {
+      const dish = await tx.dish.create({
+        data: {
+          name: input.name,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return DishMapper.mapToDish(dish);
+    } catch (error) {
+      console.error("PrismaDishRepository.createWithTx error:", error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
    * 料理を作成
    */
   async create(input: CreateDishInput): Promise<Dish> {
