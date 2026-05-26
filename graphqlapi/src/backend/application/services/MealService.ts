@@ -3,6 +3,7 @@ import {
   Meal,
   CreateMealInput,
   MealWithDishes,
+  MealDishWithDish,
 } from "@/backend/domain/entities/Meal";
 import { IMealRepository } from "@/backend/domain/interfaces/IMealRepository";
 import { IDishRepository } from "@/backend/domain/interfaces/IDishRepository";
@@ -44,9 +45,12 @@ export class MealService implements IMealService {
             // ここでは簡略化のためDishRepositoryにcreateWithTxがある前提
             // 本来はIDishRepositoryにtx対応メソッドを追加すべきだが、DishServiceを参考にしたため
             // DishRepositoryの実装に合わせて調整が必要
-            const createdDish = await (this.dishRepository as any).createWithTx(tx, {
-              name: dishInput.name,
-            });
+            const createdDish = await (this.dishRepository as any).createWithTx(
+              tx,
+              {
+                name: dishInput.name,
+              },
+            );
             dishIds.push(createdDish.id);
           }
         }
@@ -68,11 +72,36 @@ export class MealService implements IMealService {
    */
   async getMealWithDishes(id: number): Promise<MealWithDishes | null> {
     try {
-      return await (this.mealRepository as any).findById(id);
+      return await this.mealRepository.findById(id);
     } catch (error) {
       console.error("MealService.getMealWithDishes error:", error);
       const message = error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get meal: ${message}`);
+    }
+  }
+  /**
+   * ユーザーの指定期間内の食事を全て取得（料理情報込み）
+   * @param userId - ユーザーID
+   * @param fromDate - 開始日
+   * @param toDate - 終了日
+   * @returns 食事と料理情報の配列
+   */
+  async getAllMealsWithDishes(
+    userId: string,
+    fromDate: Date,
+    toDate: Date,
+  ): Promise<MealWithDishes[]> {
+    try {
+      const meals = await this.mealRepository.findByUserAndPeriod(
+        userId,
+        fromDate,
+        toDate,
+      );
+      return meals;
+    } catch (error) {
+      console.error("MealService.getAllMealsWithDishes error:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      throw new Error(`Failed to get meals with dishes: ${message}`);
     }
   }
 }

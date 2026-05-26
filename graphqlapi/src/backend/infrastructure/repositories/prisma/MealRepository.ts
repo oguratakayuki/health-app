@@ -2,20 +2,28 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
-import { Meal, CreateMealInput, MealDishWithDish } from "@backend/domain/entities/Meal";
+import {
+  Meal,
+  CreateMealInput,
+  MealDishWithDish,
+  MealWithDishes,
+} from "@backend/domain/entities/Meal";
 import { MealMapper } from "./mappers/MealMapper";
 
 export class MealRepository implements IMealRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findById(id: number): Promise<Meal | null> {
+  async findById(id: number): Promise<MealWithDishes | null> {
     const meal = await this.prisma.meal.findUnique({
       where: { id },
     });
     return meal ? MealMapper.mapToMeal(meal as any) : null;
   }
 
-  async createWithTx(tx: Prisma.TransactionClient, input: Omit<CreateMealInput, "dishes">): Promise<Meal> {
+  async createWithTx(
+    tx: Prisma.TransactionClient,
+    input: Omit<CreateMealInput, "dishes">,
+  ): Promise<Meal> {
     const meal = await tx.meal.create({
       data: {
         userId: BigInt(input.userId),

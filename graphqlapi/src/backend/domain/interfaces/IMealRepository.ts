@@ -1,10 +1,18 @@
 import { DailyNutrientSummary } from "@/backend/domain/entities/NutrientSummary";
-import { Meal, CreateMealInput, MealDishWithDish } from "@/backend/domain/entities/Meal";
+import {
+  Meal,
+  CreateMealInput,
+  MealDishWithDish,
+  MealWithDishes,
+} from "@/backend/domain/entities/Meal";
 import { Prisma } from "@prisma/client";
 
 export interface IMealRepository {
-  findById(id: number): Promise<Meal | null>;
-  createWithTx(tx: Prisma.TransactionClient, input: Omit<CreateMealInput, "dishes">): Promise<Meal>;
+  findById(id: number): Promise<MealWithDishes | null>;
+  createWithTx(
+    tx: Prisma.TransactionClient,
+    input: Omit<CreateMealInput, "dishes">,
+  ): Promise<Meal>;
   getDailyNutrientSummary(
     userId: number,
     date: Date,
@@ -14,5 +22,5 @@ export interface IMealRepository {
     userId: string,
     from: Date,
     to: Date,
-  ): Promise<MealDishWithDish[]>;
+  ): Promise<MealWithDishes[]>;
 }

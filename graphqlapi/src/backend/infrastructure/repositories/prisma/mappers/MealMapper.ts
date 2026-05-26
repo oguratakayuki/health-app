@@ -16,7 +16,7 @@ type PrismaMealWithRelations = Prisma.MealGetPayload<{
 }>;
 
 export class MealMapper {
-  static mapToMeal(m: PrismaMealWithRelations): MealDishWithDish {
+  static mapToMeal(m: PrismaMealWithRelations): MealWithDishes {
     return {
       id: Number(m.id),
       mealDate: m.mealDate,
