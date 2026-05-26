@@ -16,6 +16,17 @@ export class MealRepository implements IMealRepository {
   async findById(id: number): Promise<MealWithDishes | null> {
     const meal = await this.prisma.meal.findUnique({
       where: { id },
+      include: {
+        mealDishes: {
+          include: {
+            dish: {
+              include: {
+                dishIngredients: true,
+              },
+            },
+          },
+        },
+      },
     });
     return meal ? MealMapper.mapToMeal(meal as any) : null;
   }
