@@ -31,7 +31,7 @@ export interface UpdateMealInput {
 }
 
 export interface MealWithDishes extends Meal {
-  mealDishes: MealDishWithDish[];
+  dishes: DishWithIngredients[];
 }
 
 export interface MealDishWithDish extends Meal {

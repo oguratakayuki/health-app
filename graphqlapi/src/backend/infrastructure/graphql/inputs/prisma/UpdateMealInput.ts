@@ -1,14 +1,6 @@
 // UpdateMealInput.ts (拡張版)
 import { InputType, Field } from "type-graphql";
-
-@InputType()
-class UpdateDishInput {
-  @Field()
-  id: number; // 更新対象のdish id
-
-  @Field({ nullable: true })
-  name?: string;
-}
+import { UpdateDishInput } from "./UpdateDishInput";
 
 @InputType()
 export class UpdateMealInput {

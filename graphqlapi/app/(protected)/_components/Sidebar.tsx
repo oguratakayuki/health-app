@@ -25,6 +25,7 @@ import { useMe } from "@/frontend/hooks/useMe";
 
 const menuItems = [
   { text: "ダッシュボード", icon: <Dashboard />, path: "/dashboard" },
+  { text: "献立管理", icon: <Restaurant />, path: "/meals" },
   { text: "栄養成分管理", icon: <Restaurant />, path: "/ingredient-nutrients" },
   {
     text: "年齢別基準値",

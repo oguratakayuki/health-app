@@ -1,13 +1,15 @@
 // MealResolver.ts
 import { Query, Resolver, Arg, Mutation, Ctx } from "type-graphql";
 
-import { Meal } from "@/backend/infrastructure/graphql/types/Meal";
+import {
+  Meal,
+  MealWithDishes,
+} from "@/backend/infrastructure/graphql/types/Meal";
 import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateMealWithDishesInput";
 import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateMealInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { MealService } from "@/backend/application/services/MealService";
 import { Authorized } from "@/backend/application/auth/decorators";
-import { MealWithDishes } from "@/backend/domain/entities/Meal";
 
 @Resolver()
 export class MealResolver {
@@ -38,12 +40,27 @@ export class MealResolver {
     }
   }
 
-  @Query(() => [Meal], { name: "meals" })
+  @Query(() => [MealWithDishes], { name: "meals" })
   @Authorized()
-  async meals(@Ctx() ctx: GraphQLContext): Promise<Meal[]> {
+  async meals(
+    @Ctx() ctx: GraphQLContext,
+    @Arg("from") from: string,
+    @Arg("to") to: string,
+  ): Promise<MealWithDishes[]> {
     try {
       const mealService = this.getMealService(ctx);
-      return (await mealService.getAllMeals()) as Meal[];
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+
+      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+        throw new Error("Invalid date format provided for from or to");
+      }
+
+      return (await mealService.getAllMealsWithDishes(
+        ctx.user.id,
+        fromDate,
+        toDate,
+      )) as MealWithDishes[];
     } catch (error) {
       console.error(`Error in meals query: ${error}`);
       throw new Error("Failed to fetch meals");
@@ -75,10 +92,17 @@ export class MealResolver {
   ): Promise<MealWithDishes[]> {
     try {
       const mealService = this.getMealService(ctx);
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+
+      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+        throw new Error("Invalid date format provided for from or to");
+      }
+
       return (await mealService.getAllMealsWithDishes(
         ctx.user.id,
-        new Date(from),
-        new Date(to),
+        fromDate,
+        toDate,
       )) as MealWithDishes[];
     } catch (error) {
       console.error(`Error in mealsWithDishes query: ${error}`);

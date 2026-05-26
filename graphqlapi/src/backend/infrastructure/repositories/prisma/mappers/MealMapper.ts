@@ -26,27 +26,20 @@ export class MealMapper {
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
       userId: Number(m.userId),
-      mealDishes: m.mealDishes.map((md) => ({
-        id: Number(md.id),
-        mealId: Number(md.mealId),
-        dishId: Number(md.dishId),
-        createdAt: md.createdAt,
-        updatedAt: md.updatedAt,
-        dish: {
-          id: Number(md.dish.id),
-          name: md.dish.name,
-          createdAt: md.dish.createdAt,
-          updatedAt: md.dish.updatedAt,
-          dishIngredients: md.dish.dishIngredients.map((di) => ({
-            id: Number(di.id),
-            dishId: Number(di.dishId),
-            ingredientId: Number(di.ingredientId),
-            contentQuantity: di.contentQuantity,
-            contentUnit: di.contentUnit,
-            createdAt: di.createdAt,
-            updatedAt: di.updatedAt,
-          })),
-        },
+      dishes: m.mealDishes.map((md) => ({
+        id: Number(md.dish.id),
+        name: md.dish.name,
+        createdAt: md.dish.createdAt,
+        updatedAt: md.dish.updatedAt,
+        dishIngredients: md.dish.dishIngredients.map((di) => ({
+          id: Number(di.id),
+          dishId: Number(di.dishId),
+          ingredientId: Number(di.ingredientId),
+          contentQuantity: di.contentQuantity,
+          contentUnit: di.contentUnit,
+          createdAt: di.createdAt,
+          updatedAt: di.updatedAt,
+        })),
       })),
     };
   }

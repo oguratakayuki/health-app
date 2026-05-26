@@ -17,9 +17,9 @@ export class User {
   @Field(() => Boolean, { nullable: false, defaultValue: false })
   isAdmin!: boolean;
 
-  @Field()
+  @Field(() => Date)
   createdAt!: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt!: Date;
 }
