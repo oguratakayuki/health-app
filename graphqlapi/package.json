@@ -16,7 +16,8 @@
     "test:user": "NODE_ENV=test vitest UserRepository",
     "test:dish": "NODE_ENV=test vitest DishRepository",
     "test:ingredient": "NODE_ENV=test vitest IngredientRepository",
-    "test:hooks": "NODE_ENV=test vitest useMe"
+    "test:hooks": "NODE_ENV=test vitest useMe",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@apollo/client": "3.8.0",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
+    "@quramy/jest-prisma": "^1.8.2",
     "@types/bcryptjs": "^3.0.0",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^30.0.0",
@@ -69,7 +71,7 @@
     "postcss": "8",
     "prisma": "^6",
     "tailwindcss": "3",
-    "typescript": "^5.4.0",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.16"
   }
 }

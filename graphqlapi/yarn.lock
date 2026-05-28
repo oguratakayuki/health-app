@@ -1137,6 +1137,20 @@
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
+"@quramy/jest-prisma-core@^1.8.0":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@quramy/jest-prisma-core/-/jest-prisma-core-1.8.2.tgz#5f06a019b361baa25e451e7ea6c9d263ab1bd6c7"
+  integrity sha512-6QZ68muT5zK7dSjMmVsyWimmsN19KtWvnyTj93/JfPuQV2S8F1JM8xBiSL1FDME3uVNVewO+OB5AKjFL30bhYw==
+  dependencies:
+    chalk "^4.0.0"
+
+"@quramy/jest-prisma@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@quramy/jest-prisma/-/jest-prisma-1.8.2.tgz#c30a315afdb4694b73d98923ba02551b58395278"
+  integrity sha512-emDgxlU5ILGEMQo66Pg18H/IpIqS4rcGIY1lLfe10cBtWwj3LYsr11nAgkkvC0J8yd+F4lEJtKRC1RlNoS+NXA==
+  dependencies:
+    "@quramy/jest-prisma-core" "^1.8.0"
+
 "@radix-ui/react-compose-refs@1.1.2":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.2.tgz"
@@ -1460,7 +1474,7 @@
 
 "@types/jest@^30.0.0":
   version "30.0.0"
-  resolved "https://registry.npmjs.org/@types/jest/-/jest-30.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-30.0.0.tgz#5e85ae568006712e4ad66f25433e9bdac8801f1d"
   integrity sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==
   dependencies:
     expect "^30.0.0"
@@ -2308,12 +2322,7 @@ d3-timer@^3.0.1:
   resolved "https://registry.npmjs.org/d3-timer/-/d3-timer-3.0.1.tgz"
   integrity sha512-ndfJ/JxxMd3nw31uyKoY2naivF+r29V+Lc0svZxe1JvvIRmi8hUsrMvdOwgS1o6uBHmiz91geQ0ylPP0aj1VUA==
 
-dayjs@^1.11.13:
-  version "1.11.21"
-  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.21.tgz"
-  integrity sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==
-
-dayjs@^1.11.21:
+dayjs@^1.11.13, dayjs@^1.11.21:
   version "1.11.21"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.21.tgz#57f87562e62de76f3c704bd2b8d522fc33068eb2"
   integrity sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==
@@ -4598,10 +4607,10 @@ typeorm@^0.3.17:
     uuid "^11.1.0"
     yargs "^17.7.2"
 
-typescript@^5.4.0:
-  version "5.9.3"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz"
-  integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
+typescript@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-6.0.3.tgz#90251dc007916e972786cb94d74d15b185577d21"
+  integrity sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==
 
 undici-types@~6.21.0:
   version "6.21.0"

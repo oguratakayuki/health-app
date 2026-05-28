@@ -108,7 +108,7 @@ export class MealService implements IMealService {
   async updateMeal(id: string, input: UpdateMealInput): Promise<Meal> {
     try {
       return await this.prisma.$transaction(async (tx) => {
-        // 1. 時刻の変換ロジック (Repositoryのロジックをサービス層でも適用)
+        // 1. 時刻の変換ロジック
         let finalStartTime: Date | undefined;
         let finalEndTime: Date | undefined;
 
@@ -138,7 +138,7 @@ export class MealService implements IMealService {
         }
 
         // 2. 基本情報の更新
-        const meal = await tx.meal.update({
+        await tx.meal.update({
           where: { id: parseInt(id) },
           data: {
             mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
@@ -149,17 +149,24 @@ export class MealService implements IMealService {
           },
         });
 
-        // 3. 料理の更新ロジック (差分抽出)
+        // 3. 料理の更新ロジック (差分抽出と重複排除)
         const currentMealDishes = await tx.mealDish.findMany({
           where: { mealId: parseInt(id) },
           select: { dishId: true },
         });
-        const currentDishIds = currentMealDishes.map((md) => md.dishId);
+        const currentDishIds = currentMealDishes.map((md) => Number(md.dishId));
 
+        // 3-a. 追加処理
         if (input.addDishIds && input.addDishIds.length > 0) {
-          const dishesToAdd = input.addDishIds.filter(
-            (id) => !currentDishIds.includes(id)
+          // 入力値をNumberに統一し、Setで重複排除
+          const uniqueAddDishIds = Array.from(
+            new Set(input.addDishIds.map((id) => Number(id))),
           );
+          // 既存データにないものだけを抽出
+          const dishesToAdd = uniqueAddDishIds.filter(
+            (dishId) => !currentDishIds.includes(dishId),
+          );
+
           if (dishesToAdd.length > 0) {
             await tx.mealDish.createMany({
               data: dishesToAdd.map((dishId) => ({
@@ -172,16 +179,23 @@ export class MealService implements IMealService {
           }
         }
 
+        // 3-b. 削除処理
         if (input.removeDishIds && input.removeDishIds.length > 0) {
+          // 入力値をNumberに統一
+          const dishIdsToRemove = input.removeDishIds.map((id) => Number(id));
+
           await tx.mealDish.deleteMany({
             where: {
               mealId: parseInt(id),
-              dishId: { in: input.removeDishIds },
+              dishId: { in: dishIdsToRemove },
             },
           });
         }
 
-        const updatedMealWithDishes = await this.mealRepository.findById(parseInt(id));
+        // 4. 最新データの取得と返却
+        const updatedMealWithDishes = await this.mealRepository.findById(
+          parseInt(id),
+        );
         return updatedMealWithDishes as unknown as Meal;
       });
     } catch (error) {
