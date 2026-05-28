@@ -4,6 +4,8 @@ export interface Meal {
   id: number;
   userId: number;
   mealDate: Date;
+  startTime: string | null;
+  endTime: string | null;
   category: string; // 'breakfast', 'lunch', 'dinner', 'snack'
   createdAt: Date;
   updatedAt: Date;
@@ -32,7 +34,7 @@ export interface UpdateMealInput {
 
 export interface MealWithDishes extends Meal {
   dishes: DishWithIngredients[];
-  mealDishes?: any[]; 
+  mealDishes?: any[];
 }
 
 export interface MealDishWithDish extends Meal {

@@ -1,4 +1,3 @@
-
 import { gql } from "@apollo/client";
 
 export const GET_MEALS = gql`
@@ -48,6 +47,8 @@ export const GET_MEAL_WITH_DISHES = gql`
       id
       name
       mealDate
+      startTime
+      endTime
       category
       dishes {
         id

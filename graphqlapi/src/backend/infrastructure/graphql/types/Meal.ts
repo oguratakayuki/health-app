@@ -1,6 +1,5 @@
-
-import { ObjectType, Field, ID } from 'type-graphql';
-import { Dish } from './Dish';
+import { ObjectType, Field, ID } from "type-graphql";
+import { Dish } from "./Dish";
 
 @ObjectType()
 export class Meal {
@@ -15,6 +14,12 @@ export class Meal {
 
   @Field()
   mealDate!: Date;
+
+  @Field()
+  startTime!: string;
+
+  @Field()
+  endTime!: string;
 
   @Field()
   category!: string;

@@ -51,10 +51,25 @@ export default function UpdateMealPage() {
   useEffect(() => {
     if (mealData?.mealWithDishes) {
       const meal = mealData.mealWithDishes;
+      console.log(mealData);
       setMealDate(dayjs(meal.mealDate));
       setCategory(meal.category || "breakfast");
-      // startTime/endTimeがAPIから返ってくる想定 (現状のGET_MEAL_WITH_DISHESにはないが、型定義にはある)
-      // もしAPIが返さない場合は null のまま
+      // TODO サーバサイドに移植
+      if (meal?.startTime) {
+        const ms = Number(meal.startTime);
+        const timeData = dayjs().startOf("day").add(ms, "millisecond");
+        setStartTime(timeData);
+      } else {
+        setStartTime(null);
+      }
+      if (meal?.endTime) {
+        const ms = Number(meal.endTime);
+        const timeData = dayjs().startOf("day").add(ms, "millisecond");
+        setEndTime(timeData);
+      } else {
+        setEndTime(null);
+      }
+
       if (meal.dishes) {
         setSelectedDishes(meal.dishes.map((d: any) => d.id.toString()));
       }
