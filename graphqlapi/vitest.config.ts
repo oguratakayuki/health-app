@@ -12,6 +12,7 @@ export default defineConfig({
       "src/backend/domain/entities/__tests__/**/*.spec.ts",
       "src/backend/application/services/calculators/__tests__/**/*.spec.ts",
       "src/backend/infrastructure/graphql/__tests__/**/*.spec.ts",
+      "src/backend/presentation/resolvers/__tests__/**/*.spec.ts",
     ],
     setupFiles: ["./vitest.setup.ts"],
   },

@@ -99,9 +99,103 @@ export class MealService implements IMealService {
       );
       return meals;
     } catch (error) {
-      console.error("MealService.getAllMealsWithDishes error:", error);
+      console.error("MealService.getAllMealsWithHdishes error:", error);
       const message = error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get meals with dishes: ${message}`);
+    }
+  }
+
+  async updateMeal(id: string, input: UpdateMealInput): Promise<Meal> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        // 1. 時刻の変換ロジック (Repositoryのロジックをサービス層でも適用)
+        let finalStartTime: Date | undefined;
+        let finalEndTime: Date | undefined;
+
+        if (input.startTime || input.endTime) {
+          let baseDate: Date;
+          if (input.mealDate) {
+            baseDate = new Date(input.mealDate);
+          } else {
+            const currentMeal = await tx.meal.findUnique({
+              where: { id: parseInt(id) },
+              select: { mealDate: true },
+            });
+            if (!currentMeal) throw new Error("Meal not found");
+            baseDate = currentMeal.mealDate;
+          }
+
+          const combineDateAndTime = (timeStr?: string) => {
+            if (!timeStr) return undefined;
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            const date = new Date(baseDate);
+            date.setUTCHours(hours, minutes, 0, 0);
+            return date;
+          };
+
+          finalStartTime = combineDateAndTime(input.startTime);
+          finalEndTime = combineDateAndTime(input.endTime);
+        }
+
+        // 2. 基本情報の更新
+        const meal = await tx.meal.update({
+          where: { id: parseInt(id) },
+          data: {
+            mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
+            category: input.category,
+            startTime: finalStartTime,
+            endTime: finalEndTime,
+            userId: input.userId ? BigInt(input.userId) : undefined,
+          },
+        });
+
+        // 3. 料理の更新ロジック (差分抽出)
+        const currentMealDishes = await tx.mealDish.findMany({
+          where: { mealId: parseInt(id) },
+          select: { dishId: true },
+        });
+        const currentDishIds = currentMealDishes.map((md) => md.dishId);
+
+        if (input.addDishIds && input.addDishIds.length > 0) {
+          const dishesToAdd = input.addDishIds.filter(
+            (id) => !currentDishIds.includes(id)
+          );
+          if (dishesToAdd.length > 0) {
+            await tx.mealDish.createMany({
+              data: dishesToAdd.map((dishId) => ({
+                mealId: parseInt(id),
+                dishId: dishId,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              })),
+            });
+          }
+        }
+
+        if (input.removeDishIds && input.removeDishIds.length > 0) {
+          await tx.mealDish.deleteMany({
+            where: {
+              mealId: parseInt(id),
+              dishId: { in: input.removeDishIds },
+            },
+          });
+        }
+
+        const updatedMealWithDishes = await this.mealRepository.findById(parseInt(id));
+        return updatedMealWithDishes as unknown as Meal;
+      });
+    } catch (error) {
+      console.error("MealService.updateMeal error:", error);
+      throw error;
+    }
+  }
+
+  async deleteMeal(id: string): Promise<boolean> {
+    try {
+      return await this.mealRepository.delete(parseInt(id));
+    } catch (error) {
+      console.error("MealService.deleteMeal error:", error);
+      throw error;
     }
   }
 }

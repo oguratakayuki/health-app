@@ -1,9 +1,12 @@
+
 import { MealService } from "../MealService";
 import { PrismaClient } from "@prisma/client";
 import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { IDishRepository } from "@backend/domain/interfaces/IDishRepository";
 import { IMealDishRepository } from "@backend/domain/interfaces/IMealDishRepository";
+import { UpdateMealInput } from "@backend/infrastructure/graphql/inputs/prisma/UpdateMealInput";
 import { vi, describe, it, expect, beforeEach } from "vitest";
+import { Meal } from "@backend/domain/entities/Meal";
 
 describe("MealService", () => {
   let mealService: MealService;
@@ -15,10 +18,20 @@ describe("MealService", () => {
   beforeEach(() => {
     mockPrisma = {
       $transaction: vi.fn((callback) => callback(mockPrisma)),
+      meal: {
+        update: vi.fn(),
+      },
+      mealDish: {
+        createMany: vi.fn(),
+        deleteMany: vi.fn(),
+        findMany: vi.fn(),
+      },
     };
     mockMealRepo = {
       findById: vi.fn(),
       createWithTx: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
       getDailyNutrientSummary: vi.fn(),
       findByUserAndDate: vi.fn(),
       findByUserAndPeriod: vi.fn(),
@@ -53,8 +66,8 @@ describe("MealService", () => {
       mealDate: new Date(),
       category: "lunch",
       dishes: [
-        { id: 1 }, // Existing
-        { name: "New Dish" }, // New
+        { id: 1 },
+        { name: "New Dish" },
       ],
     };
 
@@ -102,5 +115,87 @@ describe("MealService", () => {
 
     const result = await mealService.getMealWithDishes(100);
     expect(result).toEqual(mockMeal);
+  });
+
+  describe("updateMeal", () => {
+    it("should update meal basic info and add dishes only if they don't exist", async () => {
+      const mealId = "123";
+      const input: UpdateMealInput = {
+        mealDate: new Date(),
+        category: "dinner",
+        addDishIds: [10, 20],
+      };
+      const mockMeal = { id: 123, name: "Updated Meal" } as Meal;
+
+      // Mock current dishes: dish 10 already exists
+      mockPrisma.mealDish.findMany = vi.fn().mockResolvedValue([
+        { dishId: 10 },
+      ]);
+      
+      mockPrisma.meal.update = vi.fn().mockResolvedValue(mockMeal);
+      mockPrisma.mealDish.createMany = vi.fn().mockResolvedValue({ count: 1 });
+      
+      mockMealRepo.findById = vi.fn().mockResolvedValue(mockMeal);
+
+      const result = await mealService.updateMeal(mealId, input);
+
+      expect(result).toEqual(mockMeal);
+      expect(mockPrisma.meal.update).toHaveBeenCalled();
+      expect(mockPrisma.mealDish.createMany).toHaveBeenCalledWith({
+        data: [{
+          mealId: 123,
+          dishId: 20,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        }],
+      });
+    });
+
+    it("should remove dishes when removeDishIds is provided", async () => {
+      const mealId = "123";
+      const input: UpdateMealInput = {
+        removeDishIds: [5, 6],
+      };
+      const mockMeal = { id: 123, name: "Meal" } as Meal;
+
+      mockPrisma.meal.update = vi.fn().mockResolvedValue(mockMeal);
+      mockPrisma.mealDish.findMany = vi.fn().mockResolvedValue([]);
+      mockPrisma.mealDish.deleteMany = vi.fn().mockResolvedValue({ count: 2 });
+      mockMealRepo.findById = vi.fn().mockResolvedValue(mockMeal);
+
+      const result = await mealService.updateMeal(mealId, input);
+
+      expect(result).toEqual(mockMeal);
+      expect(mockPrisma.mealDish.deleteMany).toHaveBeenCalledWith({
+        where: {
+          mealId: 123,
+          dishId: { in: [5, 6] },
+        },
+      });
+    });
+
+    it("should throw error when update fails", async () => {
+      const mealId = "123";
+      const input: UpdateMealInput = { category: "snack" };
+      mockPrisma.meal.update = vi.fn().mockRejectedValue(new Error("DB Error"));
+
+      await expect(mealService.updateMeal(mealId, input)).rejects.toThrow("DB Error");
+    });
+  });
+
+  describe("deleteMeal", () => {
+    it("should return true when meal is successfully deleted", async () => {
+      (mockMealRepo.delete as any).mockResolvedValue(true);
+      const result = await mealService.deleteMeal("123");
+      expect(result).toBe(true);
+      expect(mockMealRepo.delete).toHaveBeenCalledWith(123);
+    });
+
+    it("should return false when meal cannot be deleted", async () => {
+      (mockMealRepo.delete as any).mockResolvedValue(false);
+      const result = await mealService.deleteMeal("123");
+      expect(result).toBe(false);
+      expect(mockMealRepo.delete).toHaveBeenCalledWith(123);
+    });
   });
 });

@@ -13,4 +13,6 @@ export interface IMealService {
     fromDate: Date,
     toDate: Date,
   ): Promise<MealWithDishes[]>;
+  updateMeal(id: string, input: UpdateMealInput): Promise<Meal>;
+  deleteMeal(id: string): Promise<boolean>;
 }

@@ -13,6 +13,8 @@ export interface IMealRepository {
     tx: Prisma.TransactionClient,
     input: Omit<CreateMealInput, "dishes">,
   ): Promise<Meal>;
+  update(id: number, input: UpdateMealInput): Promise<Meal>;
+  delete(id: number): Promise<boolean>;
   getDailyNutrientSummary(
     userId: number,
     date: Date,

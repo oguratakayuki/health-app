@@ -147,6 +147,7 @@ export class MealResolver {
     @Arg("input") input: UpdateMealInput,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Meal> {
+    console.log("updateMeal!!!!!!!!!!!!!");
     try {
       const mealService = this.getMealService(ctx);
       return (await mealService.updateMeal(id, input)) as Meal;
