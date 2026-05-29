@@ -10,6 +10,8 @@ import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/prisma/
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { MealService } from "@/backend/application/services/MealService";
 import { Authorized } from "@/backend/application/auth/decorators";
+import { MealPresentationMapper } from "@/backend/infrastructure/mappers/MealPresentationMapper";
+import { UpdateMealUseCaseDto } from "@/backend/application/dtos/UpdateMealUseCaseDto";
 
 @Resolver()
 export class MealResolver {
@@ -148,9 +150,13 @@ export class MealResolver {
     @Ctx() ctx: GraphQLContext,
   ): Promise<Meal> {
     console.log("updateMeal!!!!!!!!!!!!!");
+    const dto: UpdateMealUseCaseDto = MealPresentationMapper.toServiceDto(
+      ctx.user.id,
+      input,
+    );
     try {
       const mealService = this.getMealService(ctx);
-      return (await mealService.updateMeal(id, input)) as Meal;
+      return (await mealService.updateMeal(id, dto)) as Meal;
     } catch (error) {
       console.error(`Error in updateMeal mutation: ${error}`);
       throw new Error(

@@ -2,6 +2,7 @@ import { IMealService } from "@/backend/domain/interfaces/IMealService";
 import {
   Meal,
   CreateMealInput,
+  UpdateMealInput,
   MealWithDishes,
   MealDishWithDish,
 } from "@/backend/domain/entities/Meal";
@@ -9,6 +10,7 @@ import { IMealRepository } from "@/backend/domain/interfaces/IMealRepository";
 import { IDishRepository } from "@/backend/domain/interfaces/IDishRepository";
 import { IMealDishRepository } from "@/backend/domain/interfaces/IMealDishRepository";
 import { PrismaClient } from "@prisma/client";
+import { UpdateMealUseCaseDto } from "@/backend/application/dtos/UpdateMealUseCaseDto";
 
 export class MealService implements IMealService {
   constructor(
@@ -105,47 +107,17 @@ export class MealService implements IMealService {
     }
   }
 
-  async updateMeal(id: string, input: UpdateMealInput): Promise<Meal> {
+  async updateMeal(id: string, dto: UpdateMealUseCaseDto): Promise<Meal> {
     try {
       return await this.prisma.$transaction(async (tx) => {
-        // 1. 時刻の変換ロジック
-        let finalStartTime: Date | undefined;
-        let finalEndTime: Date | undefined;
-
-        if (input.startTime || input.endTime) {
-          let baseDate: Date;
-          if (input.mealDate) {
-            baseDate = new Date(input.mealDate);
-          } else {
-            const currentMeal = await tx.meal.findUnique({
-              where: { id: parseInt(id) },
-              select: { mealDate: true },
-            });
-            if (!currentMeal) throw new Error("Meal not found");
-            baseDate = currentMeal.mealDate;
-          }
-
-          const combineDateAndTime = (timeStr?: string) => {
-            if (!timeStr) return undefined;
-            const [hours, minutes] = timeStr.split(":").map(Number);
-            const date = new Date(baseDate);
-            date.setUTCHours(hours, minutes, 0, 0);
-            return date;
-          };
-
-          finalStartTime = combineDateAndTime(input.startTime);
-          finalEndTime = combineDateAndTime(input.endTime);
-        }
-
-        // 2. 基本情報の更新
         await tx.meal.update({
           where: { id: parseInt(id) },
           data: {
-            mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
-            category: input.category,
-            startTime: finalStartTime,
-            endTime: finalEndTime,
-            userId: input.userId ? BigInt(input.userId) : undefined,
+            mealDate: dto.mealDate ? new Date(dto.mealDate) : undefined,
+            category: dto.category,
+            startTime: dto.startTime,
+            endTime: dto.endTime,
+            userId: BigInt(dto.userId),
           },
         });
 
@@ -157,10 +129,10 @@ export class MealService implements IMealService {
         const currentDishIds = currentMealDishes.map((md) => Number(md.dishId));
 
         // 3-a. 追加処理
-        if (input.addDishIds && input.addDishIds.length > 0) {
+        if (dto.addDishIds && dto.addDishIds.length > 0) {
           // 入力値をNumberに統一し、Setで重複排除
           const uniqueAddDishIds = Array.from(
-            new Set(input.addDishIds.map((id) => Number(id))),
+            new Set(dto.addDishIds.map((id) => Number(id))),
           );
           // 既存データにないものだけを抽出
           const dishesToAdd = uniqueAddDishIds.filter(
@@ -180,9 +152,9 @@ export class MealService implements IMealService {
         }
 
         // 3-b. 削除処理
-        if (input.removeDishIds && input.removeDishIds.length > 0) {
+        if (dto.removeDishIds && dto.removeDishIds.length > 0) {
           // 入力値をNumberに統一
-          const dishIdsToRemove = input.removeDishIds.map((id) => Number(id));
+          const dishIdsToRemove = dto.removeDishIds.map((id) => Number(id));
 
           await tx.mealDish.deleteMany({
             where: {

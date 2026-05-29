@@ -23,12 +23,16 @@ export interface CreateMealInput {
   userId: number;
   mealDate: Date;
   category: string;
+  startTime: string;
+  endTime: string;
   dishes: MealDishInput[];
 }
 
 export interface UpdateMealInput {
-  mealDate?: Date;
-  category?: string;
+  mealDate: Date;
+  category: string;
+  startTime: string;
+  endTime: string;
   dishIds?: number[];
 }
 

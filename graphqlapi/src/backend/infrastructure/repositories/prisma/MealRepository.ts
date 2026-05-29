@@ -5,6 +5,7 @@ import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
 import {
   Meal,
   CreateMealInput,
+  UpdateMealInput,
   MealDishWithDish,
   MealWithDishes,
 } from "@backend/domain/entities/Meal";
@@ -76,27 +77,29 @@ export class MealRepository implements IMealRepository {
       finalEndTime = combineDateAndTime(input.endTime);
     }
 
-    return await this.prisma.meal.update({
-      where: { id },
-      data: {
-        mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
-        category: input.category,
-        startTime: finalStartTime,
-        endTime: finalEndTime,
-        userId: input.userId ? BigInt(input.userId) : undefined,
-      },
-      include: {
-        mealDishes: {
-          include: {
-            dish: {
-              include: {
-                dishIngredients: true,
+    return await this.prisma.meal
+      .update({
+        where: { id },
+        data: {
+          mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
+          category: input.category,
+          startTime: finalStartTime,
+          endTime: finalEndTime,
+          userId: input.userId ? BigInt(input.userId) : undefined,
+        },
+        include: {
+          mealDishes: {
+            include: {
+              dish: {
+                include: {
+                  dishIngredients: true,
+                },
               },
             },
           },
         },
-      },
-    }).then((meal) => MealMapper.mapToMeal(meal as any));
+      })
+      .then((meal) => MealMapper.mapToMeal(meal as any));
   }
 
   async delete(id: number): Promise<boolean> {
