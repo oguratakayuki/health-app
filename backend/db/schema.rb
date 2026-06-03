@@ -10,7 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_11_045338) do
+ActiveRecord::Schema.define(version: 2026_06_03_132739) do
+
+  create_table "body_compositions", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "ユーザーの体重・体組成の計測履歴データ", force: :cascade do |t|
+    t.bigint "user_id", null: false, comment: "ユーザーID"
+    t.decimal "weight", precision: 4, scale: 1, null: false, comment: "体重 (kg)"
+    t.decimal "bmi", precision: 3, scale: 1, null: false, comment: "BMI（体格指数）"
+    t.decimal "body_fat_percentage", precision: 3, scale: 1, null: false, comment: "体脂肪率 (%)"
+    t.decimal "body_fat_mass", precision: 3, scale: 1, null: false, comment: "体脂肪量 (kg)"
+    t.decimal "skeletal_muscle_percentage", precision: 3, scale: 1, null: false, comment: "骨格筋率 (%)"
+    t.decimal "skeletal_muscle_mass", precision: 3, scale: 1, null: false, comment: "骨格筋量 (kg)"
+    t.decimal "subcutaneous_fat_percentage", precision: 3, scale: 1, null: false, comment: "皮下脂肪率 (%)"
+    t.decimal "ffmi", precision: 3, scale: 1, null: false, comment: "FFMI（除脂肪量指数）"
+    t.decimal "bone_mass", precision: 3, scale: 2, null: false, comment: "骨量 (kg)"
+    t.integer "visceral_fat_level", null: false, comment: "内臓脂肪レベル"
+    t.integer "basal_metabolism", null: false, comment: "基礎代謝量 (kcal)"
+    t.datetime "measured_at", null: false, comment: "計測日時"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "measured_at"], name: "index_body_compositions_on_user_id_and_measured_at"
+    t.index ["user_id"], name: "index_body_compositions_on_user_id"
+  end
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
@@ -163,6 +183,7 @@ ActiveRecord::Schema.define(version: 2026_05_11_045338) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "body_compositions", "users"
   add_foreign_key "dish_ingredients", "dishes"
   add_foreign_key "dish_ingredients", "ingredients"
   add_foreign_key "ingredient_nutrients", "ingredients"

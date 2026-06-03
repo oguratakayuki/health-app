@@ -19,9 +19,37 @@ model User {
   createdAt  DateTime @map("created_at")
   updatedAt  DateTime @map("updated_at")
 
-  meals Meal[]
+  meals            Meal[]
+  bodyCompositions BodyComposition[]
 
   @@map("users")
+}
+
+model BodyComposition {
+  id                        BigInt   @id @default(autoincrement())
+  userId                    BigInt   @map("user_id")
+  weight                    Decimal  @db.Decimal(4, 1)
+  bmi                       Decimal  @db.Decimal(3, 1)
+  bodyFatPercentage         Decimal  @map("body_fat_percentage") @db.Decimal(3, 1)
+  bodyFatMass               Decimal  @map("body_fat_mass") @db.Decimal(3, 1)
+  skeletalMusclePercentage  Decimal  @map("skeletal_muscle_percentage") @db.Decimal(3, 1)
+  skeletalMuscleMass        Decimal  @map("skeletal_muscle_mass") @db.Decimal(3, 1)
+  subcutaneousFatPercentage Decimal  @map("subcutaneous_fat_percentage") @db.Decimal(3, 1)
+  ffmi                      Decimal  @db.Decimal(3, 1)
+  boneMass                  Decimal  @map("bone_mass") @db.Decimal(3, 2)
+  visceralFatLevel          Int      @map("visceral_fat_level")
+  basalMetabolism           Int      @map("basal_metabolism")
+  measuredAt                DateTime @map("measured_at")
+  createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @updatedAt @map("updated_at")
+
+  // ���レーション定義
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 検索を高速化するためのインデックス（ユーザーIDと計測日時の組み合わせでよく検索す��ため）
+  @@index([userId, measuredAt])
+  // データベース上の実際のテーブル名を指定
+  @@map("body_compositions")
 }
 
 model Meal {
