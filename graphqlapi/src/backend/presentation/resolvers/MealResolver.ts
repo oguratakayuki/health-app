@@ -150,7 +150,6 @@ export class MealResolver {
     @Arg("input") input: UpdateMealInput,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Meal> {
-    console.log("updateMeal!!!!!!!!!!!!!");
     const dto: UpdateMealUseCaseDto = MealPresentationMapper.toServiceDto(
       ctx.user.id,
       input,

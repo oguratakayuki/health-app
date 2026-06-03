@@ -1,5 +1,6 @@
 // src/backend/domain/entities/Meal.ts
-import { DishWithIngredients } from "src/backend/domain/entities/Dish";
+import { DishWithIngredients } from "@/backend/domain/entities/Dish";
+import { MealDish } from "@/backend/domain/entities/MealDish";
 export interface Meal {
   id: number;
   userId: number;
@@ -36,12 +37,8 @@ export interface UpdateMealInput {
 }
 
 export interface MealWithDishes extends Meal {
+  mealDishes?: MealDish[];
   dishes: DishWithIngredients[];
-  mealDishes?: any[];
-}
-
-export interface MealDishWithDish extends Meal {
-  dish: DishWithIngredients;
 }
 
 export interface MealDishWithDish extends Meal {
