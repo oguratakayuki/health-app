@@ -1,9 +1,7 @@
 "use client";
 
-import { use } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-
-import { useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import {
   RadarChart,
@@ -35,6 +33,12 @@ export default function DailyNutritionPage({ params }: Props) {
   const { date } = params;
   const router = useRouter();
 
+  // Next.js (SSR) のサイズ計測エラーを防ぐためのマウントフラグ
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { data, loading, error } = useQuery(DAILY_NUTRITION_QUERY, {
     variables: {
       date,
@@ -47,15 +51,14 @@ export default function DailyNutritionPage({ params }: Props) {
 
   const dailyNutrition = data?.dailyNutrition;
 
+  // データが null の場合も 0% としてマッピングし、チャートの形（軸）を維持する
   const radarData = useMemo(() => {
     if (!dailyNutrition?.comparisons) return [];
 
-    return dailyNutrition.comparisons
-      .filter((item: any) => item.percentage !== null)
-      .map((item: any) => ({
-        nutrient: formatNutrientLabel(item.nutrientCode),
-        percentage: Math.round(item.percentage),
-      }));
+    return dailyNutrition.comparisons.map((item: any) => ({
+      nutrient: formatNutrientLabel(item.nutrientCode),
+      percentage: item.percentage !== null ? Math.round(item.percentage) : 0,
+    }));
   }, [dailyNutrition]);
 
   if (loading) {
@@ -75,7 +78,6 @@ export default function DailyNutritionPage({ params }: Props) {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6">
           <div className="flex items-center gap-3 text-red-700">
             <AlertCircle className="w-6 h-6" />
-
             <div>
               <h2 className="font-bold">データ取得エラー</h2>
               <p className="text-sm">{error.message}</p>
@@ -108,7 +110,6 @@ export default function DailyNutritionPage({ params }: Props) {
 
           <div>
             <h1 className="text-2xl font-bold text-gray-900">1日の栄養分析</h1>
-
             <p className="text-gray-600">栄養摂取量と推奨量の比較</p>
           </div>
         </div>
@@ -117,7 +118,6 @@ export default function DailyNutritionPage({ params }: Props) {
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <Calendar className="w-5 h-5 text-gray-600" />
-
             <h2 className="font-medium text-gray-900">分析日</h2>
           </div>
 
@@ -139,9 +139,7 @@ export default function DailyNutritionPage({ params }: Props) {
       {/* PFC */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <PfcCard title="タンパク質" value={dailyNutrition.pfc.protein} />
-
         <PfcCard title="脂質" value={dailyNutrition.pfc.fat} />
-
         <PfcCard title="炭水化物" value={dailyNutrition.pfc.carbohydrate} />
       </div>
 
@@ -149,30 +147,30 @@ export default function DailyNutritionPage({ params }: Props) {
       <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-6 h-6 text-green-600" />
-
           <h2 className="text-xl font-bold text-gray-900">
             栄養達成率レーダーチャート
           </h2>
         </div>
 
-        <div className="w-full h-[500px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData}>
-              <PolarGrid />
-
-              <PolarAngleAxis dataKey="nutrient" />
-
-              <PolarRadiusAxis angle={90} domain={[0, 150]} />
-
-              <Radar
-                name="達成率"
-                dataKey="percentage"
-                stroke="#16a34a"
-                fill="#22c55e"
-                fillOpacity={0.5}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
+        <div className="w-full h-[500px] flex items-center justify-center">
+          {isMounted ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="nutrient" />
+                <PolarRadiusAxis angle={90} domain={[0, 150]} />
+                <Radar
+                  name="達成率"
+                  dataKey="percentage"
+                  stroke="#16a34a"
+                  fill="#22c55e"
+                  fillOpacity={0.5}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-gray-400">チャートを準備中...</div>
+          )}
         </div>
       </div>
 
@@ -189,15 +187,12 @@ export default function DailyNutritionPage({ params }: Props) {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   栄養素
                 </th>
-
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   摂取量
                 </th>
-
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   目標量
                 </th>
-
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   達成率
                 </th>
@@ -210,11 +205,8 @@ export default function DailyNutritionPage({ params }: Props) {
                   <td className="px-6 py-4">
                     {formatNutrientLabel(item.nutrientCode)}
                   </td>
-
                   <td className="px-6 py-4">{item.intake ?? "-"}</td>
-
                   <td className="px-6 py-4">{item.target}</td>
-
                   <td className="px-6 py-4">
                     {item.percentage !== null
                       ? `${Math.round(item.percentage)}%`
@@ -230,13 +222,18 @@ export default function DailyNutritionPage({ params }: Props) {
   );
 }
 
-function PfcCard({ title, value }: { title: string; value: number }) {
+function PfcCard({
+  title,
+  value,
+}: {
+  title: string;
+  value: number | null | undefined;
+}) {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h3 className="text-gray-500 text-sm mb-2">{title}</h3>
-
       <div className="text-3xl font-bold text-green-600">
-        {value.toFixed(1)}%
+        {value != null ? `${value.toFixed(1)}%` : "-"}
       </div>
     </div>
   );

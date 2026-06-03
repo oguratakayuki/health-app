@@ -31,9 +31,8 @@ export interface CreateMealInput {
 export interface UpdateMealInput {
   mealDate: Date;
   category: string;
-  startTime: string;
-  endTime: string;
-  dishIds?: number[];
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface MealWithDishes extends Meal {

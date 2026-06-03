@@ -11,6 +11,17 @@ import {
 } from "@backend/domain/entities/Meal";
 import { MealMapper } from "./mappers/MealMapper";
 
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// プラグインを有効化
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+// デフォルトのタイムゾーンをアジア/東京（JST）に設定
+dayjs.tz.setDefault("Asia/Tokyo");
+
 export class MealRepository implements IMealRepository {
   constructor(private prisma: PrismaClient) {}
 
@@ -46,60 +57,63 @@ export class MealRepository implements IMealRepository {
     return MealMapper.mapToMeal(meal as any);
   }
 
-  async update(id: number, input: UpdateMealInput): Promise<Meal> {
-    let finalStartTime: Date | undefined;
-    let finalEndTime: Date | undefined;
+  async update(
+    id: number,
+    data: UpdateMealInput,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Meal> {
+    // tx があれば tx を、無ければ通常の this.prisma を使う
+    const client = tx ?? this.prisma;
 
-    if (input.startTime || input.endTime) {
-      // a. 更新用の日付を決定 (入力値があれば優先、なければDBから取得)
-      let baseDate: Date;
-      if (input.mealDate) {
-        baseDate = new Date(input.mealDate);
-      } else {
-        const currentMeal = await this.prisma.meal.findUnique({
-          where: { id },
-          select: { mealDate: true },
-        });
-        if (!currentMeal) throw new Error("Meal not found");
-        baseDate = currentMeal.mealDate;
-      }
+    // 🌟 await しつつ、更新された Meal オブジェクトをそのまま return する
+    return await client.meal.update({
+      where: { id },
+      data,
+    });
+  }
 
-      // b. 時刻文字列 (HH:mm) を Date オブジェクトに変換
-      const combineDateAndTime = (timeStr?: string) => {
-        if (!timeStr) return undefined;
-        const [hours, minutes] = timeStr.split(":").map(Number);
-        const date = new Date(baseDate);
-        date.setUTCHours(hours, minutes, 0, 0);
-        return date;
-      };
+  // 現在紐づいている料理IDの取得
+  async findConnectedDishIds(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+  ): Promise<number[]> {
+    // tx があれば tx を、無ければ通常の this.prisma を使う
+    const client = tx ?? this.prisma;
+    const dishes = await client.mealDish.findMany({
+      where: { mealId },
+      select: { dishId: true },
+    });
+    return dishes.map((d) => Number(d.dishId));
+  }
 
-      finalStartTime = combineDateAndTime(input.startTime);
-      finalEndTime = combineDateAndTime(input.endTime);
-    }
-
-    return await this.prisma.meal
-      .update({
-        where: { id },
-        data: {
-          mealDate: input.mealDate ? new Date(input.mealDate) : undefined,
-          category: input.category,
-          startTime: finalStartTime,
-          endTime: finalEndTime,
-          userId: input.userId ? BigInt(input.userId) : undefined,
-        },
-        include: {
-          mealDishes: {
-            include: {
-              dish: {
-                include: {
-                  dishIngredients: true,
-                },
-              },
-            },
-          },
-        },
-      })
-      .then((meal) => MealMapper.mapToMeal(meal as any));
+  // 料理の複数紐づけ（追加）
+  async connectDishes(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+    dishIds: number[],
+  ): Promise<void> {
+    const client = tx ?? this.prisma;
+    await client.mealDish.createMany({
+      data: dishIds.map((dishId) => ({
+        mealId,
+        dishId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+    });
+  }
+  async disconnectDishes(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+    dishIds: number[],
+  ): Promise<void> {
+    const client = tx ?? this.prisma;
+    await client.mealDish.deleteMany({
+      where: {
+        mealId,
+        dishId: { in: dishIds },
+      },
+    });
   }
 
   async delete(id: number): Promise<boolean> {
@@ -167,10 +181,16 @@ export class MealRepository implements IMealRepository {
     userId: string,
     date: Date,
   ): Promise<MealDishWithDish[]> {
+    // 1. 引数のDate（JST想定）から、その日の始まりと翌日の始まり（UTC）を生成
+    const startOfDay = dayjs.tz(date).startOf("day").toDate();
+    const startOfNextDay = dayjs.tz(date).startOf("day").add(1, "day").toDate();
     const meals = await this.prisma.meal.findMany({
       where: {
         userId: BigInt(userId),
-        mealDate: date,
+        mealDate: {
+          gte: startOfDay, // JST 00:00:00 相当のUTC
+          lt: startOfNextDay, // JST 翌00:00:00 相当のUTC
+        },
       },
       include: {
         mealDishes: {

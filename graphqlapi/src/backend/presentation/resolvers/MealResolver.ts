@@ -26,6 +26,7 @@ export class MealResolver {
     return ctx.mealService;
   }
 
+  // 使ってない
   @Query(() => Meal, { nullable: true, name: "meal" })
   @Authorized()
   async meal(

@@ -99,6 +99,7 @@ export class MealService implements IMealService {
         fromDate,
         toDate,
       );
+
       return meals;
     } catch (error) {
       console.error("MealService.getAllMealsWithHdishes error:", error);
@@ -110,23 +111,24 @@ export class MealService implements IMealService {
   async updateMeal(id: string, dto: UpdateMealUseCaseDto): Promise<Meal> {
     try {
       return await this.prisma.$transaction(async (tx) => {
-        await tx.meal.update({
-          where: { id: parseInt(id) },
-          data: {
-            mealDate: dto.mealDate ? new Date(dto.mealDate) : undefined,
-            category: dto.category,
-            startTime: dto.startTime,
-            endTime: dto.endTime,
-            userId: BigInt(dto.userId),
-          },
-        });
+        const mealId = parseInt(id);
+        // 1. Application層で、ドメイン層の汎用型へ詰め替える（マッピング）
+        const updateData: UpdateMealInput = {
+          mealDate: dto.mealDate,
+          category: dto.category,
+          startTime: dto.startTime,
+          endTime: dto.endTime,
+        };
+
+        // 2. リポジトリにはドメインの型（MealUpdateData）を渡す
+        // ※リポジトリのインターフェースもこの型を受け取るように定義されている
+        await this.mealRepository.update(mealId, updateData, tx);
 
         // 3. 料理の更新ロジック (差分抽出と重複排除)
-        const currentMealDishes = await tx.mealDish.findMany({
-          where: { mealId: parseInt(id) },
-          select: { dishId: true },
-        });
-        const currentDishIds = currentMealDishes.map((md) => Number(md.dishId));
+        const currentDishIds = await this.mealRepository.findConnectedDishIds(
+          tx,
+          mealId,
+        );
 
         // 3-a. 追加処理
         if (dto.addDishIds && dto.addDishIds.length > 0) {
@@ -140,14 +142,7 @@ export class MealService implements IMealService {
           );
 
           if (dishesToAdd.length > 0) {
-            await tx.mealDish.createMany({
-              data: dishesToAdd.map((dishId) => ({
-                mealId: parseInt(id),
-                dishId: dishId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              })),
-            });
+            await this.mealRepository.connectDishes(tx, mealId, dishesToAdd);
           }
         }
 
@@ -155,13 +150,11 @@ export class MealService implements IMealService {
         if (dto.removeDishIds && dto.removeDishIds.length > 0) {
           // 入力値をNumberに統一
           const dishIdsToRemove = dto.removeDishIds.map((id) => Number(id));
-
-          await tx.mealDish.deleteMany({
-            where: {
-              mealId: parseInt(id),
-              dishId: { in: dishIdsToRemove },
-            },
-          });
+          await this.mealRepository.disconnectDishes(
+            tx,
+            mealId,
+            dishIdsToRemove,
+          );
         }
 
         // 4. 最新データの取得と返却

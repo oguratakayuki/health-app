@@ -5,7 +5,7 @@ import {
   MealDishWithDish,
   MealWithDishes,
 } from "@/backend/domain/entities/Meal";
-import { Prisma } from "@prisma/client";
+import { Prisma, MealUpdateInput } from "@prisma/client";
 
 export interface IMealRepository {
   findById(id: number): Promise<MealWithDishes | null>;
@@ -13,7 +13,11 @@ export interface IMealRepository {
     tx: Prisma.TransactionClient,
     input: Omit<CreateMealInput, "dishes">,
   ): Promise<Meal>;
-  update(id: number, input: UpdateMealInput): Promise<Meal>;
+  update(
+    id: number,
+    data: MealUpdateInput,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Meal>;
   delete(id: number): Promise<boolean>;
   getDailyNutrientSummary(
     userId: number,
@@ -25,4 +29,18 @@ export interface IMealRepository {
     from: Date,
     to: Date,
   ): Promise<MealWithDishes[]>;
+  findConnectedDishIds(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+  ): Promise<number[]>;
+  connectDishes(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+    dishIds: number[],
+  ): Promise<void>;
+  disconnectDishes(
+    tx: Prisma.TransactionClient,
+    mealId: number,
+    dishIds: number[],
+  ): Promise<void>;
 }

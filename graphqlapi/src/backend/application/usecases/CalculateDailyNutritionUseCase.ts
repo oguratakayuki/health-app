@@ -30,11 +30,10 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     // TODO
     const age = 44;
     const gender = Gender.Male;
-    // const date = new Date(2026, 0, 17);
 
     // 1日の栄養素ごとの摂取量
     const items: IDailyNutrientAggregationItem[] =
-      await this.queryService.fetchAggregationItems("1", date);
+      await this.queryService.fetchAggregationItems(userId, date);
     const totals = this.aggregator.aggregate(items);
     const pfc = this.pfcCalculator.calculate(totals);
     const targets = await this.nutrientionTargetService.findTargets(
@@ -61,7 +60,6 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     // 栄養素ごとの摂取量
     const items: IDailyNutrientAggregationItem[] =
       await this.queryService.fetchAggregationItemsByPeriod(userId, from, to);
-    console.log(items);
 
     // 日付ごとにgrouping
     const grouped = new Map<string, IDailyNutrientAggregationItem[]>();
@@ -71,7 +69,6 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
       current.push(item);
       grouped.set(key, current);
     }
-    console.log(grouped);
     const targets = await this.nutrientionTargetService.findTargets(
       gender,
       age,
