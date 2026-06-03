@@ -21,6 +21,7 @@ curl -X POST http://localhost:9229/ \
   }'  | jq | grep Id
 
 -> UserPoolId: local_0bIbQfA0
+local_2UIllGjY
 ```
 -> .env.developmentに設定
 
@@ -30,11 +31,12 @@ curl -X POST http://localhost:9229/ \
  -H "Content-Type: application/x-amz-json-1.1" \
  -H "X-Amz-Target: AWSCognitoIdentityProviderService.CreateUserPoolClient" \
  -d '{
-   "UserPoolId": "local_2R9HuCQq",
+   "UserPoolId": "local_2UIllGjY",
    "ClientName": "test-client",
    "ExplicitAuthFlows": ["USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
  }' | jq | grep ClientId
 ```
+    "ClientId": "3l4vtfxsv2w4gw5qpewhm40ey",
 -> .env.developmentに設定
 ## graphqlapiを再起動
 ```
