@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_06_03_132739) do
+ActiveRecord::Schema.define(version: 2026_06_04_010503) do
 
   create_table "body_compositions", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "ユーザーの体重・体組成の計測履歴データ", force: :cascade do |t|
     t.bigint "user_id", null: false, comment: "ユーザーID"
@@ -179,6 +179,8 @@ ActiveRecord::Schema.define(version: 2026_06_03_132739) do
     t.boolean "is_admin", default: false, null: false
     t.integer "gender"
     t.integer "age"
+    t.decimal "height", precision: 4, scale: 1, comment: "身長 (cm)"
+    t.date "birthday", comment: "誕生日"
     t.index ["cognito_sub"], name: "index_users_on_cognito_sub", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
   end
