@@ -142,7 +142,15 @@ ingredients_data = [
   { name: "スターアニス", original_name: "八角" },
   { name: "黒胡椒", original_name: "黒胡椒" },
   { name: "白胡椒", original_name: "白胡椒" },
-  { name: "唐辛子", original_name: "唐辛子" }
+  { name: "唐辛子", original_name: "唐辛子" },
+
+  # --- 久留米系ラーメン用 ---
+  { name: "豚骨", original_name: "豚骨" },
+  { name: "豚脂", original_name: "ラード" },
+  { name: "長ねぎ", original_name: "長ねぎ" },
+  { name: "鶏ガラスープの素", original_name: "鶏がらスープの素" },
+  { name: "もやし", original_name: "もやし" },
+  { name: "味付卵", original_name: "味付卵" }
 ]
 
 ingredients_data.each do |data|

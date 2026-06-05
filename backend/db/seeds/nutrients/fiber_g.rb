@@ -3,7 +3,13 @@
 nutrient = Nutrient.find_or_create_by!(code: "fiber_g") { |n| n.name = "食物繊維" }
 data = {
   "にんじん" => 2.8,
-  "キャベツ" => 1.8
+  "キャベツ" => 1.8,
+  "豚骨" => 0,
+  "豚脂" => 0,
+  "長ねぎ" => 1.6,
+  "鶏ガラスープの素" => 1,
+  "もやし" => 0.6,
+  "味付卵" => 0
 }
 
 data.each do |ing_name, val|

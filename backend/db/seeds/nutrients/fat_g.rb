@@ -3,7 +3,13 @@
 nutrient = Nutrient.find_or_create_by!(code: "fat_g") { |n| n.name = "脂質" }
 data = {
   "豚肉" => 19,
-  "植物油" => 100
+  "植物油" => 100,
+  "豚骨" => 12,
+  "豚脂" => 100,
+  "長ねぎ" => 0.2,
+  "鶏ガラスープの素" => 8,
+  "もやし" => 0.2,
+  "味付卵" => 9
 }
 
 data.each do |ing_name, val|
