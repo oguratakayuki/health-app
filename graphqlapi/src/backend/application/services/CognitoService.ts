@@ -145,8 +145,18 @@ export class CognitoService {
     });
   }
 
+  // GlobalSignOutがサポートされていないので、空実装
+  async signOut(accessToken: string): Promise<void> {
+    // cognito-localはGlobalSignOutをサポートしていない
+    // 何もしない（またはログだけ出力）
+    console.log(
+      "Sign out requested but cognito-local doesn't support GlobalSignOut",
+    );
+    return Promise.resolve();
+  }
+
   async initialize() {
-    // 将来的に設定処理を追加するならここに
+    // 将来的に設定処理を追加予定
     return Promise.resolve();
   }
 

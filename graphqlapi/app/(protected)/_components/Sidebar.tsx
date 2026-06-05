@@ -1,4 +1,3 @@
-// app/(protected)/_components/Sidebar.tsx
 "use client";
 
 import {
@@ -12,41 +11,67 @@ import {
   Typography,
   Divider,
   Skeleton,
+  Button,
 } from "@mui/material";
 import {
   Restaurant,
   Person,
   Dashboard,
   AdminPanelSettings,
+  Logout,
 } from "@mui/icons-material";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useMe } from "@/frontend/hooks/useMe";
 
 const menuItems = [
   { text: "ダッシュボード", icon: <Dashboard />, path: "/dashboard" },
-  { text: "献立管理", icon: <Restaurant />, path: "/meals" },
-  { text: "栄養成分管理", icon: <Restaurant />, path: "/ingredient-nutrients" },
-  {
-    text: "年齢別基準値",
-    icon: <Restaurant />,
-    path: "/nutrients-intake-standards",
-  },
+  { text: "献立", icon: <Restaurant />, path: "/meals" },
   { text: "ユーザー情報", icon: <Person />, path: "/user" },
-  { text: "radar chart", icon: <Restaurant />, path: "/daily-nutrition" },
+  { text: "統計情報", icon: <Restaurant />, path: "/daily-nutrition" },
 ];
 
 const adminMenuItems = [
-  { text: "献立情報", icon: <AdminPanelSettings />, path: "/dishes" },
-  { text: "栄養素情報", icon: <AdminPanelSettings />, path: "/nutrients" },
-  { text: "食材情報", icon: <AdminPanelSettings />, path: "/ingredients" },
+  { text: "料理", icon: <AdminPanelSettings />, path: "/dishes" },
+  { text: "食材", icon: <AdminPanelSettings />, path: "/ingredients" },
+  { text: "栄養素", icon: <AdminPanelSettings />, path: "/nutrients" },
+  {
+    text: "食材栄養成分",
+    icon: <Restaurant />,
+    path: "/ingredient-nutrients",
+  },
+  {
+    text: "栄養素摂取基準値",
+    icon: <Restaurant />,
+    path: "/nutrients-intake-standards",
+  },
 ];
 
 const drawerWidth = 240;
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, loading, isAdmin } = useMe();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        router.push("/login");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   // ローディング中のスケルトン表示
   if (loading) {
@@ -75,6 +100,8 @@ export default function Sidebar() {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
         },
       }}
       variant="permanent"
@@ -90,7 +117,7 @@ export default function Sidebar() {
       </Box>
       <Divider />
 
-      <List sx={{ p: 1 }}>
+      <List sx={{ p: 1, flexGrow: 1 }}>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
             <Link
@@ -125,6 +152,25 @@ export default function Sidebar() {
           </>
         )}
       </List>
+
+      {/* ログアウトボタン */}
+      <Box sx={{ p: 2, mt: "auto" }}>
+        <Divider sx={{ mb: 2 }} />
+        <Button
+          fullWidth
+          variant="outlined"
+          color="error"
+          startIcon={<Logout />}
+          onClick={handleLogout}
+          sx={{
+            justifyContent: "flex-start",
+            textTransform: "none",
+            py: 1,
+          }}
+        >
+          ログアウト
+        </Button>
+      </Box>
     </Drawer>
   );
 }
