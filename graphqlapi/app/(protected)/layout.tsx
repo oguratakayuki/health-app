@@ -1,7 +1,7 @@
 "use client";
 
 import Sidebar from "./_components/Sidebar";
-import { AuthGuard } from "../components/auth/AuthGuard";
+import { AuthGuard } from "@frontend/auth/guards/AuthGuard";
 
 export default function DashboardLayout({
   children,

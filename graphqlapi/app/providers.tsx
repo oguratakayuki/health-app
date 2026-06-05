@@ -4,7 +4,8 @@ import React from "react";
 import { ApolloProvider } from "@apollo/client";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { createApolloClient } from "../lib/apolloClient";
+import { getApolloClient } from "../lib/apolloClient";
+import { AuthProvider } from "@frontend/auth/providers/AuthProvider";
 
 const theme = createTheme({
   palette: {
@@ -14,14 +15,16 @@ const theme = createTheme({
 });
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const client = React.useMemo(() => createApolloClient(), []);
+  const client = getApolloClient();
 
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
+      </AuthProvider>
     </ApolloProvider>
   );
 }

@@ -13,6 +13,7 @@ docker compose run web bundle exec rails db:seed
 ```
 # 設計ドキュメント
 [GraphQLにおける認証・認可アーキテクチャ設計](graphqlapi/docs/graphql-auth-architecture.md)
+[フロントエンドの認証・認可アーキテクチャ設計](graphqlapi/docs/frontend-auth-architecture.md)
 
 # DEVELOPMENT MEMO
 ```

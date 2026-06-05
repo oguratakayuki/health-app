@@ -3,10 +3,13 @@
 * docker compose run graphqlapi npm run test:single NutrientsIntakeStandard
 
 # prisma
-* prismaのキャッシュクリア rm -rf ~/.cache/prisma
-* rm -rf node_modules/.prisma
-* rm -rf node_modules/@prisma/client
-* DATABASE_URL=mysql://root:rootp@db:3306/health_development npx prisma generate
+* prismaのキャッシュクリア
+```
+rm -rf ~/.cache/prisma
+rm -rf node_modules/.prisma
+rm -rf node_modules/@prisma/client
+DATABASE_URL=mysql://root:rootp@db:3306/health_development npx prisma generate
+```
 
 # cognitoの設定手順
 

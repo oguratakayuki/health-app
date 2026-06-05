@@ -1,4 +1,4 @@
-// components/auth/AuthGuard.tsx
+// app/components/auth/AuthGuard.tsx
 "use client";
 
 import { useMe } from "@/frontend/hooks/useMe";
