@@ -110,9 +110,7 @@ ingredients_data = [
   { name: "コーンスターチ", original_name: "コーンスターチ" },
   { name: "はん天", original_name: "寒天" },
   { name: "きな粉", original_name: "きな粉" },
-  { name: "オートミール", original_name: "オートミール" }, # 重複チェック、後で削除
   { name: "さつまいも", original_name: "さつまいも" },
-  { name: "かぼちゃ", original_name: "かぼちゃ" }, # 重複
   { name: "れんこん", original_name: "れんこん" },
   { name: "ごぼう", original_name: "ごぼう" },
   { name: "山芋", original_name: "山芋" },
@@ -150,7 +148,21 @@ ingredients_data = [
   { name: "長ねぎ", original_name: "長ねぎ" },
   { name: "鶏ガラスープの素", original_name: "鶏がらスープの素" },
   { name: "もやし", original_name: "もやし" },
-  { name: "味付卵", original_name: "味付卵" }
+  { name: "味付卵", original_name: "味付卵" },
+
+  # --- 3〜4月追加用 ---
+  { name: "酒", original_name: "料理酒" },
+  { name: "出汁", original_name: "和風出汁" },
+  { name: "コンソメ", original_name: "牛コンソメ" },
+  { name: "カレールー", original_name: "カレー粉" },
+  { name: "片栗粉", original_name: "ジャガイモデンプン" },
+  { name: "レモン", original_name: "レモン" },
+  { name: "黒酢", original_name: "黒酢" },
+  { name: "豆苗", original_name: "豆苗" },
+  { name: "枝豆", original_name: "枝豆" },
+  { name: "春雨", original_name: "春雨（茹で）" },
+  { name: "インゲン", original_name: "インゲンマメ" },
+  { name: "じゃこ", original_name: "煮干し" }
 ]
 
 ingredients_data.each do |data|
