@@ -1,3 +1,4 @@
+// app/(protected)/_components/Sidebar.tsx
 "use client";
 
 import {
@@ -22,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useMe } from "@/frontend/hooks/useMe";
+import { useAuth } from "@/frontend/auth/hooks/useAuth";
 
 const menuItems = [
   { text: "ダッシュボード", icon: <Dashboard />, path: "/dashboard" },
@@ -52,22 +53,12 @@ const drawerWidth = 240;
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading, isAdmin } = useMe();
+  const { user, loading, isAdmin, logout } = useAuth(); // useAuth に変更
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        router.push("/login");
-      } else {
-        console.error("Logout failed");
-      }
+      await logout(); // AuthProvider の logout メソッドを使用
+      router.push("/login");
     } catch (error) {
       console.error("Error during logout:", error);
     }

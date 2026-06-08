@@ -7,7 +7,7 @@ import { CognitoService } from "../CognitoService";
 import { UserService } from "../UserService";
 import { IngredientNutrientService } from "../IngredientNutrientService";
 import { MealService } from "../MealService";
- 
+import { CalculateDailyNutritionUseCase } from "../../usecases/CalculateDailyNutritionUseCase";
 import {
   createPrismaDishService,
   createPrismaNutrientService,
@@ -19,28 +19,24 @@ import {
   createCalculateDailyNutritionUseCase,
   createPrismaMealService,
 } from "./PrismaAdapter";
- 
 /**
-  * サービスファクトリー
-  * コンテキスト対応版
-  */
+ * サービスファクトリー
+ * コンテキスト対応版
+ */
 export class ServiceFactory {
   private static usePrisma = true;
- 
   static createDishService(context?: any): DishService {
     if (context?.dishService) {
       return context.dishService;
     }
     return createPrismaDishService();
   }
- 
   static createNutrientService(context?: any): NutrientService {
     if (context?.nutrientService) {
       return context.nutrientService;
     }
     return createPrismaNutrientService();
   }
- 
   static createNutrientsIntakeStandardService(
     context?: any,
   ): NutrientsIntakeStandardService {
@@ -49,7 +45,6 @@ export class ServiceFactory {
     }
     return createNutrientsIntakeStandardService();
   }
- 
   static createCalculateDailyNutritionUseCase(
     context?: any,
   ): CalculateDailyNutritionUseCase {
@@ -58,28 +53,24 @@ export class ServiceFactory {
     }
     return createCalculateDailyNutritionUseCase();
   }
- 
   static createIngredientService(context?: any): IngredientService {
     if (context?.ingredientService) {
       return context.ingredientService;
     }
     return createPrismaIngredientService();
   }
- 
   static createCognitoService(context?: any): CognitoService {
     if (context?.cognitoService) {
       return context.cognitoService;
     }
     return createCognitoService();
   }
- 
   static createUserService(context?: any): UserService {
     if (context?.userService) {
       return context.userService;
     }
     return createUserService();
   }
- 
   static createIngredientNutrientService(
     context?: any,
   ): IngredientNutrientService {
@@ -95,7 +86,6 @@ export class ServiceFactory {
     }
     return createPrismaMealService();
   }
- 
   // ヘルパーメソッド: コンテキストからすべてのサービスを取得
   static getServicesFromContext(context?: any) {
     return {
@@ -119,7 +109,6 @@ export class ServiceFactory {
       mealService: context?.mealService || this.createMealService(context),
     };
   }
- 
   static setUsePrisma(usePrisma: boolean) {
     this.usePrisma = usePrisma;
   }

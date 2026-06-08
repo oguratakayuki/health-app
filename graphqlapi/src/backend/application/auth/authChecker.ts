@@ -6,8 +6,10 @@ export const authChecker: AuthChecker<GraphQLContext> = (
   { context },
   roles,
 ) => {
+  console.log("authChecker called, user:", context.user);
   // 未認証の場合
   if (!context.user) {
+    console.log("authChecker: No user in context");
     return false;
   }
   // ロールチェック（rolesが空の場合は認証されていればOK）
@@ -22,5 +24,6 @@ export const authChecker: AuthChecker<GraphQLContext> = (
   if (roles.includes("user") && context.user.isAdmin === false) {
     return true;
   }
+  console.log("authChecker: Authentication successful");
   return true;
 };

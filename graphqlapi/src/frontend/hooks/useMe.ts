@@ -1,17 +1,14 @@
-// src/frontend/hooks/useMe.ts
-import { useQuery } from "@apollo/client";
-import { ME_QUERY } from "@/frontend/graphql/queries/me";
+// src/frontend/hooks/useMe.ts  (非推奨ラッパー)
+import { useAuth } from "@frontend/auth/hooks/useAuth";
 
 export const useMe = () => {
-  const { data, loading, error } = useQuery(ME_QUERY, {
-    fetchPolicy: "cache-first",
-  });
-
+  const { user, loading, error, isAdmin, isLoggedIn } = useAuth();
+  console.log("HERE");
   return {
-    user: data?.me ?? null,
+    user,
     loading,
     error,
-    isAdmin: data?.me?.isAdmin === true,
-    isLoggedIn: !!data?.me,
+    isAdmin,
+    isLoggedIn,
   };
 };

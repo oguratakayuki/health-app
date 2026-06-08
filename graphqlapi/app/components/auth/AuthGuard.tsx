@@ -18,6 +18,7 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
   useEffect(() => {
     if (!loading) {
       if (!isLoggedIn) {
+        console.log("app/components/auth/AuthGuard.tsx");
         router.push("/login");
       } else if (requireAdmin && !isAdmin) {
         router.push("/not-found");

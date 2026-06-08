@@ -14,7 +14,6 @@ let yogaInstance: any = null;
 async function getYoga() {
   if (!yogaInstance) {
     console.log("🔧 Initializing GraphQL Yoga with context support...");
-    // GraphQLスキーマの構築
     const schema = await buildSchema({
       resolvers,
       validate: false,
@@ -26,29 +25,48 @@ async function getYoga() {
       schema,
       graphqlEndpoint: "/api/graphql",
       context: async ({ request }): Promise<GraphQLContext> => {
-        // ユーザー認証
-        let user;
+        let graphQLUser = null;
         try {
-          user = await verifyIdToken(request);
+          // 1. Cognitoトークンを検証
+          const cognitoUser = await verifyIdToken(request);
+          console.log("GraphQL context - Cognito user found:", !!cognitoUser);
+          console.log("GraphQL context - Cognito user email:", cognitoUser?.email);
+          if (cognitoUser?.email) {
+            // 2. データベースからユーザー情報を取得
+            const userService = ServiceFactory.createUserService();
+            const dbUser = await userService.findByEmail(cognitoUser.email);
+            if (dbUser) {
+              // 3. GraphQLのUser型に変換
+              graphQLUser = {
+                id: dbUser.id.toString(),
+                email: dbUser.email,
+                name: dbUser.name,
+                isAdmin: dbUser.isAdmin,
+                cognitoSub: dbUser.cognitoSub,
+                createdAt: dbUser.createdAt,
+                updatedAt: dbUser.updatedAt,
+              };
+              console.log("GraphQL context - DB user found:", graphQLUser.email, "isAdmin:", graphQLUser.isAdmin);
+            } else {
+              console.log("GraphQL context - No DB user found for email:", cognitoUser.email);
+            }
+          }
         } catch (error) {
-          console.warn("Authentication failed:", error.message);
+          console.warn("Authentication failed:", error?.message || error);
           // 認証失敗でもコンテキストは作成（公開クエリ用）
-          user = undefined;
+          graphQLUser = null;
         }
         // サービスインスタンスを作成
         const services = ServiceFactory.getServicesFromContext();
         // 完全なコンテキストを作成
         const context: GraphQLContext = {
-          user: user || undefined, // nullをundefinedに変換
+          user: graphQLUser || undefined,
           ...services,
         };
         return context;
       },
-      // 開発環境ではGraphiQLを有効化
       graphiql: process.env.NODE_ENV !== "production",
-      // エラーハンドリング
       maskedErrors: process.env.NODE_ENV === "production",
-      // リクエスト/レスポンスログ（開発環境のみ）
       logging: process.env.NODE_ENV !== "production" ? "debug" : undefined,
     });
     console.log("✅ GraphQL Yoga initialized with context support");

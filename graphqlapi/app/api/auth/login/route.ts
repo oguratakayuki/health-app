@@ -21,24 +21,30 @@ export async function POST(req: NextRequest) {
     );
 
     const res = NextResponse.json({ message: "ログイン成功" });
+    const maxAge = 60 * 60 * 24 * 7; // 7日間
+    const isProduction = process.env.NODE_ENV === "production";
+    console.log(`process.env.NODE_ENV ${process.env.NODE_ENV}`);
     res.cookies.set("idToken", idToken!, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: isProduction,
+      secure: isProduction,
       path: "/",
       sameSite: "lax",
+      maxAge: maxAge,
     });
     res.cookies.set("accessToken", accessToken!, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: isProduction,
+      secure: isProduction,
       path: "/",
       sameSite: "lax",
+      maxAge: maxAge,
     });
     if (refreshToken) {
       res.cookies.set("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
+        httpOnly: isProduction,
+        secure: isProduction,
         path: "/",
         sameSite: "lax",
+        maxAge: maxAge * 30,
       });
     }
 

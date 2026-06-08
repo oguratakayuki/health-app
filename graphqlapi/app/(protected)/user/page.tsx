@@ -1,31 +1,38 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+// app/(protected)/user/page.tsx
+"use client";
+
+import { useAuth } from "@/frontend/auth/hooks/useAuth";
+import { CircularProgress, Box } from "@mui/material";
 import UserInfo from "./user-info";
 
-export default async function ProtectedPage() {
-  const cookieStore = cookies();
-  const idToken = cookieStore.get("idToken");
+export default function UserPage() {
+  const { user, loading, isLoggedIn } = useAuth();
 
-  if (!idToken) {
-    redirect("/login");
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  // SSR側で /api/auth/me を叩いて user 情報を取得
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${idToken.value}`,
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    redirect("/login");
+  if (!isLoggedIn || !user) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
+        <p>ユーザー情報を取得できませんでした。</p>
+      </Box>
+    );
   }
 
-  const user = await res.json();
-
-  // クライアント側コンポーネントに渡して表示
-  return (
-    <UserInfo user={user.user} />
-  );
+  return <UserInfo user={user} />;
 }

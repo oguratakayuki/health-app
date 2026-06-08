@@ -1,31 +1,26 @@
 // lib/apolloClient.ts
-import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+  from,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { TokenService } from "@/frontend/auth/services/TokenService";
 
-const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL || "/api/graphql";
-
-// HTTPリンク
-const httpLink = new HttpLink({
-  uri: GRAPHQL_URL,
-  credentials: "include", // クッキーも送信（フォールバック用）
+const httpLink = createHttpLink({
+  uri: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/graphql`,
+  credentials: "include",
 });
 
-// 認証リンク - Authorizationヘッダーを追加
 const authLink = setContext((_, { headers }) => {
-  // クライアントサイドでのみ実行
-  if (typeof window === 'undefined') {
-    return { headers };
-  }
-  // クッキーからidTokenを取得
-  const cookies = document.cookie.split(';');
-  const idTokenCookie = cookies.find(c => c.trim().startsWith('idToken='));
-  const token = idTokenCookie ? decodeURIComponent(idTokenCookie.split('=')[1]) : null;
-  // デバッグログ
-  if (token) {
-    console.log("🔐 Apollo Client - Adding Authorization header with token");
-  } else {
-    console.warn("⚠️ Apollo Client - No idToken found in cookies");
-  }
+  const tokenService = TokenService.getInstance();
+  const token = tokenService.getIdToken(); // IDトークンを取得
+  console.log("Apollo Client authLink:", {
+    hasToken: !!token,
+    tokenPreview: token?.substring(0, 50),
+    token: token,
+  });
   return {
     headers: {
       ...headers,
@@ -34,43 +29,16 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// リンクを結合（authLink → httpLink の順序が重要）
-const combinedLink = from([authLink, httpLink]);
-
-export function createApolloClient() {
-  return new ApolloClient({
-    ssrMode: false, // Client-only
-    link: combinedLink,
-    cache: new InMemoryCache({
-      typePolicies: {
-        Query: {
-          fields: {
-            ingredientNutrients: {
-              merge(existing = [], incoming: any[]) {
-                return incoming;
-              },
-            },
-          },
-        },
-      },
-    }),
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'network-only', // キャッシュの問題を避けるため
-      },
+export const apolloClient = new ApolloClient({
+  link: from([authLink, httpLink]),
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "network-only",
     },
-  });
-}
-
-// シングルトンインスタンス
-let apolloClientInstance: ApolloClient<any> | null = null;
+  },
+});
 
 export function getApolloClient() {
-  if (!apolloClientInstance) {
-    apolloClientInstance = createApolloClient();
-  }
-  return apolloClientInstance;
+  return apolloClient;
 }
-
-// 後方互換性のためのデフォルトエクスポート
-export default getApolloClient();

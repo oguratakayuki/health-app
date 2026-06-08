@@ -8,6 +8,21 @@ export class AuthService {
     private apolloClient: ApolloClient<object>,
     private tokenService: TokenService = TokenService.getInstance(),
   ) {}
+  async signup(email: string, password: string, name: string): Promise<void> {
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Signup failed");
+    }
+    // サインアップ後はログインしない（確認コードが必要なため）
+    // トークンの設定などは行わない
+  }
+
   async login(email: string, password: string): Promise<void> {
     try {
       const response = await fetch("/api/auth/login", {
@@ -20,12 +35,13 @@ export class AuthService {
         throw new Error(error.message || "Login failed");
       }
       const data = await response.json();
+      // クッキーはサーバー側で設定されるので、localStorageのみ更新
       this.tokenService.setTokens(
         data.idToken,
         data.accessToken,
         data.refreshToken,
       );
-      // Apolloキャッシュのリセット
+      console.log("Login successful, tokens saved");
       await this.apolloClient.resetStore();
     } catch (error) {
       console.error("Login service error:", error);

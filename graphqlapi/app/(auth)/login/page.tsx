@@ -1,52 +1,50 @@
+// app/(auth)/login/page.tsx
 "use client";
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Lock, LogIn, User } from "lucide-react";
+import { useAuth } from "@/frontend/auth/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, loading: authLoading } = useAuth(); // useAuth から login を使用
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
+
+  const isLoading = localLoading || authLoading;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setMessage("");
-    setLoading(true);
+    setLocalLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "ログインに失敗しました");
-      }
+      // AuthProvider の login メソッドを使用
+      await login(username, password);
 
       setMessage("ログイン成功！Dashboardへ移動します…");
+      console.log("ログイン成功！Dashboardへ移動します…");
+
+      // 少し待ってからリダイレクト（状態更新のため）
       setTimeout(() => router.push("/dashboard"), 500);
     } catch (err: any) {
-      setError(err.message);
+      console.error("ログインエラー:", err);
+      setError(err.message || "ログインに失敗しました");
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
-        {/* ログインフォームカード */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          {/* ヘッダー */}
           <div className="flex flex-col items-center mb-6">
             <div className="bg-blue-100 p-3 rounded-full mb-4">
               <LogIn className="w-8 h-8 text-blue-600" />
@@ -57,9 +55,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* ログインフォーム */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* ユーザー名入力 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 ユーザー名
@@ -82,7 +78,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* パスワード入力 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 パスワード
@@ -105,13 +100,12 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* ログインボタン */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="flex items-center justify-center">
                   <svg
                     className="animate-spin h-5 w-5 mr-2 text-white"
@@ -141,7 +135,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* メッセージ表示 */}
           <div className="mt-4 space-y-2">
             {message && (
               <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
@@ -155,7 +148,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* フッターリンク */}
           <div className="mt-6 pt-6 border-t border-gray-200 text-center">
             <p className="text-gray-600 text-sm">
               アカウントをお持ちでない方は{" "}

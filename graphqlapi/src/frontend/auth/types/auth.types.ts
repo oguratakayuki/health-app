@@ -18,6 +18,7 @@ export interface AuthState {
 }
 
 export interface AuthContextValue extends AuthState {
+  signup: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;

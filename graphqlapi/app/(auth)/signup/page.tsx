@@ -1,38 +1,32 @@
+// app/(auth)/signup/page.tsx
 "use client";
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { User, Mail, Lock, UserPlus } from "lucide-react";
+import { useAuth } from "@/frontend/auth/hooks/useAuth";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { signup, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
+
+  const isLoading = localLoading || authLoading;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
-    setLoading(true);
+    setLocalLoading(true);
 
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "サインアップに失敗しました");
-      }
-
+      await signup(email, password, name);
       setMessage(
         "サインアップに成功しました。確認コード入力ページへ移動します…",
       );
@@ -41,18 +35,16 @@ export default function SignupPage() {
         router.push(`/confirm?email=${encodeURIComponent(email)}`);
       }, 700);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "サインアップに失敗しました");
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
-        {/* サインアップフォームカード */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          {/* ヘッダー */}
           <div className="flex flex-col items-center mb-6">
             <div className="bg-purple-100 p-3 rounded-full mb-4">
               <UserPlus className="w-8 h-8 text-purple-600" />
@@ -63,9 +55,7 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {/* サインアップフォーム */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* 名前入力 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 名前
@@ -88,7 +78,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* メールアドレス入力 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 メールアドレス
@@ -111,7 +100,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* パスワード入力 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 パスワード
@@ -134,13 +122,12 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* サインアップボタン */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="flex items-center justify-center">
                   <svg
                     className="animate-spin h-5 w-5 mr-2 text-white"
@@ -170,7 +157,6 @@ export default function SignupPage() {
             </button>
           </form>
 
-          {/* メッセージ表示 */}
           <div className="mt-4 space-y-2">
             {message && (
               <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
@@ -184,7 +170,6 @@ export default function SignupPage() {
             )}
           </div>
 
-          {/* フッターリンク */}
           <div className="mt-6 pt-6 border-t border-gray-200 text-center">
             <p className="text-gray-600 text-sm">
               既にアカウントをお持ちの方は{" "}

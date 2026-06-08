@@ -34,6 +34,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const user = useMemo(() => data?.me as AuthUser | undefined, [data]);
   const isLoggedIn = useMemo(() => !!user, [user]);
   const isAdmin = useMemo(() => user?.isAdmin === true, [user]);
+  const signup = useCallback(
+    async (email: string, password: string, name: string) => {
+      await authService.signup(email, password, name);
+      // サインアップ後は自動ログインしない（確認コードが必要）
+    },
+    [authService],
+  );
   const login = useCallback(
     async (email: string, password: string) => {
       await authService.login(email, password);
@@ -42,6 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [authService, refetch],
   );
   const logout = useCallback(async () => {
+    console.log("🔴 logout called! Stack trace:", new Error().stack);
     await authService.logout();
     await refetch();
   }, [authService, refetch]);
@@ -58,10 +66,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // トークン期限チェックと自動リフレッシュ
   useEffect(() => {
     const checkToken = async () => {
-      const token = tokenService.getAccessToken();
-      if (token && tokenService.isTokenExpired(token)) {
+      const token = tokenService.getIdToken(); // IDトークンを使用
+      if (!token) {
+        console.log("No token found");
+        return;
+      }
+      const isExpired = tokenService.isTokenExpired(token);
+      console.log("checkToken:", { hasToken: !!token, isExpired });
+      if (isExpired) {
+        console.log("Token expired, attempting refresh...");
         const refreshed = await authService.refreshSession();
         if (!refreshed) {
+          console.log("Refresh failed, logging out...");
           await logout();
         }
       }
@@ -69,6 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const interval = setInterval(checkToken, 60000); // 1分ごとにチェック
     return () => clearInterval(interval);
   }, [authService, logout, tokenService]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: user || null,
@@ -76,6 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       error: error || null,
       isLoggedIn,
       isAdmin,
+      signup,
       login,
       logout,
       refetchUser,
@@ -87,6 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       error,
       isLoggedIn,
       isAdmin,
+      signup,
       login,
       logout,
       refetchUser,
