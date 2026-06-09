@@ -119,10 +119,6 @@ export async function verifyIdTokenFromCookie(
   }
 }
 function extractToken(req: Request): string | null {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.split(" ")[1];
-  }
   const cookieHeader = req.headers.get("cookie") || "";
   const match = cookieHeader.match(/idToken=([^;]+)/);
   if (match) {

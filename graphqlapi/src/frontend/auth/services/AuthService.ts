@@ -1,13 +1,9 @@
 // src/frontend/auth/services/AuthService.ts
 import { ApolloClient } from "@apollo/client";
-import { TokenService } from "./TokenService";
-import { AUTH_STORAGE_KEYS } from "../constants/auth.constants";
 
 export class AuthService {
-  constructor(
-    private apolloClient: ApolloClient<object>,
-    private tokenService: TokenService = TokenService.getInstance(),
-  ) {}
+  constructor(private apolloClient: ApolloClient<object>) {}
+
   async signup(email: string, password: string, name: string): Promise<void> {
     const response = await fetch("/api/auth/signup", {
       method: "POST",
@@ -15,68 +11,35 @@ export class AuthService {
       body: JSON.stringify({ email, password, name }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Signup failed");
+      throw new Error(data.error || "Signup failed");
     }
-    // サインアップ後はログインしない（確認コードが必要なため）
-    // トークンの設定などは行わない
   }
 
   async login(email: string, password: string): Promise<void> {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: email, password }),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Login failed");
-      }
-      const data = await response.json();
-      // クッキーはサーバー側で設定されるので、localStorageのみ更新
-      this.tokenService.setTokens(
-        data.idToken,
-        data.accessToken,
-        data.refreshToken,
-      );
-      console.log("Login successful, tokens saved");
-      await this.apolloClient.resetStore();
-    } catch (error) {
-      console.error("Login service error:", error);
-      throw error;
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: email, password }),
+      credentials: "include", // クッキーを受け取るために必要
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Login failed");
     }
+
+    await this.apolloClient.resetStore();
   }
+
   async logout(): Promise<void> {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      this.tokenService.clearTokens();
-      await this.apolloClient.resetStore();
-    }
-  }
-  async refreshSession(): Promise<boolean> {
-    const refreshToken = localStorage.getItem(AUTH_STORAGE_KEYS.REFRESH_TOKEN);
-    if (!refreshToken) return false;
-    try {
-      const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        this.tokenService.setTokens(
-          data.idToken,
-          data.accessToken,
-          data.refreshToken,
-        );
-        return true;
-      }
-    } catch (error) {
-      console.error("Token refresh failed:", error);
-    }
-    return false;
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    await this.apolloClient.resetStore();
   }
 }

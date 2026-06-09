@@ -6,7 +6,6 @@ import { useQuery, useApolloClient } from "@apollo/client";
 import { ME_QUERY } from "@/frontend/graphql/queries/me";
 import { AuthContext } from "../contexts/AuthContext";
 import { AuthService } from "../services/AuthService";
-import { TokenService } from "../services/TokenService";
 import { AuthContextValue, AuthUser } from "../types/auth.types";
 
 interface AuthProviderProps {
@@ -16,7 +15,6 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const apolloClient = useApolloClient();
   const [authService] = useState(() => new AuthService(apolloClient));
-  const tokenService = TokenService.getInstance();
   const { data, loading, error, refetch } = useQuery(ME_QUERY, {
     fetchPolicy: "cache-first",
     errorPolicy: "ignore",
@@ -63,28 +61,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     },
     [refetch],
   );
-  // トークン期限チェックと自動リフレッシュ
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = tokenService.getIdToken(); // IDトークンを使用
-      if (!token) {
-        console.log("No token found");
-        return;
-      }
-      const isExpired = tokenService.isTokenExpired(token);
-      console.log("checkToken:", { hasToken: !!token, isExpired });
-      if (isExpired) {
-        console.log("Token expired, attempting refresh...");
-        const refreshed = await authService.refreshSession();
-        if (!refreshed) {
-          console.log("Refresh failed, logging out...");
-          await logout();
-        }
-      }
-    };
-    const interval = setInterval(checkToken, 60000); // 1分ごとにチェック
-    return () => clearInterval(interval);
-  }, [authService, logout, tokenService]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

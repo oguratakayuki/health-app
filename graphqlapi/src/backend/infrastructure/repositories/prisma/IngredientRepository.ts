@@ -34,7 +34,6 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
         orderBy: { id: "asc" },
       });
-      console.log("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
       return ingredients.map((ingredient) =>
         IngredientMapper.mapToIngredientWithRelations(ingredient),
@@ -154,7 +153,9 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         orderBy: { id: "asc" },
       });
 
-      return ingredients.map((ingredient) => IngredientMapper.mapToIngredient(ingredient));
+      return ingredients.map((ingredient) =>
+        IngredientMapper.mapToIngredient(ingredient),
+      );
     } catch (error) {
       console.error("PrismaIngredientRepository.findByName error:", error);
       throw this.handleError(error);
@@ -172,9 +173,6 @@ export class PrismaIngredientRepository implements IIngredientRepository {
       throw this.handleError(error);
     }
   }
-
-
-
 
   /**
    * エラーハンドリング

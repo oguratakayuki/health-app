@@ -25,14 +25,14 @@ export async function POST(req: NextRequest) {
     const isProduction = process.env.NODE_ENV === "production";
     console.log(`process.env.NODE_ENV ${process.env.NODE_ENV}`);
     res.cookies.set("idToken", idToken!, {
-      httpOnly: isProduction,
+      httpOnly: true,
       secure: isProduction,
       path: "/",
       sameSite: "lax",
       maxAge: maxAge,
     });
     res.cookies.set("accessToken", accessToken!, {
-      httpOnly: isProduction,
+      httpOnly: true,
       secure: isProduction,
       path: "/",
       sameSite: "lax",
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     });
     if (refreshToken) {
       res.cookies.set("refreshToken", refreshToken, {
-        httpOnly: isProduction,
+        httpOnly: true,
         secure: isProduction,
         path: "/",
         sameSite: "lax",
