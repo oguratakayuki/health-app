@@ -1,8 +1,9 @@
+import { Dish, DishWithIngredients } from "@/backend/domain/entities/Dish";
 import {
-  Dish,
-  DishWithIngredients,
-} from "@/backend/domain/entities/Dish";
-import { Dish as PrismaDish, DishIngredient as PrismaDishIngredient, Ingredient as PrismaIngredient } from "@prisma/client";
+  Dish as PrismaDish,
+  DishIngredient as PrismaDishIngredient,
+  Ingredient as PrismaIngredient,
+} from "@prisma/client";
 
 // Define a type for Prisma Dish with necessary relations
 type PrismaDishWithIngredients = PrismaDish & {

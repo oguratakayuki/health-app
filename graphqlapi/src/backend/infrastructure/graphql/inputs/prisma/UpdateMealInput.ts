@@ -4,20 +4,17 @@ import { UpdateDishInput } from "./UpdateDishInput";
 
 @InputType()
 export class UpdateMealInput {
-  @Field({ nullable: true })
-  mealDate?: Date;
+  @Field({ nullable: false })
+  mealDate!: Date;
 
-  @Field({ nullable: true })
-  category?: string;
+  @Field({ nullable: false })
+  category!: string;
 
-  @Field({ nullable: true })
-  startTime?: string;
+  @Field({ nullable: false })
+  startTime!: string;
 
-  @Field({ nullable: true })
-  endTime?: string;
-
-  @Field({ nullable: true })
-  userId?: number;
+  @Field({ nullable: false })
+  endTime!: string;
 
   @Field(() => [UpdateDishInput], { nullable: true })
   dishes?: UpdateDishInput[];

@@ -5,8 +5,8 @@ export interface Meal {
   id: number;
   userId: number;
   mealDate: Date;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: Date; // prismaの仕様
+  endTime: Date; // prismaの仕様
   category: string; // 'breakfast', 'lunch', 'dinner', 'snack'
   createdAt: Date;
   updatedAt: Date;

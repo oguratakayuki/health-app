@@ -10,7 +10,7 @@ export class Meal {
   name?: string;
 
   @Field()
-  userId!: number;
+  userId!: string;
 
   @Field()
   mealDate!: Date;
