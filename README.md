@@ -1,4 +1,7 @@
-# README
+# 設計ドキュメント
+- [GraphQLにおける認証・認可アーキテクチャ設計](graphqlapi/docs/graphql-auth-architecture.md)
+- [フロントエンドの認証・認可アーキテクチャ設計](graphqlapi/docs/frontend-auth-architecture.md)
+- [バックエンドにおけるデータマッピング・腐敗防止層（ACL）の設計規律](graphqlapi/docs/backend-data-mapping-architecture.md)
 
 
 # SETUP
@@ -11,10 +14,6 @@ docker compose run web bundle exec rails csv_import:ingredients_nutrients
 docker compose run web bundle exec rails db:migrate
 docker compose run web bundle exec rails db:seed
 ```
-# 設計ドキュメント
-[GraphQLにおける認証・認可アーキテクチャ設計](graphqlapi/docs/graphql-auth-architecture.md)
-[フロントエンドの認証・認可アーキテクチャ設計](graphqlapi/docs/frontend-auth-architecture.md)
-
 # DEVELOPMENT MEMO
 ```
 docker exec -it  health-app-db-1  mysql -u root -p health_development
