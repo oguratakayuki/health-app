@@ -1,10 +1,10 @@
 import { Nutrient } from "@/backend/domain/entities/Nutrient";
 import { Nutrient as PrismaNutrient } from "@prisma/client";
 
-export class NutrientMapper {
+export class NutrientRepositoryMapper {
   static mapToDomain(prismaNutrient: PrismaNutrient): Nutrient {
     return {
-      id: prismaNutrient.id.toString(),
+      id: Number(prismaNutrient.id),
       name: prismaNutrient.name,
       code: prismaNutrient.code,
       parentId: prismaNutrient.parentId

@@ -7,7 +7,7 @@ import {
 } from "@/backend/domain/entities/Nutrient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
-import { NutrientMapper } from "./mappers/NutrientMapper";
+import { NutrientRepositoryMapper } from "@/backend/acl/domain_infrastructure/NutrientRepositoryMapper";
 
 export class PrismaNutrientRepository implements INutrientRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -24,7 +24,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
 
       if (!nutrient) return null;
 
-      return NutrientMapper.mapToDomain(nutrient);
+      return NutrientRepositoryMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.findById error:", error);
       throw this.handleError(error);
@@ -37,7 +37,9 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
+      return nutrients.map((nutrient) =>
+        NutrientRepositoryMapper.mapToDomain(nutrient),
+      );
     } catch (error) {
       console.error("PrismaNutrientRepository.findAll error:", error);
       throw this.handleError(error);
@@ -56,7 +58,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         },
       });
 
-      return NutrientMapper.mapToDomain(nutrient);
+      return NutrientRepositoryMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.create error:", error);
       throw this.handleError(error);
@@ -76,7 +78,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
         },
       });
 
-      return NutrientMapper.mapToDomain(nutrient);
+      return NutrientRepositoryMapper.mapToDomain(nutrient);
     } catch (error) {
       console.error("PrismaNutrientRepository.update error:", error);
       throw this.handleError(error);
@@ -106,7 +108,9 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
+      return nutrients.map((nutrient) =>
+        NutrientRepositoryMapper.mapToDomain(nutrient),
+      );
     } catch (error) {
       console.error("PrismaNutrientRepository.findByName error:", error);
       throw this.handleError(error);
@@ -122,7 +126,9 @@ export class PrismaNutrientRepository implements INutrientRepository {
         orderBy: { id: "asc" },
       });
 
-      return nutrients.map((nutrient) => NutrientMapper.mapToDomain(nutrient));
+      return nutrients.map((nutrient) =>
+        NutrientRepositoryMapper.mapToDomain(nutrient),
+      );
     } catch (error) {
       console.error("PrismaNutrientRepository.findByParentId error:", error);
       throw this.handleError(error);

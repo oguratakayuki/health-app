@@ -1,8 +1,8 @@
 // backend/domain/entities/Nutrient.ts
 
 export interface Nutrient {
-  id: string;
-  name: string | null;
+  id: number;
+  name: string;
   code: string;
   parentId: string | null;
   createdAt: Date;

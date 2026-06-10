@@ -69,7 +69,6 @@ export class MealRepository implements IMealRepository {
     // tx があれば tx を、無ければ通常の this.prisma を使う
     const client = tx ?? this.prisma;
 
-    // 🌟 await しつつ、更新された Meal オブジェクトをそのまま return する
     const meal = await client.meal.update({
       where: { id },
       data,
