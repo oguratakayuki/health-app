@@ -9,7 +9,7 @@ type PrismaItemWithRelations = Prisma.IngredientNutrientGetPayload<{
   };
 }>;
 
-export class IngredientNutrientMapper {
+export class IngredientNutrientRepositoryMapper {
   static mapToDomain(
     prismaItem: PrismaItemWithRelations,
   ): IngredientNutrientWithRelations {
