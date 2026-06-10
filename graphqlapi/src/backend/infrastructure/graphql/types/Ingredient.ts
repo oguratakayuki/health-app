@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from 'type-graphql';
+import { ObjectType, Field, ID } from "type-graphql";
 
 @ObjectType()
 export class Ingredient {
@@ -6,7 +6,7 @@ export class Ingredient {
   id!: string;
 
   @Field({ nullable: true })
-  name?: string;
+  name!: string;
 
   @Field({ nullable: true })
   remarks?: string;

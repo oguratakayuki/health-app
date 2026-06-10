@@ -20,34 +20,17 @@ export class IngredientResolver {
 
   @Query(() => [Ingredient])
   @Authorized()
-  async ingredients(
-    @Ctx() ctx: GraphQLContext,
-  ): Promise<IngredientWithRelations[]> {
-    console.log("ingredient service !!!!!!!!!!");
+  async ingredients(@Ctx() ctx: GraphQLContext): Promise<Ingredient[]> {
     try {
       const ingredientService = this.getIngredientService(ctx);
       const ingredients = await ingredientService.getAllIngredients();
-      // 既存のマッピングロジックを維持
       return ingredients.map((ingredient) => ({
         id: ingredient.id.toString(),
         name: ingredient.name,
-        originalName: ingredient.originalName,
-        remarks: ingredient.remarks,
+        originalName: ingredient.originalName ?? undefined,
+        remarks: ingredient.remarks ?? undefined,
         createdAt: ingredient.createdAt,
         updatedAt: ingredient.updatedAt,
-        nutrients: ingredient.nutrients?.map((n: any) => ({
-          id: n.id,
-          name: n.name,
-          createdAt: n.createdAt,
-          updatedAt: n.updatedAt,
-          parentId: n.parentId,
-        })),
-        dishes: ingredient.dishes?.map((d: any) => ({
-          id: d.id,
-          name: d.name,
-          createdAt: d.createdAt,
-          updatedAt: d.updatedAt,
-        })),
       }));
     } catch (error) {
       console.error(`Error in ingredients query: ${error}`);

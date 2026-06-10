@@ -5,7 +5,7 @@ import {
 } from "@/backend/domain/entities/Ingredient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
-import { IngredientMapper } from "./mappers/IngredientMapper";
+import { IngredientRepositoryMapper } from "@/backend/acl/domain_infrastructure/IngredientRepositoryMapper";
 
 export class PrismaIngredientRepository implements IIngredientRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -17,26 +17,14 @@ export class PrismaIngredientRepository implements IIngredientRepository {
   /**
    * 全ての材料を取得（関連情報を含む）
    */
-  async findAll(): Promise<IngredientWithRelations[]> {
+  async findAll(): Promise<Ingredient[]> {
     try {
       const ingredients = await this.prismaClient.ingredient.findMany({
-        include: {
-          ingredientNutrients: {
-            include: {
-              nutrient: true,
-            },
-          },
-          dishIngredients: {
-            include: {
-              dish: true,
-            },
-          },
-        },
         orderBy: { id: "asc" },
       });
 
       return ingredients.map((ingredient) =>
-        IngredientMapper.mapToIngredientWithRelations(ingredient),
+        IngredientRepositoryMapper.mapToIngredient(ingredient),
       );
     } catch (error) {
       console.error("PrismaIngredientRepository.findAll error:", error);
@@ -67,7 +55,9 @@ export class PrismaIngredientRepository implements IIngredientRepository {
 
       if (!ingredient) return null;
 
-      return IngredientMapper.mapToIngredientWithRelations(ingredient);
+      return IngredientRepositoryMapper.mapToIngredientWithRelations(
+        ingredient,
+      );
     } catch (error) {
       console.error("PrismaIngredientRepository.findById error:", error);
       throw this.handleError(error);
@@ -91,7 +81,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
       });
 
-      return IngredientMapper.mapToIngredient(ingredient);
+      return IngredientRepositoryMapper.mapToIngredient(ingredient);
     } catch (error) {
       console.error("PrismaIngredientRepository.create error:", error);
       throw this.handleError(error);
@@ -118,7 +108,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
         },
       });
 
-      return IngredientMapper.mapToIngredient(ingredient);
+      return IngredientRepositoryMapper.mapToIngredient(ingredient);
     } catch (error) {
       console.error("PrismaIngredientRepository.update error:", error);
       throw this.handleError(error);
@@ -154,7 +144,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
       });
 
       return ingredients.map((ingredient) =>
-        IngredientMapper.mapToIngredient(ingredient),
+        IngredientRepositoryMapper.mapToIngredient(ingredient),
       );
     } catch (error) {
       console.error("PrismaIngredientRepository.findByName error:", error);

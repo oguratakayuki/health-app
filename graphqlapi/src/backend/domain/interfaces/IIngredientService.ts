@@ -11,7 +11,7 @@ export interface CreateIngredientData {
 }
 
 export interface IIngredientService {
-  getAllIngredients(): Promise<IngredientWithRelations[]>;
+  getAllIngredients(): Promise<Ingredient[]>;
   getIngredientById(id: bigint): Promise<IngredientWithRelations | null>;
   createIngredient(ingredient: CreateIngredientData): Promise<Ingredient>;
   updateIngredient(

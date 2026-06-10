@@ -34,7 +34,7 @@ type PrismaIngredientWithRelations = PrismaIngredient & {
   }[];
 };
 
-export class IngredientMapper {
+export class IngredientRepositoryMapper {
   /**
    * PrismaのIngredientをIngredient型にマッピング
    */
@@ -55,7 +55,8 @@ export class IngredientMapper {
   static mapToIngredientWithRelations(
     prismaIngredient: PrismaIngredientWithRelations,
   ): IngredientWithRelations {
-    const baseIngredient = IngredientMapper.mapToIngredient(prismaIngredient);
+    const baseIngredient =
+      IngredientRepositoryMapper.mapToIngredient(prismaIngredient);
     return {
       ...baseIngredient,
       // ingredientNutrientsから栄養素情報を抽出
@@ -95,3 +96,4 @@ export class IngredientMapper {
     };
   }
 }
+

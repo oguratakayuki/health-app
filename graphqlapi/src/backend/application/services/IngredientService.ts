@@ -15,8 +15,7 @@ export class IngredientService implements IIngredientService {
     this.ingredientRepository = ingredientRepository;
   }
 
-  async getAllIngredients(): Promise<IngredientWithRelations[]> {
-    console.log("getAllIngredients !!!!!!!!!!!!!!!!!1");
+  async getAllIngredients(): Promise<Ingredient[]> {
     return await this.ingredientRepository.findAll();
   }
 

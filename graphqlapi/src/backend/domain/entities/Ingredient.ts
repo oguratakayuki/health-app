@@ -4,7 +4,7 @@ import { IngredientNutrient } from "./IngredientNutrient";
 
 export interface Ingredient {
   id: string;
-  name: string | null;
+  name: string;
   remarks: string | null;
   originalName: string | null;
   createdAt: Date;
