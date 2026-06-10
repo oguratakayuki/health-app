@@ -12,13 +12,13 @@ type PrismaDishWithIngredients = PrismaDish & {
   })[];
 };
 
-export class DishMapper {
+export class DishRepositoryMapper {
   /**
    * PrismaのDishをDish型にマッピング
    */
   static mapToDish(prismaDish: PrismaDish): Dish {
     return {
-      id: prismaDish.id.toString(),
+      id: Number(prismaDish.id),
       name: prismaDish.name,
       createdAt: prismaDish.createdAt,
       updatedAt: prismaDish.updatedAt,
@@ -31,19 +31,19 @@ export class DishMapper {
   static mapToDishWithIngredients(
     prismaDish: PrismaDishWithIngredients,
   ): DishWithIngredients {
-    const baseDish = DishMapper.mapToDish(prismaDish);
+    const baseDish = DishRepositoryMapper.mapToDish(prismaDish);
     return {
       ...baseDish,
       dishIngredients: prismaDish.dishIngredients.map((di) => ({
-        id: di.id.toString(),
-        dishId: di.dishId.toString(),
-        ingredientId: di.ingredientId.toString(),
+        id: Number(di.id),
+        dishId: Number(di.dishId),
+        ingredientId: Number(di.ingredientId),
         contentQuantity: di.contentQuantity,
         contentUnit: di.contentUnit,
         createdAt: di.createdAt,
         updatedAt: di.updatedAt,
         ingredient: {
-          id: di.ingredient.id.toString(),
+          id: Number(di.ingredient.id),
           name: di.ingredient.name,
           remarks: di.ingredient.remarks,
           originalName: di.ingredient.originalName,
