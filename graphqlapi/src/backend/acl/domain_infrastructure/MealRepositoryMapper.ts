@@ -1,22 +1,35 @@
-import { MealDishWithDish } from "@backend/domain/entities/Meal";
-import { Prisma } from "@prisma/client";
+import { Prisma, Meal as PrismaMeal } from "@prisma/client";
 
+import { MealWithDishes, Meal } from "@backend/domain/entities/Meal";
 type PrismaMealWithRelations = Prisma.MealGetPayload<{
   include: {
     mealDishes: {
       include: {
         dish: {
           include: {
-            dishIngredients: true,
-          },
-        },
-      },
-    },
-  },
+            dishIngredients: true;
+          };
+        };
+      };
+    };
+  };
 }>;
 
-export class MealMapper {
-  static mapToMeal(m: PrismaMealWithRelations): MealWithDishes {
+export class MealRepositoryMapper {
+  static mapToMeal(m: PrismaMeal): Meal {
+    return {
+      id: Number(m.id),
+      mealDate: m.mealDate,
+      category: m.category,
+      startTime: m.startTime,
+      endTime: m.endTime,
+      createdAt: m.createdAt,
+      updatedAt: m.updatedAt,
+      userId: Number(m.userId),
+    };
+  }
+
+  static mapToMealWithDishes(m: PrismaMealWithRelations): MealWithDishes {
     return {
       id: Number(m.id),
       mealDate: m.mealDate,

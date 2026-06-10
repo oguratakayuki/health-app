@@ -1,8 +1,8 @@
-import { Ingredient } from "./Ingredient"
+import { Ingredient } from "./Ingredient";
 export interface DishIngredient {
-  id: string;
-  dishId: string;
-  ingredientId: string;
+  id: number;
+  dishId: number;
+  ingredientId: number;
   contentQuantity: number;
   contentUnit: string;
   createdAt: Date;

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_06_04_010503) do
+ActiveRecord::Schema.define(version: 2026_06_10_042829) do
 
   create_table "body_compositions", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "ユーザーの体重・体組成の計測履歴データ", force: :cascade do |t|
     t.bigint "user_id", null: false, comment: "ユーザーID"
@@ -101,8 +101,8 @@ ActiveRecord::Schema.define(version: 2026_06_04_010503) do
     t.bigint "user_id", null: false
     t.date "meal_date", null: false, comment: "食事した日付"
     t.string "category", null: false, comment: "食事分類 enum(朝食、昼食、晩飯)"
-    t.time "start_time", comment: "食事の開始時刻"
-    t.time "end_time", comment: "食事の終了時刻"
+    t.time "start_time", default: "2000-01-01 12:00:00", null: false, comment: "食事の開始時刻"
+    t.time "end_time", default: "2000-01-01 13:00:00", null: false, comment: "食事の終了時刻"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "meal_date", "category"], name: "index_meals_on_user_id_meal_date_category_unique", unique: true

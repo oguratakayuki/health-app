@@ -17,7 +17,6 @@ export class DailyNutritionQueryService {
     const items: IDailyNutrientAggregationItem[] = [];
     // ⚪︎月x日 朝食など、１回の食事ごとのloop
     for (const meal of meals) {
-      console.log("meals exists");
       // カレーなど、料理ごとのloop
       for (const mealDish of meal.mealDishes) {
         // ジャガイモ、などの料理に含まれる食材ごとのloop
@@ -25,7 +24,7 @@ export class DailyNutritionQueryService {
           // 食材に含まれる栄養素情報を取得
           const ingredientNutrients =
             await this.ingredientNutrientRepository.findByIngredientId(
-              dishIngredient.ingredientId,
+              dishIngredient.ingredientId.toString(),
             );
           // 栄養素ごとに、それがどれだけ入っているか、足し合わせる
           // どれだけ入っているかは、

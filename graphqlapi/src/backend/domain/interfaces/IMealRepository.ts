@@ -23,7 +23,7 @@ export interface IMealRepository {
     userId: number,
     date: Date,
   ): Promise<DailyNutrientSummary[]>;
-  findByUserAndDate(userId: string, date: Date): Promise<MealDishWithDish[]>;
+  findByUserAndDate(userId: string, date: Date): Promise<MealWithDishes[]>;
   findByUserAndPeriod(
     userId: string,
     from: Date,
@@ -43,4 +43,9 @@ export interface IMealRepository {
     mealId: number,
     dishIds: number[],
   ): Promise<void>;
+  findByUserAndPeriod(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<MealWithDishes[]>;
 }

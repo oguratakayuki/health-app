@@ -1,11 +1,11 @@
 // src/backend/infrastructure/repositories/prisma/__tests__/MealRepository.spec.ts
 import { MealRepository } from "../MealRepository";
 import { runInTransaction } from "@/backend/infrastructure/repositories/prisma/__tests__/test-transaction";
-import { MealMapper } from "../mappers/MealMapper";
+import { MealRepositoryMapper } from "@/backend/acl/domain_infrastructure/MealRepositoryMapper";
 
 describe("MealRepository", () => {
   describe("#findByUserAndDate", () => {
-    it("should return meals mapped by MealMapper", async () => {
+    it("should return meals mapped by MealRepositoryMapper", async () => {
       await runInTransaction(async (tx) => {
         const repository = new MealRepository(tx);
         const userId = "1";
@@ -18,7 +18,7 @@ describe("MealRepository", () => {
   });
 
   describe("#findByUserAndDate", () => {
-    it("should return meals mapped by MealMapper", async () => {
+    it("should return meals mapped by MealRepositoryMapper", async () => {
       await runInTransaction(async (tx) => {
         const repository = new MealRepository(tx);
         const userId = "1";

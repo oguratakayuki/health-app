@@ -9,7 +9,7 @@ import {
   MealDishWithDish,
   MealWithDishes,
 } from "@backend/domain/entities/Meal";
-import { MealMapper } from "./mappers/MealMapper";
+import { MealRepositoryMapper } from "@/backend/acl/domain_infrastructure/MealRepositoryMapper";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -40,7 +40,7 @@ export class MealRepository implements IMealRepository {
         },
       },
     });
-    return meal ? MealMapper.mapToMeal(meal as any) : null;
+    return meal ? MealRepositoryMapper.mapToMealWithDishes(meal) : null;
   }
 
   async createWithTx(
@@ -52,9 +52,13 @@ export class MealRepository implements IMealRepository {
         userId: BigInt(input.userId),
         mealDate: input.mealDate,
         category: input.category,
+        startTime: input.startTime,
+        endTime: input.startTime,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
-    return MealMapper.mapToMeal(meal as any);
+    return MealRepositoryMapper.mapToMeal(meal as any);
   }
 
   async update(
@@ -66,10 +70,11 @@ export class MealRepository implements IMealRepository {
     const client = tx ?? this.prisma;
 
     // 🌟 await しつつ、更新された Meal オブジェクトをそのまま return する
-    return await client.meal.update({
+    const meal = await client.meal.update({
       where: { id },
       data,
     });
+    return MealRepositoryMapper.mapToMeal(meal);
   }
 
   // 現在紐づいている料理IDの取得
@@ -180,7 +185,7 @@ export class MealRepository implements IMealRepository {
   async findByUserAndDate(
     userId: string,
     date: Date,
-  ): Promise<MealDishWithDish[]> {
+  ): Promise<MealWithDishes[]> {
     // 1. 引数のDate（JST想定）から、その日の始まりと翌日の始まり（UTC）を生成
     const startOfDay = dayjs.tz(date).startOf("day").toDate();
     const startOfNextDay = dayjs.tz(date).startOf("day").add(1, "day").toDate();
@@ -204,14 +209,14 @@ export class MealRepository implements IMealRepository {
         },
       },
     });
-    return meals.map((m) => MealMapper.mapToMeal(m as any));
+    return meals.map((m) => MealRepositoryMapper.mapToMealWithDishes(m as any));
   }
 
   async findByUserAndPeriod(
     userId: string,
     from: Date,
     to: Date,
-  ): Promise<MealDishWithDish[]> {
+  ): Promise<MealWithDishes[]> {
     const meals = await this.prisma.meal.findMany({
       where: {
         userId: BigInt(userId),
@@ -236,6 +241,6 @@ export class MealRepository implements IMealRepository {
       },
     });
 
-    return meals.map((m) => MealMapper.mapToMeal(m as any));
+    return meals.map((m) => MealRepositoryMapper.mapToMealWithDishes(m as any));
   }
 }

@@ -1,7 +1,7 @@
-import { DishIngredient } from "./DishIngredient"
+import { DishIngredient } from "./DishIngredient";
 
 export interface Dish {
-  id: string;
+  id: number;
   name: string | null;
   createdAt: Date;
   updatedAt: Date;
