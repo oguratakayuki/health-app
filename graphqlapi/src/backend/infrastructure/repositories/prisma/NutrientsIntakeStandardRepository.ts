@@ -12,7 +12,7 @@ import {
   UpdateNutrientsIntakeStandardInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { RepositoryError } from "@/backend/domain/entities/Common";
-import { NutrientsIntakeStandardMapper } from "./mappers/NutrientsIntakeStandardMapper";
+import { NutrientsIntakeStandardRepositoryMapper } from "@backend/acl/domain_infrastructure/NutrientsIntakeStandardRepositoryMapper";
 import { Gender, toGenderDbValue } from "@/backend/domain/types/Gender";
 
 export class NutrientsIntakeStandardRepository implements INutrientsIntakeStandardRepository {
@@ -56,7 +56,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       orderBy: { id: "asc" },
     });
     return records.map((record) =>
-      NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+      NutrientsIntakeStandardRepositoryMapper.mapToEntityWithRelations(
+        record as any,
+      ),
     );
   }
 
@@ -68,7 +70,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       });
 
       return records.map((record) =>
-        NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+        NutrientsIntakeStandardRepositoryMapper.mapToEntityWithRelations(
+          record as any,
+        ),
       );
     } catch (error) {
       throw this.handleError(error);
@@ -90,7 +94,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       },
     });
     return records.map((record) =>
-      NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+      NutrientsIntakeStandardRepositoryMapper.mapToEntityWithRelations(
+        record as any,
+      ),
     );
   }
 
@@ -109,7 +115,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       });
 
       return records.map((record) =>
-        NutrientsIntakeStandardMapper.mapToEntityWithRelations(record as any),
+        NutrientsIntakeStandardRepositoryMapper.mapToEntityWithRelations(
+          record as any,
+        ),
       );
     } catch (error) {
       console.error(
@@ -127,14 +135,6 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
     data: CreateNutrientsIntakeStandardInput,
   ): Promise<NutrientsIntakeStandard> {
     try {
-      // 文字列からRails形式のIndex(整数)に変換
-      const unitIndex = data.unit
-        ? NUTRIENT_UNIT_LABELS.indexOf(data.unit as any)
-        : null;
-      const genderIndex = data.gender
-        ? GENDER_LABELS.indexOf(data.gender as any)
-        : null;
-
       // indexOf が -1 (見つからない) の場合は undefined/null などのハンドリングが必要
       const record = await this.prismaClient.nutrientsIntakeStandard.create({
         data: {
@@ -142,8 +142,8 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
             connect: { id: BigInt(data.nutrientId) },
           },
           content: data.content,
-          unit: unitIndex !== -1 ? unitIndex : null,
-          gender: genderIndex !== -1 ? genderIndex : null,
+          unit: data.unit,
+          gender: data.gender,
           ageFrom: data.ageFrom,
           ageTo: data.ageTo,
           createdAt: new Date(),
@@ -151,7 +151,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         },
       });
 
-      return NutrientsIntakeStandardMapper.mapToEntity(record);
+      return NutrientsIntakeStandardRepositoryMapper.mapToEntity(record);
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.create error:",
@@ -176,7 +176,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       );
 
       if (!record) return null;
-      return NutrientsIntakeStandardMapper.mapToEntityWithRelations(
+      return NutrientsIntakeStandardRepositoryMapper.mapToEntityWithRelations(
         record as any,
       );
     } catch (error) {
@@ -199,7 +199,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
       });
 
       return records.map((record) =>
-        NutrientsIntakeStandardMapper.mapToEntity(record),
+        NutrientsIntakeStandardRepositoryMapper.mapToEntity(record),
       );
     } catch (error) {
       console.error(
@@ -244,7 +244,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
         },
       });
 
-      return NutrientsIntakeStandardMapper.mapToEntity(record);
+      return NutrientsIntakeStandardRepositoryMapper.mapToEntity(record);
     } catch (error) {
       console.error(
         "PrismaNutrientsIntakeStandardRepository.update error:",

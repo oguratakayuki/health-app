@@ -1,8 +1,8 @@
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
-  GENDER_LABELS,
-  NUTRIENT_UNIT_LABELS,
+  Gender,
+  NutrientUnit,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { Prisma } from "@prisma/client";
 
@@ -13,22 +13,22 @@ type PrismaNutrientsIntakeStandardWithRelations =
     include: { nutrient: true };
   }>;
 
-export class NutrientsIntakeStandardMapper {
+export class NutrientsIntakeStandardRepositoryMapper {
   /**
    * Railsの整数Enumを文字列に変換してマッピング
    */
   static mapToEntity(
     prismaData: PrismaNutrientsIntakeStandard,
   ): NutrientsIntakeStandard {
+    console.log(prismaData.gender);
     return {
       id: prismaData.id.toString(), // bigintをstringに変換
-      nutrientId: prismaData.nutrientId.toString(),
+      nutrientId: Number(prismaData.nutrientId),
       content: prismaData.content,
-      gender:
-        prismaData.gender !== null ? GENDER_LABELS[prismaData.gender] : null,
-      unit: prismaData.unit,
-      ageFrom: prismaData.ageFrom ? prismaData.ageFrom.toNumber() : null,
-      ageTo: prismaData.ageTo ? prismaData.ageTo.toNumber() : null,
+      gender: prismaData.gender as Gender,
+      unit: prismaData.unit as NutrientUnit,
+      ageFrom: prismaData.ageFrom.toNumber(),
+      ageTo: prismaData.ageTo.toNumber(),
       createdAt: prismaData.createdAt,
       updatedAt: prismaData.updatedAt,
     };

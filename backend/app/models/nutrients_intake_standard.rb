@@ -10,6 +10,5 @@ class NutrientsIntakeStandard < ApplicationRecord
     kcal: "kcal",
     energy_percent: "energy_percent" # "％エネルギー"
   }
-  enum gender: %i[male female]
   belongs_to :nutrient
 end

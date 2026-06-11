@@ -18,7 +18,7 @@ export type Gender = (typeof GENDER_LABELS)[number];
 
 export interface NutrientsIntakeStandard {
   id: string;
-  nutrientId: number | null;
+  nutrientId: number;
   content: number;
   unit: NutrientUnit;
   gender: Gender;
@@ -45,10 +45,10 @@ export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeSta
 export interface CreateNutrientsIntakeStandardInput {
   nutrientId: number;
   content: number;
-  unit: NutrientUnit | null;
-  gender: Gender | string;
-  ageFrom?: number | null;
-  ageTo?: number | null;
+  unit: NutrientUnit;
+  gender: Gender;
+  ageFrom: number;
+  ageTo: number;
 }
 
 /**
