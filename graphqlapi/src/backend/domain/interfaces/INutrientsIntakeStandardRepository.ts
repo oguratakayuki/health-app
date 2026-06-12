@@ -4,47 +4,27 @@ import {
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
 import { Gender } from "@/backend/domain/types/Gender";
 
-export interface FindAllWithFiltersOptions {
-  gender?: string;
-  age?: number;
-}
-
-// 作成・更新用の入力型定義
-export interface CreateNutrientsIntakeStandardInput {
-  nutrientId: number;
-  content: number;
-  unit: string; // "g", "mg" などの文字列
-  gender: string; // "male", "female" などの文字列
-  ageFrom?: number;
-  ageTo?: number;
-}
-
-export interface UpdateNutrientsIntakeStandardInput {
-  nutrientId?: number;
-  content?: number;
-  unit?: string;
-  gender?: string;
-  ageFrom?: number;
-  ageTo?: number;
-}
+import {
+  CreateNutrientsIntakeStandardDto,
+  UpdateNutrientsIntakeStandardDto,
+  FindAllWithFiltersOptionsDto,
+} from "@/backend/application/dtos/NutrientsIntakeStandard";
 
 export interface INutrientsIntakeStandardRepository {
   findById(id: string): Promise<NutrientsIntakeStandardWithRelations | null>;
   findAll(): Promise<NutrientsIntakeStandard[]>;
   findByNutrientId(nutrientId: number): Promise<NutrientsIntakeStandard[]>;
-  // create(
-  //   data: CreateNutrientsIntakeStandardInput,
-  // ): Promise<NutrientsIntakeStandard>;
+  create(
+    data: CreateNutrientsIntakeStandardDto,
+  ): Promise<NutrientsIntakeStandard>;
   update(
     id: string,
-    data: UpdateNutrientsIntakeStandardInput,
+    data: UpdateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard>;
   delete(id: string): Promise<boolean>;
-  // count(): Promise<number>;
   findAllWithRelations(): Promise<NutrientsIntakeStandardWithRelations[]>;
-  // フィルター付きの全件取得メソッドを追加
   findAllWithFilters(
-    options: FindAllWithFiltersOptions,
+    options: FindAllWithFiltersOptionsDto,
   ): Promise<NutrientsIntakeStandard[]>;
   findByGenderAndAge(
     gender: Gender,

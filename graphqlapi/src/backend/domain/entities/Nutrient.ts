@@ -8,14 +8,3 @@ export interface Nutrient {
   createdAt: Date;
   updatedAt: Date;
 }
-export interface CreateNutrientInput {
-  name: string;
-  code: string;
-  parentId?: string | null;
-}
-
-export interface UpdateNutrientInput {
-  name?: string;
-  code?: string;
-  parentId?: string | null;
-}

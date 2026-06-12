@@ -38,27 +38,3 @@ export interface GetStandardsOptions {
 export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeStandard {
   nutrient?: any;
 }
-
-/**
- * 作成用入力型
- */
-export interface CreateNutrientsIntakeStandardInput {
-  nutrientId: number;
-  content: number;
-  unit: NutrientUnit;
-  gender: Gender;
-  ageFrom: number;
-  ageTo: number;
-}
-
-/**
- * 更新用入力型
- */
-export interface UpdateNutrientsIntakeStandardInput {
-  nutrientId?: number;
-  content: number;
-  unit: NutrientUnit;
-  gender: Gender;
-  ageFrom: number;
-  ageTo: number;
-}

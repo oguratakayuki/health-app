@@ -11,14 +11,6 @@ export interface DishWithIngredients extends Dish {
   dishIngredients: DishIngredient[];
 }
 
-export interface CreateDishInput {
-  name: string;
-}
-
-export interface UpdateDishInput {
-  name?: string;
-}
-
 export interface DishWithIngredients extends Dish {
   dishIngredients: DishIngredient[];
 }

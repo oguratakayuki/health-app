@@ -14,7 +14,7 @@ model User {
   name       String?
   cognitoSub String    @unique @map("cognito_sub")
   isAdmin    Boolean   @default(false) @map("is_admin")
-  gender     Int?
+  gender     String?
   age        Int?
   createdAt  DateTime  @map("created_at")
   updatedAt  DateTime  @map("updated_at")
@@ -175,14 +175,14 @@ model NutrientsIntakeStandard {
   id        BigInt   @id @default(autoincrement())
   content   Int
   unit      String
-  gender    Int
+  gender    String
   ageFrom   Decimal  @map("age_from")
   ageTo     Decimal  @map("age_to")
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
 
-  nutrientId BigInt?   @map("nutrient_id")
-  nutrient   Nutrient? @relation(fields: [nutrientId], references: [id])
+  nutrientId BigInt   @map("nutrient_id")
+  nutrient   Nutrient @relation(fields: [nutrientId], references: [id])
 
   @@map("nutrients_intake_standards")
 }

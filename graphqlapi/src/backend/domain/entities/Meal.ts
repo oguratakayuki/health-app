@@ -14,28 +14,6 @@ export interface Meal {
   dishIds?: number[];
 }
 
-export interface MealDishInput {
-  id?: number;
-  name?: string;
-}
-
-// 入力用DTO
-export interface CreateMealInput {
-  userId: number;
-  mealDate: Date;
-  category: string;
-  startTime: string;
-  endTime: string;
-  dishes: MealDishInput[];
-}
-
-export interface UpdateMealInput {
-  mealDate: Date;
-  category: string;
-  startTime: Date;
-  endTime: Date;
-}
-
 export interface MealWithDishes extends Meal {
   mealDishes: MealDishWithDish[];
   dishes: DishWithIngredients[];

@@ -4,12 +4,11 @@ import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
 import {
   Meal,
-  CreateMealInput,
-  UpdateMealInput,
   MealDishWithDish,
   MealWithDishes,
 } from "@backend/domain/entities/Meal";
 import { MealRepositoryMapper } from "@/backend/acl/domain_infrastructure/MealRepositoryMapper";
+import { CreateMealDto, UpdateMealDto } from "@/backend/application/dtos/Meal";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -45,7 +44,7 @@ export class MealRepository implements IMealRepository {
 
   async createWithTx(
     tx: Prisma.TransactionClient,
-    input: Omit<CreateMealInput, "dishes">,
+    input: Omit<CreateMealDto, "dishes">,
   ): Promise<Meal> {
     const meal = await tx.meal.create({
       data: {
@@ -63,7 +62,7 @@ export class MealRepository implements IMealRepository {
 
   async update(
     id: number,
-    data: UpdateMealInput,
+    data: UpdateMealDto,
     tx?: Prisma.TransactionClient,
   ): Promise<Meal> {
     // tx があれば tx を、無ければ通常の this.prisma を使う

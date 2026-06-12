@@ -1,19 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import {
-  INutrientsIntakeStandardRepository,
-  FindAllWithFiltersOptions,
-} from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
+import { INutrientsIntakeStandardRepository } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
-  GENDER_LABELS,
-  NUTRIENT_UNIT_LABELS,
-  CreateNutrientsIntakeStandardInput,
-  UpdateNutrientsIntakeStandardInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
+import {
+  CreateNutrientsIntakeStandardDto,
+  UpdateNutrientsIntakeStandardDto,
+  FindAllWithFiltersOptionsDto,
+} from "@/backend/application/dtos/NutrientsIntakeStandard";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { NutrientsIntakeStandardRepositoryMapper } from "@backend/acl/domain_infrastructure/NutrientsIntakeStandardRepositoryMapper";
-import { Gender, toGenderDbValue } from "@/backend/domain/types/Gender";
+import { Gender } from "@/backend/domain/types/Gender";
 
 export class NutrientsIntakeStandardRepository implements INutrientsIntakeStandardRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -23,15 +21,12 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   }
 
   async findAllWithFilters(
-    options: FindAllWithFiltersOptions,
+    options: FindAllWithFiltersOptionsDto,
   ): Promise<NutrientsIntakeStandard[]> {
     const where: any = {};
     // 性別フィルター
     if (options.gender) {
-      const genderIndex = GENDER_LABELS.indexOf(options.gender as any);
-      if (genderIndex !== -1) {
-        where.gender = genderIndex;
-      }
+      where.gender = options.gender;
     }
     // 年齢フィルター（指定年齢を含む基準を検索）
     if (options.age !== undefined) {
@@ -85,7 +80,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   ): Promise<NutrientsIntakeStandardWithRelations[]> {
     const records = await this.prismaClient.nutrientsIntakeStandard.findMany({
       where: {
-        gender: toGenderDbValue(gender),
+        gender: gender,
         ageFrom: { lte: age },
         ageTo: { gte: age },
       },
@@ -132,10 +127,9 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
    * 摂取基準の新規作成
    */
   async create(
-    data: CreateNutrientsIntakeStandardInput,
+    data: CreateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard> {
     try {
-      // indexOf が -1 (見つからない) の場合は undefined/null などのハンドリングが必要
       const record = await this.prismaClient.nutrientsIntakeStandard.create({
         data: {
           nutrient: {
@@ -214,33 +208,19 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
    */
   async update(
     id: string,
-    data: UpdateNutrientsIntakeStandardInput,
+    data: UpdateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard> {
     try {
       // 更新データがある場合のみIndex変換を行う
-      const unitIndex =
-        data.unit !== undefined
-          ? NUTRIENT_UNIT_LABELS.indexOf(data.unit as any)
-          : undefined;
-      const genderIndex =
-        data.gender !== undefined
-          ? GENDER_LABELS.indexOf(data.gender as any)
-          : undefined;
       const record = await this.prismaClient.nutrientsIntakeStandard.update({
         where: { id: BigInt(id) },
         data: {
-          ...(data.nutrientId !== undefined && {
-            nutrientId: BigInt(data.nutrientId),
-          }),
+          nutrientId: BigInt(data.nutrientId),
           ...(data.content !== undefined && { content: data.content }),
-          ...(unitIndex !== undefined && {
-            unit: unitIndex !== -1 ? unitIndex : null,
-          }),
-          ...(genderIndex !== undefined && {
-            gender: genderIndex !== -1 ? genderIndex : null,
-          }),
-          ...(data.ageFrom !== undefined && { ageFrom: data.ageFrom }),
-          ...(data.ageTo !== undefined && { ageTo: data.ageTo }),
+          unit: data.unit,
+          gender: data.gender,
+          ageFrom: data.ageFrom,
+          ageTo: data.ageTo,
         },
       });
 

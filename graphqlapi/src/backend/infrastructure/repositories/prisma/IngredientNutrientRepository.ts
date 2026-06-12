@@ -3,8 +3,11 @@ import { IIngredientNutrientRepository } from "@/backend/domain/interfaces/IIngr
 import {
   IngredientNutrient,
   IngredientNutrientWithRelations,
-  CreateIngredientNutrientInput,
 } from "@/backend/domain/entities/IngredientNutrient";
+import {
+  CreateIngredientNutrientDto,
+  UpdateIngredientNutrientDto,
+} from "@/backend/application/dtos/IngredientNutrient";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { IngredientNutrientRepositoryMapper } from "@/backend/acl/domain_infrastructure/IngredientNutrientRepositoryMapper";
 
@@ -72,7 +75,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
   }
 
   async create(
-    input: CreateIngredientNutrientInput,
+    input: CreateIngredientNutrientDto,
   ): Promise<IngredientNutrientWithRelations> {
     try {
       const ingredientNutrient =
@@ -102,7 +105,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
 
   async update(
     id: bigint,
-    data: Partial<IngredientNutrient>,
+    data: UpdateIngredientNutrientDto,
   ): Promise<IngredientNutrient> {
     throw new Error("Method not implemented.");
   }

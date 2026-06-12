@@ -1,9 +1,6 @@
 import { IUserRepository } from "@/backend/domain/interfaces/IUserRepository";
-import {
-  User,
-  CreateUserInput,
-  UpdateUserInput,
-} from "@/backend/domain/entities/User";
+import { User } from "@/backend/domain/entities/User";
+import { CreateUserDto, UpdateUserDto } from "@/backend/application/dtos/User";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
 import { UserRepositoryMapper } from "@/backend/acl/domain_infrastructure/UserRepositoryMapper";
@@ -71,7 +68,7 @@ export class UserRepository implements IUserRepository {
   /**
    * ユーザーを作成
    */
-  async create(input: CreateUserInput): Promise<User> {
+  async create(input: CreateUserDto): Promise<User> {
     try {
       const user = await this.prismaClient.user.create({
         data: {
@@ -94,7 +91,7 @@ export class UserRepository implements IUserRepository {
   /**
    * ユーザーを更新
    */
-  async update(id: string, input: UpdateUserInput): Promise<User> {
+  async update(id: string, input: UpdateUserDto): Promise<User> {
     try {
       const user = await this.prismaClient.user.update({
         where: { id: BigInt(id) },
@@ -120,7 +117,7 @@ export class UserRepository implements IUserRepository {
    */
   async save(user: User): Promise<User> {
     // saveメソッドはupdateと同等の実装
-    const updateData: UpdateUserInput = {
+    const updateData: UpdateUserDto = {
       name: user.name,
       cognitoSub: user.cognitoSub,
       isAdmin: user.isAdmin,

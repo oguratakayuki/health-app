@@ -7,6 +7,11 @@ import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
 import { IngredientRepositoryMapper } from "@/backend/acl/domain_infrastructure/IngredientRepositoryMapper";
 
+import {
+  CreateIngredientDto,
+  UpdateIngredientDto,
+} from "@/backend/application/dtos/Ingredient";
+
 export class PrismaIngredientRepository implements IIngredientRepository {
   constructor(private prismaClient: PrismaClient) {
     if (!prismaClient) {
@@ -67,9 +72,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
   /**
    * 材料を作成
    */
-  async create(
-    ingredientData: Omit<Ingredient, "id" | "createdAt" | "updatedAt">,
-  ): Promise<Ingredient> {
+  async create(ingredientData: CreateIngredientDto): Promise<Ingredient> {
     try {
       const ingredient = await this.prismaClient.ingredient.create({
         data: {
@@ -93,7 +96,7 @@ export class PrismaIngredientRepository implements IIngredientRepository {
    */
   async update(
     id: bigint,
-    ingredientData: Partial<Ingredient>,
+    ingredientData: UpdateIngredientDto,
   ): Promise<Ingredient> {
     try {
       const ingredient = await this.prismaClient.ingredient.update({
