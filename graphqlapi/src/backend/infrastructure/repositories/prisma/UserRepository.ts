@@ -6,7 +6,7 @@ import {
 } from "@/backend/domain/entities/User";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
-import { UserMapper } from "./mappers/UserMapper";
+import { UserRepositoryMapper } from "@/backend/acl/domain_infrastructure/UserRepositoryMapper";
 
 export class UserRepository implements IUserRepository {
   constructor(private prismaClient: PrismaClient) {
@@ -25,7 +25,7 @@ export class UserRepository implements IUserRepository {
 
       if (!user) return null;
 
-      return UserMapper.mapToUser(user);
+      return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
       console.error("PrismaUserRepository.findByEmail error:", error);
       throw this.handleError(error);
@@ -43,7 +43,7 @@ export class UserRepository implements IUserRepository {
 
       if (!user) return null;
 
-      return UserMapper.mapToUser(user);
+      return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
       console.error("PrismaUserRepository.findById error:", error);
       throw this.handleError(error);
@@ -61,7 +61,7 @@ export class UserRepository implements IUserRepository {
 
       if (!user) return null;
 
-      return UserMapper.mapToUser(user);
+      return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
       console.error("PrismaUserRepository.findByCognitoSub error:", error);
       throw this.handleError(error);
@@ -84,7 +84,7 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return UserMapper.mapToUser(user);
+      return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
       console.error("PrismaUserRepository.create error:", error);
       throw this.handleError(error);
@@ -108,7 +108,7 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return UserMapper.mapToUser(user);
+      return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
       console.error("PrismaUserRepository.update error:", error);
       throw this.handleError(error);
@@ -138,7 +138,7 @@ export class UserRepository implements IUserRepository {
         orderBy: { id: "asc" },
       });
 
-      return users.map((user) => UserMapper.mapToUser(user));
+      return users.map((user) => UserRepositoryMapper.mapToUser(user));
     } catch (error) {
       console.error("PrismaUserRepository.findAll error:", error);
       throw this.handleError(error);
