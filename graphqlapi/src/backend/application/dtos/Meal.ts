@@ -11,8 +11,8 @@ export interface CreateMealDto {
 export interface UpdateMealDto {
   mealDate: Date;
   category: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
 }
 
 export interface MealDishDto {

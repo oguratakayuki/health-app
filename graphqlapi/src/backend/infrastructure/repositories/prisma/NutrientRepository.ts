@@ -1,10 +1,12 @@
 // src/repositories/prisma/NutrientRepository.ts
 import { INutrientRepository } from "@/backend/domain/interfaces/INutrientRepository";
 import { Nutrient } from "@/backend/domain/entities/Nutrient";
+
 import {
-  CreateNutrientDto,
-  UpdateNutrientDto,
-} from "@/backend/application/dtos/Nutrient";
+  CreateNutrientRepositoryInput,
+  UpdateNutrientRepositoryInput,
+} from "@/backend/domain/entities/Nutrient";
+
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
 import { NutrientRepositoryMapper } from "@/backend/acl/domain_infrastructure/NutrientRepositoryMapper";
@@ -46,7 +48,7 @@ export class PrismaNutrientRepository implements INutrientRepository {
     }
   }
 
-  async create(input: CreateNutrientDto): Promise<Nutrient> {
+  async create(input: CreateNutrientRepositoryInput): Promise<Nutrient> {
     try {
       const nutrient = await this.prismaClient.nutrient.create({
         data: {
@@ -65,7 +67,10 @@ export class PrismaNutrientRepository implements INutrientRepository {
     }
   }
 
-  async update(id: string, input: UpdateNutrientDto): Promise<Nutrient> {
+  async update(
+    id: string,
+    input: UpdateNutrientRepositoryInput,
+  ): Promise<Nutrient> {
     try {
       const nutrient = await this.prismaClient.nutrient.update({
         where: { id: BigInt(id) },

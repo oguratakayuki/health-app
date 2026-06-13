@@ -1,6 +1,8 @@
 import { IUserRepository } from "@/backend/domain/interfaces/IUserRepository";
-import { User } from "@/backend/domain/entities/User";
-import { CreateUserDto, UpdateUserDto } from "@/backend/application/dtos/User";
+import {
+  User,
+  CreateUserRepositoryInput,
+} from "@/backend/domain/entities/User";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient } from "@prisma/client";
 import { UserRepositoryMapper } from "@/backend/acl/domain_infrastructure/UserRepositoryMapper";
@@ -32,7 +34,7 @@ export class UserRepository implements IUserRepository {
   /**
    * IDでユーザーを検索（必要に応じて追加）
    */
-  async findById(id: BigInt): Promise<User | null> {
+  async findById(id: bigint): Promise<User | null> {
     try {
       const user = await this.prismaClient.user.findUnique({
         where: { id },
@@ -68,7 +70,7 @@ export class UserRepository implements IUserRepository {
   /**
    * ユーザーを作成
    */
-  async create(input: CreateUserDto): Promise<User> {
+  async create(input: CreateUserRepositoryInput): Promise<User> {
     try {
       const user = await this.prismaClient.user.create({
         data: {
@@ -88,42 +90,38 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  /**
-   * ユーザーを更新
-   */
-  async update(id: string, input: UpdateUserDto): Promise<User> {
+  async updateName(id: string, name: string): Promise<User> {
     try {
       const user = await this.prismaClient.user.update({
         where: { id: BigInt(id) },
         data: {
-          ...(input.name !== undefined && { name: input.name }),
-          ...(input.cognitoSub !== undefined && {
-            cognitoSub: input.cognitoSub,
-          }),
-          ...(input.isAdmin !== undefined && { isAdmin: input.isAdmin }),
+          name,
           updatedAt: new Date(),
         },
       });
 
       return UserRepositoryMapper.mapToUser(user);
     } catch (error) {
-      console.error("PrismaUserRepository.update error:", error);
+      console.error("PrismaUserRepository.updateName error:", error);
       throw this.handleError(error);
     }
   }
 
-  /**
-   * ユーザーを保存（更新と同等）
-   */
-  async save(user: User): Promise<User> {
-    // saveメソッドはupdateと同等の実装
-    const updateData: UpdateUserDto = {
-      name: user.name,
-      cognitoSub: user.cognitoSub,
-      isAdmin: user.isAdmin,
-    };
+  async updateCognitoSub(id: string, cognitoSub: string): Promise<User> {
+    try {
+      const user = await this.prismaClient.user.update({
+        where: { id: BigInt(id) },
+        data: {
+          cognitoSub,
+          updatedAt: new Date(),
+        },
+      });
 
-    return this.update(user.id, updateData);
+      return UserRepositoryMapper.mapToUser(user);
+    } catch (error) {
+      console.error("PrismaUserRepository.updateCognitoSub error:", error);
+      throw this.handleError(error);
+    }
   }
 
   /**

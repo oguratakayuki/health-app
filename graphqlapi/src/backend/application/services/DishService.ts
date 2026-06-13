@@ -1,9 +1,10 @@
 import { IDishService } from "@/backend/domain/interfaces/IDishService";
 import {
   Dish,
-  CreateDishInput,
-  UpdateDishInput,
+  CreateDishRepositoryInput,
+  UpdateDishRepositoryInput,
 } from "@/backend/domain/entities/Dish";
+import { CreateDishDto, UpdateDishDto } from "@/backend/application/dtos/Dish";
 
 import { DishWithIngredients } from "@/backend/domain/entities/Dish";
 import { IDishRepository } from "@/backend/domain/interfaces/IDishRepository";
@@ -55,14 +56,14 @@ export class DishService implements IDishService {
   /**
    * 料理を作成
    */
-  async createDish(input: CreateDishInput): Promise<Dish> {
+  async createDish(dto: CreateDishDto): Promise<Dish> {
     try {
       // バリデーション
-      if (!input.name || input.name.trim().length === 0) {
+      if (!dto.name || dto.name.trim().length === 0) {
         throw new Error("Dish name is required");
       }
-
-      return await this.dishRepository.create(input);
+      const repositoryInput: CreateDishRepositoryInput = { ...dto };
+      return await this.dishRepository.create(repositoryInput);
     } catch (error) {
       console.error("DishService.createDish error:", error);
       throw new Error(
@@ -74,10 +75,10 @@ export class DishService implements IDishService {
   /**
    * 料理を更新
    */
-  async updateDish(id: string, input: UpdateDishInput): Promise<Dish> {
+  async updateDish(id: string, dto: UpdateDishDto): Promise<Dish> {
     try {
       // バリデーション
-      if (input.name !== undefined && input.name.trim().length === 0) {
+      if (dto.name !== undefined && dto.name.trim().length === 0) {
         throw new Error("Dish name cannot be empty");
       }
 
@@ -86,7 +87,8 @@ export class DishService implements IDishService {
         throw new Error(`Dish with id ${id} not found`);
       }
 
-      return await this.dishRepository.update(id, input);
+      const repositoryInput: UpdateDishRepositoryInput = { ...dto };
+      return await this.dishRepository.update(id, repositoryInput);
     } catch (error) {
       console.error("DishService.updateDish error:", error);
       throw new Error(

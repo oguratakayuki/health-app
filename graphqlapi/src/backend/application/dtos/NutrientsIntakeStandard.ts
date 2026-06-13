@@ -26,3 +26,15 @@ export interface UpdateNutrientsIntakeStandardDto {
   ageFrom: number;
   ageTo: number;
 }
+
+export interface FindAllWithFiltersOptionsDto {
+  gender?: string;
+  age?: number;
+}
+
+export interface GetStandardsOptionsDto {
+  gender: string;
+  age: number;
+  // 将来的に追加
+  // userId?: string;
+}

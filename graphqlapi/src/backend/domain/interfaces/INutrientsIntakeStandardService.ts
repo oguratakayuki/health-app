@@ -1,10 +1,13 @@
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
-  CreateNutrientsIntakeStandardInput,
-  UpdateNutrientsIntakeStandardInput,
-  GetStandardsOptions,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
+
+import {
+  CreateNutrientsIntakeStandardDto,
+  UpdateNutrientsIntakeStandardDto,
+  GetStandardsOptionsDto,
+} from "@/backend/application/dtos/NutrientsIntakeStandard";
 
 export interface INutrientsIntakeStandardService {
   getStandard(id: string): Promise<NutrientsIntakeStandardWithRelations | null>;
@@ -13,17 +16,17 @@ export interface INutrientsIntakeStandardService {
     nutrientId: number,
   ): Promise<NutrientsIntakeStandard[]>;
   createStandard(
-    input: CreateNutrientsIntakeStandardInput,
+    input: CreateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard>;
   updateStandard(
     id: string,
-    input: UpdateNutrientsIntakeStandardInput,
+    input: UpdateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard>;
   deleteStandard(id: string): Promise<boolean>;
   getAllStandardsWithRelations(): Promise<
     NutrientsIntakeStandardWithRelations[]
   >;
   findAllWithFilters(
-    options: GetStandardsOptions,
+    options: GetStandardsOptionsDto,
   ): Promise<NutrientsIntakeStandard[]>;
 }

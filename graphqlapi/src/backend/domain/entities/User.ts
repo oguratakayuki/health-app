@@ -9,3 +9,14 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface CreateUserRepositoryInput {
+  email: string;
+  name?: string | null;
+  cognitoSub: string;
+}
+
+export interface UpdateUserRepositoryInput {
+  name?: string | null;
+  cognitoSub?: string | null;
+  isAdmin?: boolean;
+}

@@ -1,11 +1,11 @@
 import { IMealService } from "@/backend/domain/interfaces/IMealService";
 import {
   Meal,
-  CreateMealInput,
-  UpdateMealInput,
   MealWithDishes,
-  MealDishWithDish,
+  CreateMealRepositoryInput,
+  UpdateMealRepositoryInput,
 } from "@/backend/domain/entities/Meal";
+import { CreateMealDto, UpdateMealDto } from "@/backend/application/dtos/Meal";
 import { IMealRepository } from "@/backend/domain/interfaces/IMealRepository";
 import { IDishRepository } from "@/backend/domain/interfaces/IDishRepository";
 import { IMealDishRepository } from "@/backend/domain/interfaces/IMealDishRepository";
@@ -23,15 +23,21 @@ export class MealService implements IMealService {
   /**
    * 食事と料理を同時に作成（トランザクション処理）
    */
-  async createMealWithDishes(input: CreateMealInput): Promise<Meal> {
+  async createMealWithDishes(input: CreateMealDto): Promise<Meal> {
     try {
       return await this.prisma.$transaction(async (tx) => {
         // 1. Meal作成
-        const meal = await this.mealRepository.createWithTx(tx, {
+        const reposirotyInput: CreateMealRepositoryInput = {
           userId: input.userId,
           mealDate: input.mealDate,
           category: input.category,
-        });
+          startTime: input.startTime,
+          endTime: input.endTime,
+        };
+        const meal = await this.mealRepository.createWithTx(
+          tx,
+          reposirotyInput,
+        );
 
         // 2. Dishesの処理
         const dishIds: number[] = [];
@@ -108,12 +114,15 @@ export class MealService implements IMealService {
     }
   }
 
-  async updateMeal(id: string, dto: UpdateMealUseCaseDto): Promise<Meal> {
+  async updateMeal(
+    id: string,
+    dto: UpdateMealUseCaseDto,
+  ): Promise<MealWithDishes> {
     try {
       return await this.prisma.$transaction(async (tx) => {
         const mealId = parseInt(id);
         // 1. Application層で、ドメイン層の汎用型へ詰め替える（マッピング）
-        const updateData: UpdateMealInput = {
+        const repositoryInput: UpdateMealRepositoryInput = {
           mealDate: dto.mealDate,
           category: dto.category,
           startTime: dto.startTime,
@@ -121,8 +130,7 @@ export class MealService implements IMealService {
         };
 
         // 2. リポジトリにはドメインの型（MealUpdateData）を渡す
-        // ※リポジトリのインターフェースもこの型を受け取るように定義されている
-        await this.mealRepository.update(mealId, updateData, tx);
+        await this.mealRepository.update(mealId, repositoryInput, tx);
 
         // 3. 料理の更新ロジック (差分抽出と重複排除)
         const currentDishIds = await this.mealRepository.findConnectedDishIds(
@@ -161,7 +169,10 @@ export class MealService implements IMealService {
         const updatedMealWithDishes = await this.mealRepository.findById(
           parseInt(id),
         );
-        return updatedMealWithDishes as unknown as Meal;
+        if (!updatedMealWithDishes) {
+          throw new Error(`Meal with ID ${id} not found.`);
+        }
+        return updatedMealWithDishes as MealWithDishes;
       });
     } catch (error) {
       console.error("MealService.updateMeal error:", error);

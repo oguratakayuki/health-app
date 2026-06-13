@@ -1,17 +1,21 @@
 import { DailyNutrientSummary } from "@/backend/domain/entities/NutrientSummary";
-import { Meal, MealWithDishes } from "@/backend/domain/entities/Meal";
+import {
+  Meal,
+  MealWithDishes,
+  CreateMealRepositoryInput,
+  UpdateMealRepositoryInput,
+} from "@/backend/domain/entities/Meal";
 import { Prisma } from "@prisma/client";
-import { CreateMealDto, UpdateMealDto } from "@/backend/application/dtos/Meal";
 
 export interface IMealRepository {
   findById(id: number): Promise<MealWithDishes | null>;
   createWithTx(
     tx: Prisma.TransactionClient,
-    input: Omit<CreateMealDto, "dishes">,
+    input: CreateMealRepositoryInput,
   ): Promise<Meal>;
   update(
     id: number,
-    data: UpdateMealDto,
+    data: UpdateMealRepositoryInput,
     tx?: Prisma.TransactionClient,
   ): Promise<Meal>;
   delete(id: number): Promise<boolean>;

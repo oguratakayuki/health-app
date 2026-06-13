@@ -11,13 +11,13 @@ export interface Ingredient {
   updatedAt: Date;
 }
 
-export interface CreateIngredientInput {
+export interface CreateIngredientRepositoryInput {
   name: string;
   remarks?: string;
   originalName?: string;
 }
 
-export interface UpdateIngredientInput {
+export interface UpdateIngredientRepositoryInput {
   name?: string;
   remarks?: string;
   originalName?: string;

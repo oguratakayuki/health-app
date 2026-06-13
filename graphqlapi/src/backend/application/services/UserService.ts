@@ -1,6 +1,7 @@
 import { IUserService } from "@/backend/domain/interfaces/IUserService";
 import { IUserRepository } from "@/backend/domain/interfaces/IUserRepository";
-import { User, CreateUserInput } from "@/backend/domain/entities/User";
+import { User } from "@/backend/domain/entities/User";
+import { CreateUserRepositoryInput } from "@/backend/domain/entities/User";
 
 export class UserService implements IUserService {
   private readonly userRepository: IUserRepository;
@@ -24,12 +25,12 @@ export class UserService implements IUserService {
   }
 
   async createUser(email: string, name: string): Promise<User> {
-    const userData: CreateUserInput = {
+    const repositoryInput: CreateUserRepositoryInput = {
       email,
       name,
       cognitoSub: "",
     };
-    const user = await this.userRepository.create(userData);
+    const user = await this.userRepository.create(repositoryInput);
     return user;
   }
 
@@ -50,9 +51,10 @@ export class UserService implements IUserService {
     const user = await this.userRepository.findByEmail(email);
 
     if (user && !user.cognitoSub) {
-      const updatedUser = await this.userRepository.update(user.id, {
+      const updatedUser = await this.userRepository.updateCognitoSub(
+        user.id,
         cognitoSub,
-      });
+      );
       return updatedUser;
     }
     return user;
@@ -65,14 +67,14 @@ export class UserService implements IUserService {
   ): Promise<User> {
     let user = await this.userRepository.findByCognitoSub(sub);
     if (!user) {
-      const userData: CreateUserInput = {
+      const repositoryInput: CreateUserRepositoryInput = {
         email,
         name,
         cognitoSub: sub,
       };
-      user = await this.userRepository.create(userData);
+      user = await this.userRepository.create(repositoryInput);
     } else {
-      user = await this.userRepository.update(user.id, { name });
+      user = await this.userRepository.updateName(user.id, name);
     }
 
     return user;

@@ -13,20 +13,20 @@ class DishInput {
 @InputType()
 export class CreateMealWithDishesInput {
   @Field()
-  userId: number;
+  userId!: number;
 
   @Field()
-  mealDate: Date;
+  mealDate!: Date;
 
   @Field()
-  category: string;
+  category!: string;
 
-  @Field({ nullable: true })
-  startTime?: string;
+  @Field()
+  startTime!: string;
 
-  @Field({ nullable: true })
-  endTime?: string;
+  @Field()
+  endTime!: string;
 
   @Field(() => [DishInput])
-  dishes: DishInput[];
+  dishes?: DishInput[];
 }

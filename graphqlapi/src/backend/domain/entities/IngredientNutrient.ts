@@ -49,7 +49,7 @@ export interface IngredientNutrientWithRelations extends IngredientNutrient {
 /**
  * 材料-栄養素中間テーブルの作成用入力型
  */
-export interface CreateIngredientNutrientInput {
+export interface CreateIngredientNutrientRepositoryInput {
   ingredientId: bigint;
   nutrientId: bigint;
   contentQuantity?: number | null;
@@ -61,7 +61,7 @@ export interface CreateIngredientNutrientInput {
 /**
  * 材料-栄養素中間テーブルの更新用入力型
  */
-export interface UpdateIngredientNutrientInput {
+export interface UpdateIngredientNutrientRepositoryInput {
   contentQuantity?: number | null;
   contentUnit?: string | null;
   contentUnitPer?: number | null;

@@ -6,6 +6,7 @@ import {
   MealWithDishes,
 } from "@/backend/infrastructure/graphql/types/Meal";
 import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateMealWithDishesInput";
+import { CreateMealDto } from "@/backend/application/dtos/Meal";
 import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateMealInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { MealService } from "@/backend/application/services/MealService";
@@ -132,8 +133,11 @@ export class MealResolver {
     @Ctx() ctx: GraphQLContext,
   ): Promise<Meal> {
     try {
+      const dto: CreateMealDto = MealPresentationMapper.toCreateDto(input);
+
       const mealService = this.getMealService(ctx);
-      return (await mealService.createMealWithDishes(input)) as Meal;
+      const meal = await mealService.createMealWithDishes(dto);
+      return MealPresentationMapper.toGraphQLType(meal);
     } catch (error) {
       console.error(`Error in createMealWithDishes mutation: ${error}`);
       throw new Error(

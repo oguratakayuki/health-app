@@ -4,11 +4,11 @@ import { IMealRepository } from "@backend/domain/interfaces/IMealRepository";
 import { DailyNutrientSummary } from "@backend/domain/entities/NutrientSummary";
 import {
   Meal,
-  MealDishWithDish,
   MealWithDishes,
+  CreateMealRepositoryInput,
+  UpdateMealRepositoryInput,
 } from "@backend/domain/entities/Meal";
 import { MealRepositoryMapper } from "@/backend/acl/domain_infrastructure/MealRepositoryMapper";
-import { CreateMealDto, UpdateMealDto } from "@/backend/application/dtos/Meal";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -44,15 +44,18 @@ export class MealRepository implements IMealRepository {
 
   async createWithTx(
     tx: Prisma.TransactionClient,
-    input: Omit<CreateMealDto, "dishes">,
+    input: CreateMealRepositoryInput,
   ): Promise<Meal> {
+    const startTimeWithDate = this.parseTimeToDate(input.startTime);
+    const endTimeWithDate = this.parseTimeToDate(input.endTime);
+
     const meal = await tx.meal.create({
       data: {
         userId: BigInt(input.userId),
         mealDate: input.mealDate,
         category: input.category,
-        startTime: input.startTime,
-        endTime: input.startTime,
+        startTime: startTimeWithDate,
+        endTime: endTimeWithDate,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -62,15 +65,22 @@ export class MealRepository implements IMealRepository {
 
   async update(
     id: number,
-    data: UpdateMealDto,
+    input: UpdateMealRepositoryInput,
     tx?: Prisma.TransactionClient,
   ): Promise<Meal> {
     // tx があれば tx を、無ければ通常の this.prisma を使う
     const client = tx ?? this.prisma;
 
+    const startTimeWithDate = this.parseTimeToDate(input.startTime);
+    const endTimeWithDate = this.parseTimeToDate(input.endTime);
     const meal = await client.meal.update({
       where: { id },
-      data,
+      data: {
+        mealDate: input.mealDate,
+        category: input.category,
+        startTime: startTimeWithDate,
+        endTime: endTimeWithDate,
+      },
     });
     return MealRepositoryMapper.mapToMeal(meal);
   }
@@ -240,5 +250,33 @@ export class MealRepository implements IMealRepository {
     });
 
     return meals.map((m) => MealRepositoryMapper.mapToMealWithDishes(m as any));
+  }
+  /**
+   * "12:11" のような時刻文字列から Prisma の TIME 型保存用の Date オブジェクトを生成する
+   */
+  private parseTimeToDate(timeString: string): Date {
+    // "12:11" を ":" で分割して数値にする
+    const parts = timeString.split(":");
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+
+    // 簡易バリデーション (パース失敗や不正な時間の場合はエラーを投げる)
+    if (
+      isNaN(hours) ||
+      isNaN(minutes) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59
+    ) {
+      throw new Error(
+        `Invalid time format. Expected "HH:mm", got "${timeString}"`,
+      );
+    }
+
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0); // 秒、ミリ秒は0に固定
+
+    return date;
   }
 }

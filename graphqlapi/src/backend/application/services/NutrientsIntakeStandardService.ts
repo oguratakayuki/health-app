@@ -2,10 +2,16 @@ import { INutrientsIntakeStandardService } from "@/backend/domain/interfaces/INu
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
-  CreateNutrientsIntakeStandardInput,
-  UpdateNutrientsIntakeStandardInput,
-  GetStandardsOptions,
+  CreateNutrientsIntakeStandardRepositoryInput,
+  UpdateNutrientsIntakeStandardRepositoryInput,
+  GetStandardsOptionsRepositoryInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
+import {
+  CreateNutrientsIntakeStandardDto,
+  UpdateNutrientsIntakeStandardDto,
+  GetStandardsOptionsDto,
+} from "@/backend/application/dtos/NutrientsIntakeStandard";
+
 import { INutrientsIntakeStandardRepository } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 
 export class NutrientsIntakeStandardService implements INutrientsIntakeStandardService {
@@ -28,9 +34,12 @@ export class NutrientsIntakeStandardService implements INutrientsIntakeStandardS
    * 性別・年齢でフィルタリングした栄養摂取基準を取得
    */
   async findAllWithFilters(
-    options: GetStandardsOptions,
+    dto: GetStandardsOptionsDto,
   ): Promise<NutrientsIntakeStandard[]> {
-    return this.standardRepository.findAllWithFilters(options);
+    const repositoryInput: GetStandardsOptionsRepositoryInput = {
+      ...dto,
+    };
+    return this.standardRepository.findAllWithFilters(repositoryInput);
   }
 
   async getAllStandards(): Promise<NutrientsIntakeStandard[]> {
@@ -64,18 +73,20 @@ export class NutrientsIntakeStandardService implements INutrientsIntakeStandardS
   }
 
   async createStandard(
-    input: CreateNutrientsIntakeStandardInput,
+    dto: CreateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard> {
     try {
       // 簡易的なバリデーション
-      if (!input.nutrientId) {
+      if (!dto.nutrientId) {
         throw new Error("Nutrient ID is required");
       }
-      if (input.content === undefined || input.content === null) {
+      if (dto.content === undefined || dto.content === null) {
         throw new Error("Content value is required");
       }
-
-      return await this.standardRepository.create(input);
+      const repositoryInput: CreateNutrientsIntakeStandardRepositoryInput = {
+        ...dto,
+      };
+      return await this.standardRepository.create(repositoryInput);
     } catch (error) {
       console.error(
         "NutrientsIntakeStandardService.createStandard error:",
@@ -89,15 +100,17 @@ export class NutrientsIntakeStandardService implements INutrientsIntakeStandardS
 
   async updateStandard(
     id: string,
-    input: UpdateNutrientsIntakeStandardInput,
+    dto: UpdateNutrientsIntakeStandardDto,
   ): Promise<NutrientsIntakeStandard> {
     try {
       const existing = await this.standardRepository.findById(id);
       if (!existing) {
         throw new Error(`Standard with id ${id} not found`);
       }
-
-      return await this.standardRepository.update(id, input);
+      const repositoryInput: UpdateNutrientsIntakeStandardRepositoryInput = {
+        ...dto,
+      };
+      return await this.standardRepository.update(id, repositoryInput);
     } catch (error) {
       console.error(
         "NutrientsIntakeStandardService.updateStandard error:",

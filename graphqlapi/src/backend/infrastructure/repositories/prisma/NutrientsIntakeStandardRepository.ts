@@ -3,12 +3,11 @@ import { INutrientsIntakeStandardRepository } from "@/backend/domain/interfaces/
 import {
   NutrientsIntakeStandard,
   NutrientsIntakeStandardWithRelations,
+  CreateNutrientsIntakeStandardRepositoryInput,
+  UpdateNutrientsIntakeStandardRepositoryInput,
+  FindAllWithFiltersOptionsRepositoryInput,
 } from "@/backend/domain/entities/NutrientsIntakeStandard";
-import {
-  CreateNutrientsIntakeStandardDto,
-  UpdateNutrientsIntakeStandardDto,
-  FindAllWithFiltersOptionsDto,
-} from "@/backend/application/dtos/NutrientsIntakeStandard";
+
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { NutrientsIntakeStandardRepositoryMapper } from "@backend/acl/domain_infrastructure/NutrientsIntakeStandardRepositoryMapper";
 import { Gender } from "@/backend/domain/types/Gender";
@@ -21,7 +20,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
   }
 
   async findAllWithFilters(
-    options: FindAllWithFiltersOptionsDto,
+    options: FindAllWithFiltersOptionsRepositoryInput,
   ): Promise<NutrientsIntakeStandard[]> {
     const where: any = {};
     // 性別フィルター
@@ -127,7 +126,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
    * 摂取基準の新規作成
    */
   async create(
-    data: CreateNutrientsIntakeStandardDto,
+    data: CreateNutrientsIntakeStandardRepositoryInput,
   ): Promise<NutrientsIntakeStandard> {
     try {
       const record = await this.prismaClient.nutrientsIntakeStandard.create({
@@ -208,7 +207,7 @@ export class NutrientsIntakeStandardRepository implements INutrientsIntakeStanda
    */
   async update(
     id: string,
-    data: UpdateNutrientsIntakeStandardDto,
+    data: UpdateNutrientsIntakeStandardRepositoryInput,
   ): Promise<NutrientsIntakeStandard> {
     try {
       // 更新データがある場合のみIndex変換を行う

@@ -129,7 +129,7 @@ export class AuthResolver {
 
       // 必要に応じて最新のユーザー情報を取得
       const userService = this.getUserService(ctx);
-      const currentUser = await userService.getUserById(ctx.user.id);
+      const currentUser = await userService.getUserById(BigInt(ctx.user.id));
 
       return {
         success: true,

@@ -14,3 +14,11 @@ export interface DishWithIngredients extends Dish {
 export interface DishWithIngredients extends Dish {
   dishIngredients: DishIngredient[];
 }
+
+export interface CreateDishRepositoryInput {
+  name: string;
+}
+
+export interface UpdateDishRepositoryInput {
+  name?: string;
+}

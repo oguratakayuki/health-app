@@ -22,3 +22,18 @@ export interface MealWithDishes extends Meal {
 export interface MealDishWithDish extends Meal {
   dish: DishWithIngredients;
 }
+
+export interface UpdateMealRepositoryInput {
+  mealDate: Date;
+  category: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface CreateMealRepositoryInput {
+  userId: number;
+  mealDate: Date;
+  category: string;
+  startTime: string;
+  endTime: string;
+}

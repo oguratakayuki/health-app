@@ -2,9 +2,13 @@
 import { INutrientService } from "@/backend/domain/interfaces/INutrientService";
 import {
   Nutrient,
-  CreateNutrientInput,
-  UpdateNutrientInput,
+  CreateNutrientRepositoryInput,
+  UpdateNutrientRepositoryInput,
 } from "@/backend/domain/entities/Nutrient";
+import {
+  CreateNutrientDto,
+  UpdateNutrientDto,
+} from "@/backend/application/dtos/Nutrient";
 import { INutrientRepository } from "@/backend/domain/interfaces/INutrientRepository";
 
 export class NutrientService implements INutrientService {
@@ -31,13 +35,14 @@ export class NutrientService implements INutrientService {
     }
   }
 
-  async createNutrient(input: CreateNutrientInput): Promise<Nutrient> {
+  async createNutrient(dto: CreateNutrientDto): Promise<Nutrient> {
     try {
-      if (!input.name || input.name.trim().length === 0) {
+      if (!dto.name || dto.name.trim().length === 0) {
         throw new Error("Nutrient name is required");
       }
 
-      return await this.nutrientRepository.create(input);
+      const repositoryInput: CreateNutrientRepositoryInput = { ...dto };
+      return await this.nutrientRepository.create(repositoryInput);
     } catch (error) {
       console.error("NutrientService.createNutrient error:", error);
       throw new Error(
@@ -46,12 +51,9 @@ export class NutrientService implements INutrientService {
     }
   }
 
-  async updateNutrient(
-    id: string,
-    input: UpdateNutrientInput,
-  ): Promise<Nutrient> {
+  async updateNutrient(id: string, dto: UpdateNutrientDto): Promise<Nutrient> {
     try {
-      if (input.name && input.name.trim().length === 0) {
+      if (dto.name && dto.name.trim().length === 0) {
         throw new Error("Nutrient name cannot be empty");
       }
 
@@ -60,7 +62,8 @@ export class NutrientService implements INutrientService {
         throw new Error(`Nutrient with id ${id} not found`);
       }
 
-      return await this.nutrientRepository.update(id, input);
+      const repositoryInput: UpdateNutrientRepositoryInput = { ...dto };
+      return await this.nutrientRepository.update(id, repositoryInput);
     } catch (error) {
       console.error("NutrientService.updateNutrient error:", error);
       throw new Error(

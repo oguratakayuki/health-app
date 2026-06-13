@@ -1,6 +1,7 @@
 import { IDailyNutrientAggregationItem } from "@/backend/domain/interfaces/calculators/IDailyNutrientAggregationItem";
 import { IMealRepository } from "@/backend/domain/interfaces/IMealRepository";
 import { IIngredientNutrientRepository } from "@backend/domain/interfaces/IIngredientNutrientRepository";
+import { toNutrientCode } from "@/backend/domain/types/NutrientCode";
 
 export class DailyNutritionQueryService {
   constructor(
@@ -24,20 +25,21 @@ export class DailyNutritionQueryService {
           // 食材に含まれる栄養素情報を取得
           const ingredientNutrients =
             await this.ingredientNutrientRepository.findByIngredientId(
-              dishIngredient.ingredientId.toString(),
+              dishIngredient.ingredientId,
             );
           // 栄養素ごとに、それがどれだけ入っているか、足し合わせる
           // どれだけ入っているかは、
           // 食材の量 x 食材100gあたりの栄養素含有量
           for (const ingredientNutrient of ingredientNutrients) {
             items.push({
-              nutrientCode: ingredientNutrient.nutrient.code,
+              nutrientCode: toNutrientCode(ingredientNutrient.nutrient.code),
               // 料理に含まれる食材の量
               ingredientAmountGram: dishIngredient.contentQuantity,
               // 100gあたりの栄養素の含有量()
               // 栄養素に対して単位が紐づいているので、ここで単位がgかkcalかは
               // 情報として載せなくて良い
               nutrientPer100g: ingredientNutrient.contentQuantity,
+              eatenAt: meal.mealDate,
             });
           }
         }
@@ -69,7 +71,7 @@ export class DailyNutritionQueryService {
           for (const ingredientNutrient of ingredientNutrients) {
             items.push({
               eatenAt: meal.mealDate,
-              nutrientCode: ingredientNutrient.nutrient.code,
+              nutrientCode: toNutrientCode(ingredientNutrient.nutrient.code),
               ingredientAmountGram: dishIngredient.contentQuantity,
               nutrientPer100g: ingredientNutrient.contentQuantity,
             });

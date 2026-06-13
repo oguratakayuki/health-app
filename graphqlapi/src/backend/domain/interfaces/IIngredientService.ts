@@ -4,19 +4,15 @@ import {
   IngredientWithRelations,
 } from "@/backend/domain/entities/Ingredient";
 
-export interface CreateIngredientData {
-  name?: string | null;
-  remarks?: string | null;
-  originalName?: string | null;
-}
+import {
+  CreateIngredientDto,
+  UpdateIngredientDto,
+} from "@/backend/application/dtos/Ingredient";
 
 export interface IIngredientService {
   getAllIngredients(): Promise<Ingredient[]>;
   getIngredientById(id: bigint): Promise<IngredientWithRelations | null>;
-  createIngredient(ingredient: CreateIngredientData): Promise<Ingredient>;
-  updateIngredient(
-    id: bigint,
-    ingredient: Partial<Ingredient>,
-  ): Promise<Ingredient>;
+  createIngredient(ingredient: CreateIngredientDto): Promise<Ingredient>;
+  updateIngredient(id: bigint, dto: UpdateIngredientDto): Promise<Ingredient>;
   deleteIngredient(id: bigint): Promise<void>;
 }

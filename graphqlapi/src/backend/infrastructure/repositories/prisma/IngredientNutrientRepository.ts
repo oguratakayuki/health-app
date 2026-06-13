@@ -3,11 +3,10 @@ import { IIngredientNutrientRepository } from "@/backend/domain/interfaces/IIngr
 import {
   IngredientNutrient,
   IngredientNutrientWithRelations,
+  CreateIngredientNutrientRepositoryInput,
+  UpdateIngredientNutrientRepositoryInput,
 } from "@/backend/domain/entities/IngredientNutrient";
-import {
-  CreateIngredientNutrientDto,
-  UpdateIngredientNutrientDto,
-} from "@/backend/application/dtos/IngredientNutrient";
+
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { IngredientNutrientRepositoryMapper } from "@/backend/acl/domain_infrastructure/IngredientNutrientRepositoryMapper";
 
@@ -15,7 +14,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
   constructor(private prismaClient: PrismaClient) {}
 
   async findByIngredientId(
-    ingredientId: string,
+    ingredientId: number,
   ): Promise<IngredientNutrientWithRelations[]> {
     const results = await this.prismaClient.ingredientNutrient.findMany({
       where: {
@@ -75,7 +74,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
   }
 
   async create(
-    input: CreateIngredientNutrientDto,
+    input: CreateIngredientNutrientRepositoryInput,
   ): Promise<IngredientNutrientWithRelations> {
     try {
       const ingredientNutrient =
@@ -105,7 +104,7 @@ export class IngredientNutrientRepository implements IIngredientNutrientReposito
 
   async update(
     id: bigint,
-    data: UpdateIngredientNutrientDto,
+    data: UpdateIngredientNutrientRepositoryInput,
   ): Promise<IngredientNutrient> {
     throw new Error("Method not implemented.");
   }

@@ -1,6 +1,10 @@
 import { IDishRepository } from "@/backend/domain/interfaces/IDishRepository";
-import { Dish, DishWithIngredients } from "@/backend/domain/entities/Dish";
-import { CreateDishDto, UpdateDishDto } from "@/backend/application/dto/Dish";
+import {
+  Dish,
+  DishWithIngredients,
+  CreateDishRepositoryInput,
+  UpdateDishRepositoryInput,
+} from "@/backend/domain/entities/Dish";
 import { RepositoryError } from "@/backend/domain/entities/Common";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { DishRepositoryMapper } from "@/backend/acl/domain_infrastructure/DishRepositoryMapper";
@@ -58,7 +62,7 @@ export class PrismaDishRepository implements IDishRepository {
    */
   async createWithTx(
     tx: Prisma.TransactionClient,
-    input: CreateDishDto,
+    input: CreateDishRepositoryInput1,
   ): Promise<Dish> {
     try {
       const dish = await tx.dish.create({
@@ -79,7 +83,7 @@ export class PrismaDishRepository implements IDishRepository {
   /**
    * 料理を作成
    */
-  async create(input: CreateDishDto): Promise<Dish> {
+  async create(input: CreateDishRepositoryInput): Promise<Dish> {
     try {
       const dish = await this.prismaClient.dish.create({
         data: {
@@ -99,7 +103,7 @@ export class PrismaDishRepository implements IDishRepository {
   /**
    * 料理を更新
    */
-  async update(id: string, input: UpdateDishDto): Promise<Dish> {
+  async update(id: string, input: UpdateDishRepositoryInput): Promise<Dish> {
     try {
       const dish = await this.prismaClient.dish.update({
         where: { id: BigInt(id) },

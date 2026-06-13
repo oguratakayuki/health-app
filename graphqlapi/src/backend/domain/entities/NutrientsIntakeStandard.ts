@@ -28,13 +28,39 @@ export interface NutrientsIntakeStandard {
   updatedAt: Date;
 }
 
-export interface GetStandardsOptions {
+export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeStandard {
+  nutrient?: any;
+}
+
+export interface CreateNutrientsIntakeStandardRepositoryInput {
+  nutrientId: number;
+  content: number;
+  unit: NutrientUnit;
+  gender: Gender;
+  ageFrom: number;
+  ageTo: number;
+}
+
+/**
+ * 更新用入力型
+ */
+export interface UpdateNutrientsIntakeStandardRepositoryInput {
+  nutrientId: number;
+  content: number;
+  unit: NutrientUnit;
+  gender: Gender;
+  ageFrom: number;
+  ageTo: number;
+}
+
+export interface FindAllWithFiltersOptionsRepositoryInput {
+  gender?: string;
+  age?: number;
+}
+
+export interface GetStandardsOptionsRepositoryInput {
   gender: string;
   age: number;
   // 将来的に追加
   // userId?: string;
-}
-
-export interface NutrientsIntakeStandardWithRelations extends NutrientsIntakeStandard {
-  nutrient?: any;
 }

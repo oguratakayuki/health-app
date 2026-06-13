@@ -1,12 +1,15 @@
-import {
-  IIngredientService,
-  CreateIngredientData,
-} from "@/backend/domain/interfaces/IIngredientService";
+import { IIngredientService } from "@/backend/domain/interfaces/IIngredientService";
 import {
   Ingredient,
   IngredientWithRelations,
+  CreateIngredientRepositoryInput,
+  UpdateIngredientRepositoryInput,
 } from "@/backend/domain/entities/Ingredient";
 import { IIngredientRepository } from "@/backend/domain/interfaces/IIngredientRepository";
+import {
+  CreateIngredientDto,
+  UpdateIngredientDto,
+} from "@/backend/application/dtos/Ingredient";
 
 export class IngredientService implements IIngredientService {
   private ingredientRepository: IIngredientRepository;
@@ -23,57 +26,25 @@ export class IngredientService implements IIngredientService {
     return await this.ingredientRepository.findById(id);
   }
 
-  async createIngredient(
-    ingredientData: CreateIngredientData,
-  ): Promise<Ingredient> {
-    if (!ingredientData.name || ingredientData.name.trim().length === 0) {
+  async createIngredient(dto: CreateIngredientDto): Promise<Ingredient> {
+    if (!dto.name || dto.name.trim().length === 0) {
       throw new Error("Ingredient name is required");
     }
-    // undefinedをnullに変換
-    const data = {
-      name: this.normalizeString(ingredientData.name),
-      remarks: this.normalizeString(ingredientData.remarks),
-      originalName: this.normalizeString(ingredientData.originalName),
-    };
-    return await this.ingredientRepository.create(data);
+
+    const repositoryInput: CreateIngredientRepositoryInput = { ...dto };
+    return await this.ingredientRepository.create(repositoryInput);
   }
 
   async updateIngredient(
     id: bigint,
-    ingredientData: Partial<Ingredient>,
+    dto: UpdateIngredientDto,
   ): Promise<Ingredient> {
-    // 更新時も正規化
-    const updateData: Partial<Ingredient> = {};
-    if (ingredientData.name !== undefined) {
-      const normalized = this.normalizeString(ingredientData.name);
-      if (!normalized) {
-        throw new Error("Ingredient name cannot be empty");
-      }
-      if (normalized.length > 100) {
-        throw new Error("Ingredient name cannot exceed 100 characters");
-      }
-      updateData.name = normalized;
-    }
-    if (ingredientData.remarks !== undefined) {
-      updateData.remarks = this.normalizeString(ingredientData.remarks);
-    }
-    if (ingredientData.originalName !== undefined) {
-      updateData.originalName = this.normalizeString(
-        ingredientData.originalName,
-      );
-    }
-    return await this.ingredientRepository.update(id, updateData);
+    const repositoryInput: UpdateIngredientRepositoryInput = { ...dto };
+
+    return await this.ingredientRepository.update(id, repositoryInput);
   }
 
   async deleteIngredient(id: bigint): Promise<void> {
     await this.ingredientRepository.delete(id);
-  }
-
-  private normalizeString(value: string | null | undefined): string | null {
-    if (value === undefined || value === null) {
-      return null;
-    }
-    const trimmed = value.trim();
-    return trimmed === "" ? null : trimmed;
   }
 }

@@ -8,3 +8,15 @@ export interface Nutrient {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface CreateNutrientRepositoryInput {
+  name: string;
+  code: string;
+  parentId?: string | null;
+}
+
+export interface UpdateNutrientRepositoryInput {
+  name?: string;
+  code?: string;
+  parentId?: string | null;
+}
