@@ -249,7 +249,9 @@ export class MealRepository implements IMealRepository {
       },
     });
 
-    return meals.map((m) => MealRepositoryMapper.mapToMealWithDishes(m as any));
+    return meals.map((m) =>
+      MealRepositoryMapper.mapToMealWithDishes(m),
+    ) as MealWithDishes[];
   }
   /**
    * "12:11" のような時刻文字列から Prisma の TIME 型保存用の Date オブジェクトを生成する

@@ -1,10 +1,13 @@
 // src/backend/infrastructure/mappers/MealPresentationMapper.ts
-import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateMealWithDishesInput";
+import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/CreateMealWithDishesInput";
 import { CreateMealDto } from "@/backend/application/dtos/Meal";
-import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateMealInput";
+import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/UpdateMealInput";
 import { UpdateMealUseCaseDto } from "@/backend/application/dtos/UpdateMealUseCaseDto";
 
-import { Meal as MealEntity } from "@/backend/domain/entities/Meal";
+import {
+  Meal as MealEntity,
+  MealWithDishes,
+} from "@/backend/domain/entities/Meal";
 import { Meal as GraphQLMeal } from "@/backend/infrastructure/graphql/types/Meal";
 
 export class MealPresentationMapper {
@@ -56,6 +59,77 @@ export class MealPresentationMapper {
       userId: meal.userId.toString(),
       createdAt: meal.createdAt,
       updatedAt: meal.updatedAt,
+    };
+  }
+
+  /**
+   * MealWithDishes を対応する GraphQL の型にマッピングするメインメソッド
+   */
+  static toGraphQLTypeWithRelations(meal: MealWithDishes): GraphQLMeal {
+    return {
+      // --- 基本フィールドのマッピング（既存の toGraphQLType と同じ） ---
+      id: meal.id.toString(),
+      category: meal.category,
+      mealDate: meal.mealDate,
+      startTime: this.formatTimeToStr(meal.startTime),
+      endTime: this.formatTimeToStr(meal.endTime),
+      userId: meal.userId.toString(),
+      createdAt: meal.createdAt,
+      updatedAt: meal.updatedAt,
+
+      // --- 関連エンティティのマッピング ---
+      // 1. mealDishes のマッピング
+      mealDishes: meal.mealDishes.map((mealDish) => ({
+        // mealDish 自体も Meal インターフェースを継承しているため、基本情報をマッピング
+        id: mealDish.id.toString(),
+        category: mealDish.category,
+        mealDate: mealDish.mealDate,
+        startTime: this.formatTimeToStr(mealDish.startTime),
+        endTime: this.formatTimeToStr(mealDish.endTime),
+        userId: mealDish.userId.toString(),
+        createdAt: mealDish.createdAt,
+        updatedAt: mealDish.updatedAt,
+        // ネストされた dish をマッピング
+        dish: this.mapDishToGraphQL(mealDish.dish),
+      })),
+
+      // 2. dishes のマッピング
+      dishes: meal.dishes.map((dish) => this.mapDishToGraphQL(dish)),
+    };
+  }
+
+  /**
+   * DishWithIngredients を GraphQL の型にマッピングするヘルパー
+   */
+  private static mapDishToGraphQL(dish: DishWithIngredients): GraphQLDish {
+    return {
+      id: dish.id.toString(),
+      name: dish.name, // Dishに一般的に存在するであろうフィールド（適宜修正してください）
+      // 必要に応じて他の Dish の基本フィールドをここに追加
+      createdAt: dish.createdAt,
+      updatedAt: dish.updatedAt,
+
+      // ネストされた dishIngredients をマッピング
+      dishIngredients: dish.dishIngredients.map((ing) =>
+        this.mapIngredientToGraphQL(ing),
+      ),
+    };
+  }
+
+  /**
+   * DishIngredient を GraphQL の型にマッピングするヘルパー
+   */
+  private static mapIngredientToGraphQL(
+    ing: DishIngredient,
+  ): GraphQLDishIngredient {
+    return {
+      id: ing.id.toString(),
+      dishId: ing.dishId.toString(),
+      ingredientId: ing.ingredientId.toString(),
+      contentQuantity: ing.contentQuantity,
+      contentUnit: ing.contentUnit,
+      createdAt: ing.createdAt,
+      updatedAt: ing.updatedAt,
     };
   }
 

@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { Dish } from "./Dish";
+import { Dish, DishWithIngredients } from "./Dish";
 
 @ObjectType()
 export class Meal {
@@ -33,6 +33,15 @@ export class Meal {
 
 @ObjectType()
 export class MealWithDishes extends Meal {
-  @Field(() => [Dish], { nullable: true })
+  @Field(() => [MealDishWithDish])
+  mealDishes!: MealDishWithDish[];
+
+  @Field(() => [DishWithIngredients])
   dishes!: Dish[];
+}
+
+@ObjectType()
+export class MealDishWithDish extends Meal {
+  @Field()
+  dish!: DishWithIngredients;
 }

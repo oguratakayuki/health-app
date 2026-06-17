@@ -100,11 +100,8 @@ export class MealService implements IMealService {
     toDate: Date,
   ): Promise<MealWithDishes[]> {
     try {
-      const meals = await this.mealRepository.findByUserAndPeriod(
-        userId,
-        fromDate,
-        toDate,
-      );
+      const meals: MealWithDishes[] =
+        await this.mealRepository.findByUserAndPeriod(userId, fromDate, toDate);
 
       return meals;
     } catch (error) {

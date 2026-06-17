@@ -5,6 +5,10 @@ import {
   Meal,
   MealWithDishes,
 } from "@/backend/infrastructure/graphql/types/Meal";
+import {
+  MealWithDishes as MealWithDishesEntity,
+  Meal as MealEntity,
+} from "@/backend/domain/entities/Meal";
 import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/CreateMealWithDishesInput";
 import { CreateMealDto } from "@/backend/application/dtos/Meal";
 import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/UpdateMealInput";
@@ -59,11 +63,14 @@ export class MealResolver {
         throw new Error("Invalid date format provided for from or to");
       }
 
-      return (await mealService.getAllMealsWithDishes(
-        ctx.user.id,
-        fromDate,
-        toDate,
-      )) as MealWithDishes[];
+      const meals: MealWithDishesEntity[] =
+        await mealService.getAllMealsWithDishes(ctx.user!.id, fromDate, toDate);
+
+      return meals.map((meal) =>
+        MealPresentationMapper.toGraphQLTypeWithRelations(
+          meal as MealWithDishesEntity,
+        ),
+      );
     } catch (error) {
       console.error(`Error in meals query: ${error}`);
       throw new Error("Failed to fetch meals");
