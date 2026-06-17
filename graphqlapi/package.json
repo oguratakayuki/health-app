@@ -17,7 +17,8 @@
     "test:dish": "NODE_ENV=test vitest DishRepository",
     "test:ingredient": "NODE_ENV=test vitest IngredientRepository",
     "test:hooks": "NODE_ENV=test vitest useMe",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "codegen": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "3.8.0",
@@ -58,6 +59,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
+    "@graphql-codegen/cli": "^7.1.2",
+    "@graphql-codegen/client-preset": "^6.0.1",
     "@quramy/jest-prisma": "^1.8.2",
     "@types/bcryptjs": "^3.0.0",
     "@types/graphql": "^14.5.0",

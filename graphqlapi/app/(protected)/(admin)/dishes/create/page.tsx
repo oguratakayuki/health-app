@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_DISH } from "@/frontend/graphql/queries/dish";
+// import { CREATE_DISH } from "@/frontend/graphql/queries/dish";
+import {
+  CreateDishInput,
+  CreateDishMutation,
+  CreateDishMutationVariables,
+} from "@/frontend/generated/graphql";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -18,13 +24,21 @@ import { Add, ArrowBack } from "@mui/icons-material";
 export default function CreateDishPage() {
   const [name, setName] = useState("");
   const router = useRouter();
-  const [createDish, { loading }] = useMutation(CREATE_DISH, {
+
+  const [createDish, { loading }] = useMutation<
+    CreateDishMutation,
+    CreateDishMutationVariables
+  >(CREATE_DISH, {
     onCompleted: () => router.push("/dishes"),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createDish({ variables: { name } });
+    await createDish({
+      variables: {
+        input: { name },
+      },
+    });
   };
 
   return (

@@ -2,8 +2,8 @@ import { Query, Resolver, Arg, Mutation, Ctx } from "type-graphql";
 
 import { Dish } from "@/backend/infrastructure/graphql/types/Dish";
 import { DishWithIngredients } from "@/backend/infrastructure/graphql/types/Dish";
-import { CreateDishInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateDishInput";
-import { UpdateDishInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateDishInput";
+import { CreateDishInput } from "@/backend/infrastructure/graphql/inputs/CreateDishInput";
+import { UpdateDishInput } from "@/backend/infrastructure/graphql/inputs/UpdateDishInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { DishService } from "@/backend/application/services/DishService";
 import { Authorized } from "@/backend/application/auth/decorators";

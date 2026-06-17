@@ -5,9 +5,9 @@ import {
   Meal,
   MealWithDishes,
 } from "@/backend/infrastructure/graphql/types/Meal";
-import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateMealWithDishesInput";
+import { CreateMealWithDishesInput } from "@/backend/infrastructure/graphql/inputs/CreateMealWithDishesInput";
 import { CreateMealDto } from "@/backend/application/dtos/Meal";
-import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateMealInput";
+import { UpdateMealInput } from "@/backend/infrastructure/graphql/inputs/UpdateMealInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { MealService } from "@/backend/application/services/MealService";
 import { Authorized } from "@/backend/application/auth/decorators";

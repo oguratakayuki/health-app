@@ -1,4 +1,4 @@
-// src/backend/presentation/resolvers/prisma/NutrientResolver.ts
+// src/backend/presentation/resolvers/NutrientResolver.ts
 import {
   Query,
   Resolver,
@@ -11,8 +11,8 @@ import {
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { NutrientService } from "@/backend/application/services/NutrientService";
 import { Nutrient } from "@/backend/infrastructure/graphql/types/Nutrient";
-import { CreateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateNutrientInput";
-import { UpdateNutrientInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientInput";
+import { CreateNutrientInput } from "@/backend/infrastructure/graphql/inputs/CreateNutrientInput";
+import { UpdateNutrientInput } from "@/backend/infrastructure/graphql/inputs/UpdateNutrientInput";
 import { DailyNutritionType } from "@/backend/infrastructure/graphql/types/DailyNutrition";
 import { MonthlyNutritionType } from "@/backend/infrastructure/graphql/types/MonthlyNutritionType";
 import {

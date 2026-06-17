@@ -127,6 +127,7 @@ export const DELETE_NUTRIENTS_INTAKE_STANDARD_MUTATION = gql`
 `;
 
 // Input types
+/*
 export const CREATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
   fragment CreateNutrientsIntakeStandardInputFields on CreateNutrientsIntakeStandardInput {
     nutrientId
@@ -137,7 +138,9 @@ export const CREATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
     ageTo
   }
 `;
+*/
 
+/*
 export const UPDATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
   fragment UpdateNutrientsIntakeStandardInputFields on UpdateNutrientsIntakeStandardInput {
     nutrientId
@@ -148,6 +151,7 @@ export const UPDATE_NUTRIENTS_INTAKE_STANDARD_INPUT = gql`
     ageTo
   }
 `;
+*/
 
 // 全てのクエリとミューテーションをまとめたオブジェクト
 export const NUTRIENTS_INTAKE_STANDARD_QUERIES = {

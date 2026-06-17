@@ -2,8 +2,8 @@ import { Query, Resolver, Arg, Mutation, Ctx, Int } from "type-graphql";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import type { NutrientsIntakeStandardService } from "@/backend/application/services/NutrientsIntakeStandardService";
 import { NutrientsIntakeStandard } from "@/backend/infrastructure/graphql/types/NutrientsIntakeStandard";
-import { CreateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/prisma/CreateNutrientsIntakeStandardInput";
-import { UpdateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/prisma/UpdateNutrientsIntakeStandardInput";
+import { CreateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/CreateNutrientsIntakeStandardInput";
+import { UpdateNutrientsIntakeStandardInput } from "@/backend/infrastructure/graphql/inputs/UpdateNutrientsIntakeStandardInput";
 import { Authorized } from "@/backend/application/auth/decorators";
 
 @Resolver(() => NutrientsIntakeStandard)
