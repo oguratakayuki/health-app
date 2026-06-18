@@ -48,12 +48,12 @@ export default function DishListPage() {
       {/* 料理一覧 */}
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="divide-y divide-gray-200">
-          {data.prismaDishes.length === 0 ? (
+          {data.dishes.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               料理が登録されていません
             </div>
           ) : (
-            data.prismaDishes.map((dish: any) => (
+            data.dishes.map((dish: any) => (
               <div key={dish.id} className="p-4 hover:bg-gray-50 transition">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-gray-900">{dish.name}</h3>

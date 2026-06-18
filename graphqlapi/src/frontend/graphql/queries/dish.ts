@@ -1,8 +1,18 @@
 import { gql } from "@apollo/client";
 
+// 💡 不足していた単一取得用のクエリを追加しました
+export const GET_DISH = gql(`
+  query GetDish($id: String!) {
+    dish(id: $id) {
+      id
+      name
+    }
+  }
+`);
+
 export const GET_DISHES = gql(`
   query GetDishes {
-    prismaDishes {
+    dishes {
       id
       name
     }
@@ -32,24 +42,3 @@ export const DELETE_DISH = gql(`
     deleteDish(id: $id)
   }
 `);
-
-/* ⚠️ codegen対象外（スキーマ不一致）のため、コメントアウトのまま残します
-export const GET_DISH_WITH_INGREDIENTS = gql`
-  query Dish($id: Int!) {
-    dish(id: $id) {
-      id
-      name
-      dishIngredients {
-        id
-        ingredient {
-          id
-          name
-        }
-        ingredient_id
-        content_quantity
-        content_unit
-      }
-    }
-  }
-`;
-*/

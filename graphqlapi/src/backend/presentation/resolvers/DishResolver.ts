@@ -21,7 +21,7 @@ export class DishResolver {
     return ctx.dishService;
   }
 
-  @Query(() => Dish, { nullable: true, name: "prismaDish" })
+  @Query(() => Dish, { nullable: true, name: "dish" })
   @Authorized()
   async dish(
     @Arg("id") id: string,
@@ -32,24 +32,24 @@ export class DishResolver {
       const dish = await dishService.getDish(id);
       return dish as Dish;
     } catch (error) {
-      console.error(`Error in prismaDish query: ${error}`);
+      console.error(`Error in dish query: ${error}`);
       throw new Error("Failed to fetch dish");
     }
   }
 
-  @Query(() => [Dish], { name: "prismaDishes" })
+  @Query(() => [Dish], { name: "dishes" })
   @Authorized()
   async dishes(@Ctx() ctx: GraphQLContext): Promise<Dish[]> {
     try {
       const dishService = this.getDishService(ctx);
       return (await dishService.getAllDishes()) as Dish[];
     } catch (error) {
-      console.error(`Error in prismaDishes query: ${error}`);
+      console.error(`Error in dishes query: ${error}`);
       throw new Error("Failed to fetch dishes");
     }
   }
 
-  @Query(() => [DishWithIngredients], { name: "prismaDishesWithIngredients" })
+  @Query(() => [DishWithIngredients], { name: "dishesWithIngredients" })
   async dishesWithIngredients(
     @Ctx() ctx: GraphQLContext,
   ): Promise<DishWithIngredients[]> {
@@ -57,12 +57,12 @@ export class DishResolver {
       const dishService = this.getDishService(ctx);
       return (await dishService.getDishesWithIngredients()) as DishWithIngredients[];
     } catch (error) {
-      console.error(`Error in prismaDishesWithIngredients query: ${error}`);
+      console.error(`Error in dishesWithIngredients query: ${error}`);
       throw new Error("Failed to fetch dishes with ingredients");
     }
   }
 
-  @Query(() => String, { name: "prismaDishesCount" })
+  @Query(() => String, { name: "dishesCount" })
   @Authorized()
   async dishesCount(@Ctx() ctx: GraphQLContext): Promise<string> {
     try {
@@ -70,7 +70,7 @@ export class DishResolver {
       const count = await dishService.getDishesCount();
       return count.toString();
     } catch (error) {
-      console.error(`Error in prismaDishesCount query: ${error}`);
+      console.error(`Error in dishesCount query: ${error}`);
       throw new Error("Failed to get dishes count");
     }
   }

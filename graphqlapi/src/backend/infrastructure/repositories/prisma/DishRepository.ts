@@ -62,7 +62,7 @@ export class PrismaDishRepository implements IDishRepository {
    */
   async createWithTx(
     tx: Prisma.TransactionClient,
-    input: CreateDishRepositoryInput1,
+    input: CreateDishRepositoryInput,
   ): Promise<Dish> {
     try {
       const dish = await tx.dish.create({
