@@ -6,6 +6,8 @@ export const GET_DISH = gql(`
     dish(id: $id) {
       id
       name
+      createdAt
+      updatedAt
     }
   }
 `);
