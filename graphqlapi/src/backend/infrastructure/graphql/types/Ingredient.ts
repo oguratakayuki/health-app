@@ -5,18 +5,12 @@ export class Ingredient {
   @Field(() => ID)
   id!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String)
   name!: string;
 
-  @Field({ nullable: true })
-  remarks?: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date;
 
-  @Field({ nullable: true })
-  originalName?: string;
-
-  @Field()
-  createdAt!: Date;
-
-  @Field()
-  updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date;
 }
