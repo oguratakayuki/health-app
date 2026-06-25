@@ -19,6 +19,9 @@ import {
   Authorized,
   RequireAdmin,
 } from "@/backend/application/auth/decorators";
+import { NutrientPresentationMapper } from "@/backend/acl/presentation_application/NutrientPresentationMapper";
+
+import { UpdateNutrientDto } from "@/backend/application/dtos/Nutrient";
 
 @ObjectType()
 class NutrientsResponse {
@@ -44,7 +47,7 @@ export class NutrientResolver {
 
   @Query(() => Nutrient, { nullable: true })
   @RequireAdmin()
-  async prismaNutrient(
+  async nutrient(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Nutrient | null> {
@@ -53,26 +56,26 @@ export class NutrientResolver {
       const nutrient = await nutrientService.getNutrient(id);
       return nutrient as Nutrient;
     } catch (error) {
-      console.error(`Error in prismaNutrient query: ${error}`);
+      console.error(`Error in nutrient query: ${error}`);
       throw new Error("Failed to fetch nutrient");
     }
   }
 
   @Query(() => [Nutrient])
   @RequireAdmin()
-  async prismaNutrients(@Ctx() ctx: GraphQLContext): Promise<Nutrient[]> {
+  async nutrients(@Ctx() ctx: GraphQLContext): Promise<Nutrient[]> {
     try {
       const nutrientService = this.getNutrientService(ctx);
       return (await nutrientService.getAllNutrients()) as Nutrient[];
     } catch (error) {
-      console.error(`Error in prismaNutrients query: ${error}`);
+      console.error(`Error in nutrients query: ${error}`);
       throw new Error("Failed to fetch nutrients");
     }
   }
 
   @Query(() => NutrientsResponse)
   @Authorized()
-  async searchPrismaNutrients(
+  async searchNutrients(
     @Ctx() ctx: GraphQLContext,
     @Arg("name", { nullable: true }) name?: string,
   ): Promise<NutrientsResponse> {
@@ -85,14 +88,14 @@ export class NutrientResolver {
         total,
       };
     } catch (error) {
-      console.error(`Error in searchPrismaNutrients query: ${error}`);
+      console.error(`Error in searchNutrients query: ${error}`);
       throw new Error("Failed to search nutrients");
     }
   }
 
   @Query(() => [Nutrient])
   @Authorized()
-  async prismaNutrientsByParent(
+  async nutrientsByParent(
     @Ctx() ctx: GraphQLContext,
     @Arg("parentId", { nullable: true }) parentId?: string,
   ): Promise<Nutrient[]> {
@@ -102,35 +105,36 @@ export class NutrientResolver {
         parentId || null,
       )) as Nutrient[];
     } catch (error) {
-      console.error(`Error in prismaNutrientsByParent query: ${error}`);
+      console.error(`Error in nutrientsByParent query: ${error}`);
       throw new Error("Failed to fetch nutrients by parent");
     }
   }
 
   @Query(() => String)
   @Authorized()
-  async prismaNutrientsCount(@Ctx() ctx: GraphQLContext): Promise<string> {
+  async nutrientsCount(@Ctx() ctx: GraphQLContext): Promise<string> {
     try {
       const nutrientService = this.getNutrientService(ctx);
       const count = await nutrientService.getNutrientsCount();
       return count.toString();
     } catch (error) {
-      console.error(`Error in prismaNutrientsCount query: ${error}`);
+      console.error(`Error in nutrientsCount query: ${error}`);
       throw new Error("Failed to get nutrients count");
     }
   }
 
   @Mutation(() => Nutrient)
   @Authorized()
-  async createPrismaNutrient(
+  async createNutrient(
     @Arg("input") input: CreateNutrientInput,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Nutrient> {
     try {
       const nutrientService = this.getNutrientService(ctx);
+      // TODO CreateNutrientDtoにmapping
       return (await nutrientService.createNutrient(input)) as Nutrient;
     } catch (error) {
-      console.error(`Error in createPrismaNutrient mutation: ${error}`);
+      console.error(`Error in createNutrient mutation: ${error}`);
       throw new Error(
         `Failed to create nutrient: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -139,16 +143,19 @@ export class NutrientResolver {
 
   @Mutation(() => Nutrient)
   @Authorized()
-  async updatePrismaNutrient(
+  async updateNutrient(
     @Arg("id") id: string,
     @Arg("input") input: UpdateNutrientInput,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Nutrient> {
     try {
+      const dto = NutrientPresentationMapper.toServiceDto(input);
+
       const nutrientService = this.getNutrientService(ctx);
-      return (await nutrientService.updateNutrient(id, input)) as Nutrient;
+      const domainModel = await nutrientService.updateNutrient(id, dto);
+      return NutrientPresentationMapper.toGraphQLType(domainModel);
     } catch (error) {
-      console.error(`Error in updatePrismaNutrient mutation: ${error}`);
+      console.error(`Error in updateNutrient mutation: ${error}`);
       throw new Error(
         `Failed to update nutrient: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -157,7 +164,7 @@ export class NutrientResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  async deletePrismaNutrient(
+  async deleteNutrient(
     @Arg("id") id: string,
     @Ctx() ctx: GraphQLContext,
   ): Promise<boolean> {
@@ -165,7 +172,7 @@ export class NutrientResolver {
       const nutrientService = this.getNutrientService(ctx);
       return await nutrientService.deleteNutrient(id);
     } catch (error) {
-      console.error(`Error in deletePrismaNutrient mutation: ${error}`);
+      console.error(`Error in deleteNutrient mutation: ${error}`);
       throw new Error(
         `Failed to delete nutrient: ${error instanceof Error ? error.message : "Unknown error"}`,
       );

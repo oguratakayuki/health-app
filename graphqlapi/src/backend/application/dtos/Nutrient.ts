@@ -5,7 +5,7 @@ export interface CreateNutrientDto {
 }
 
 export interface UpdateNutrientDto {
-  name?: string;
-  code?: string;
+  name: string;
+  code: string;
   parentId?: string | null;
 }

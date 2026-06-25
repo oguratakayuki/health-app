@@ -1,10 +1,23 @@
 import { gql } from "@apollo/client";
 
-export const GET_NUTRIENTS = gql`
-  query GetNutrients {
-    prismaNutrients {
+// 💡 編集ページ用に単一取得クエリを追加
+export const GET_NUTRIENT = gql`
+  query GetNutrient($id: String!) {
+    nutrient(id: $id) {
       id
       name
+      code
+      parentId
+    }
+  }
+`;
+
+export const GET_NUTRIENTS = gql`
+  query GetNutrients {
+    nutrients {
+      id
+      name
+      code
       createdAt
       updatedAt
       parentId
@@ -13,11 +26,11 @@ export const GET_NUTRIENTS = gql`
 `;
 
 export const CREATE_NUTRIENT = gql`
-  # 💡 引数を $input: CreateNutrientInput! に変更
   mutation CreateNutrient($input: CreateNutrientInput!) {
     createPrismaNutrient(input: $input) {
       id
       name
+      code
       createdAt
       updatedAt
       parentId
@@ -26,18 +39,17 @@ export const CREATE_NUTRIENT = gql`
 `;
 
 export const UPDATE_NUTRIENT = gql`
-  # 💡 $id を String! に変更、かつ $input: UpdateNutrientInput! を追加
   mutation UpdateNutrient($id: String!, $input: UpdateNutrientInput!) {
-    updatePrismaNutrient(id: $id, input: $input) {
+    updateNutrient(id: $id, input: $input) {
       id
       name
+      code
       updatedAt
     }
   }
 `;
 
 export const DELETE_NUTRIENT = gql`
-  # 💡 Error 11 より、削除の $id も String! を要求されている可能性が高いため String! に変更
   mutation DeleteNutrient($id: String!) {
     deletePrismaNutrient(id: $id)
   }

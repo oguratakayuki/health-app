@@ -5,34 +5,27 @@ import { useQuery, useMutation } from "@apollo/client";
 import {
   GET_NUTRIENTS,
   CREATE_NUTRIENT,
-  UPDATE_NUTRIENT,
   DELETE_NUTRIENT,
 } from "@/frontend/graphql/queries/nutrient";
 import {
   GetNutrientsQuery,
   CreateNutrientMutation,
   CreateNutrientMutationVariables,
-  UpdateNutrientMutation,
-  UpdateNutrientMutationVariables,
   DeleteNutrientMutation,
   DeleteNutrientMutationVariables,
 } from "@/frontend/generated/graphql";
+// 💡 Next.jsのルーターをインポート
+import { useRouter } from "next/navigation";
 import { Edit2, Trash2, Plus, Pill } from "lucide-react";
 
 export default function NutrientAdminPage() {
+  const router = useRouter(); // 💡 ルーターの初期化
   const { data, loading, refetch } = useQuery<GetNutrientsQuery>(GET_NUTRIENTS);
 
   const [createNutrient] = useMutation<
     CreateNutrientMutation,
     CreateNutrientMutationVariables
   >(CREATE_NUTRIENT, {
-    onCompleted: () => refetch(),
-  });
-
-  const [updateNutrient] = useMutation<
-    UpdateNutrientMutation,
-    UpdateNutrientMutationVariables
-  >(UPDATE_NUTRIENT, {
     onCompleted: () => refetch(),
   });
 
@@ -43,25 +36,22 @@ export default function NutrientAdminPage() {
     onCompleted: () => refetch(),
   });
 
-  // 💡 新規登録用のステート（name と code）
+  // 新規登録用のステート
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-48">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3 text-gray-600">読み込み중...</span>
+        <span className="ml-3 text-gray-600">読み込み中...</span>
       </div>
     );
   }
 
-  const list = data?.prismaNutrients || [];
+  // 💡 クエリ名（nutrients）に合わせて変更
+  const list = data?.nutrients || [];
 
-  // 💡 新規作成処理（name と code の両方を送信）
   const handleCreate = async () => {
     if (!name || !code) return;
     await createNutrient({
@@ -74,23 +64,6 @@ export default function NutrientAdminPage() {
     });
     setName("");
     setCode("");
-  };
-
-  const startEdit = (item: GetNutrientsQuery["prismaNutrients"][number]) => {
-    setEditingId(item.id);
-    setEditingName(item.name || "");
-  };
-
-  const handleUpdate = async () => {
-    if (!editingId) return;
-    await updateNutrient({
-      variables: {
-        id: editingId,
-        input: { name: editingName },
-      },
-    });
-    setEditingId(null);
-    setEditingName("");
   };
 
   const handleDelete = async (id: string) => {
@@ -166,8 +139,9 @@ export default function NutrientAdminPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
+                    {/* 💡 onClickイベントを個別の編集ページへの遷移に修正 */}
                     <button
-                      onClick={() => startEdit(item)}
+                      onClick={() => router.push(`/nutrients/${item.id}/edit`)}
                       className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
                       title="編集"
                     >
@@ -187,39 +161,6 @@ export default function NutrientAdminPage() {
           )}
         </div>
       </div>
-
-      {/* 編集フォーム */}
-      {editingId && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mt-6">
-          <h3 className="font-bold text-gray-900 mb-4">栄養素を編集</h3>
-          <div className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              value={editingName}
-              onChange={(e) => setEditingName(e.target.value)}
-              className="flex-1 px-4 py-2 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none bg-white"
-              onKeyDown={(e) => e.key === "Enter" && handleUpdate()}
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={handleUpdate}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-6 rounded-lg transition"
-              >
-                更新
-              </button>
-              <button
-                onClick={() => {
-                  setEditingId(null);
-                  setEditingName("");
-                }}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition"
-              >
-                キャンセル
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

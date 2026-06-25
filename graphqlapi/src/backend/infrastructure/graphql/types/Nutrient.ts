@@ -5,8 +5,11 @@ export class Nutrient {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: false })
   name!: string | null;
+
+  @Field(() => String, { nullable: false })
+  code!: string | null;
 
   @Field(() => Date)
   createdAt!: Date;
@@ -14,6 +17,6 @@ export class Nutrient {
   @Field(() => Date)
   updatedAt!: Date;
 
-  @Field(() => Int, { nullable: true })
-  parentId!: number | null;
+  @Field(() => String, { nullable: true })
+  parentId?: string | null;
 }
