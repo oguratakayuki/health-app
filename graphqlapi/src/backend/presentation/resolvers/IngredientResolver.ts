@@ -5,6 +5,7 @@ import { Ingredient } from "@/backend/infrastructure/graphql/types/Ingredient";
 import { CreateIngredientInput } from "@/backend/infrastructure/graphql/inputs/CreateIngredientInput";
 import { IngredientWithRelations } from "@/backend/domain/entities/Ingredient";
 import { Authorized } from "@/backend/application/auth/decorators";
+import { IngredientPresentationMapper } from "@/backend/acl/presentation_application/IngredientPresentationMapper";
 
 @Resolver()
 export class IngredientResolver {
@@ -20,38 +21,41 @@ export class IngredientResolver {
   }
 
   @Query(() => [Ingredient])
-    @Authorized()
-    async ingredients(@Ctx() ctx: GraphQLContext): Promise<Ingredient[]> {
-      try {
-        const ingredientService = this.getIngredientService(ctx);
-        const ingredients = await ingredientService.getAllIngredients();
-        return ingredients.map((ingredient) => ({
-          id: ingredient.id.toString(),
-          name: ingredient.name,
-          originalName: ingredient.originalName ?? undefined,
-          remarks: ingredient.remarks ?? undefined,
-          createdAt: ingredient.createdAt,
-          updatedAt: ingredient.updatedAt,
-        }));
-      } catch (error) {
-        console.error(`Error in ingredients query: ${error}`);
-        throw new Error("Failed to fetch ingredients");
-      }
+  @Authorized()
+  async ingredients(@Ctx() ctx: GraphQLContext): Promise<Ingredient[]> {
+    try {
+      const ingredientService = this.getIngredientService(ctx);
+      const ingredients = await ingredientService.getAllIngredients();
+      return ingredients.map((ingredient) => ({
+        id: ingredient.id.toString(),
+        name: ingredient.name,
+        originalName: ingredient.originalName ?? undefined,
+        remarks: ingredient.remarks ?? undefined,
+        createdAt: ingredient.createdAt,
+        updatedAt: ingredient.updatedAt,
+      }));
+    } catch (error) {
+      console.error(`Error in ingredients query: ${error}`);
+      throw new Error("Failed to fetch ingredients");
     }
+  }
 
   @Mutation(() => Ingredient, { name: "createIngredient" })
   @Authorized()
   async createIngredient(
-    @Arg("input", () => CreateIngredientInput) input: CreateIngredientInput,
+    @Arg("input") input: CreateIngredientInput,
     @Ctx() ctx: GraphQLContext,
   ): Promise<Ingredient> {
-    return {
-      id: "mock-id",
-      name: input.name || "Mock Ingredient",
-      remarks: input.remarks,
-      originalName: input.originalName,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    try {
+      const ingredientService = this.getIngredientService(ctx);
+      const dto = IngredientPresentationMapper.toCreateDto(input);
+      const ingredient = await ingredientService.createIngredient(dto);
+      return IngredientPresentationMapper.toGraphQLType(ingredient);
+    } catch (error) {
+      console.error(`Error in createIngredient mutation: ${error}`);
+      throw new Error(
+        `Failed to create ingredient: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 }

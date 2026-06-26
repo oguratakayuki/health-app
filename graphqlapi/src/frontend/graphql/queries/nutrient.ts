@@ -27,7 +27,7 @@ export const GET_NUTRIENTS = gql`
 
 export const CREATE_NUTRIENT = gql`
   mutation CreateNutrient($input: CreateNutrientInput!) {
-    createPrismaNutrient(input: $input) {
+    createNutrient(input: $input) {
       id
       name
       code
@@ -51,6 +51,6 @@ export const UPDATE_NUTRIENT = gql`
 
 export const DELETE_NUTRIENT = gql`
   mutation DeleteNutrient($id: String!) {
-    deletePrismaNutrient(id: $id)
+    deleteNutrient(id: $id)
   }
 `;

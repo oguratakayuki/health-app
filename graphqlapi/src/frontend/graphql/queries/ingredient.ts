@@ -10,8 +10,8 @@ export const GET_INGREDIENTS = gql`
 `;
 
 export const CREATE_INGREDIENT = gql`
-  mutation ($name: String!) {
-    createIngredient(name: $name) {
+  mutation CreateIngredient($input: CreateIngredientInput!) {
+    createIngredient(input: $input) {
       id
       name
     }

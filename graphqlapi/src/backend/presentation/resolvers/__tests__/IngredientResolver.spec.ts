@@ -8,6 +8,7 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 describe("IngredientResolver", () => {
   let resolver: IngredientResolver;
   const mockIngredientService = {
+    createIngredient: vi.fn(),
     getAllIngredients: vi.fn(),
   } as any;
 
@@ -22,33 +23,42 @@ describe("IngredientResolver", () => {
   });
 
   describe("createIngredient mutation", () => {
-    it("should return a mock ingredient when creating", async () => {
+    it("should call ingredientService.createIngredient and return mapped result", async () => {
       const input: CreateIngredientInput = {
         name: "Test Ingredient",
         remarks: "Test Remarks",
         originalName: "Original Test Name",
       };
 
+      const mockEntity = {
+        id: "new-id",
+        name: "Test Ingredient",
+        remarks: "Test Remarks",
+        originalName: "Original Test Name",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      mockIngredientService.createIngredient.mockResolvedValue(mockEntity);
+
       const result = await resolver.createIngredient(input, mockContext);
 
-      expect(result).toEqual({
-        id: "mock-id",
-        name: input.name,
-        remarks: input.remarks,
-        originalName: input.originalName,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
+      expect(mockIngredientService.createIngredient).toHaveBeenCalledWith({
+        name: "Test Ingredient",
+        remarks: "Test Remarks",
+        originalName: "Original Test Name",
       });
+      expect(result).toEqual(mockEntity);
     });
 
-    it("should use default name when input name is missing", async () => {
+    it("should throw error when ingredientService.createIngredient fails", async () => {
       const input: CreateIngredientInput = {
-        name: undefined,
+        name: "Error Ingredient",
       };
+      mockIngredientService.createIngredient.mockRejectedValue(new Error("Service Error"));
 
-      const result = await resolver.createIngredient(input, mockContext);
-
-      expect(result.name).toBe("Mock Ingredient");
+      await expect(resolver.createIngredient(input, mockContext)).rejects.toThrow(
+        "Failed to create ingredient: Service Error",
+      );
     });
   });
 });

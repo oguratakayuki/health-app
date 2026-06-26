@@ -36,7 +36,13 @@ export default function IngredientAdminPage() {
   // 作成
   const handleCreate = async () => {
     if (!name) return;
-    await createIngredient({ variables: { name } });
+    await createIngredient({
+      variables: {
+        input: {
+          name: name,
+        },
+      },
+    });
     setName("");
   };
 
