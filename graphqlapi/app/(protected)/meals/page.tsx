@@ -1,33 +1,48 @@
-
 "use client";
 
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_MEALS, DELETE_MEAL } from "@/frontend/graphql/queries/meal";
 import Link from "next/link";
-import { Plus, UtensilsCrossed, Eye, Edit2, Trash2, Calendar } from "lucide-react";
-import { useState } from "react";
+import { Plus, UtensilsCrossed, Eye, Edit2, Trash2 } from "lucide-react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
 
+// 自作したストアとハイドレーション用フックをインポート
+import { useMealFilterStore } from "@/frontend/stores/useMealFilterStore";
+import { useHydratedStore } from "@/frontend/hooks/useHydratedStore";
+
 dayjs.locale("ja");
 
 export default function MealListPage() {
-  const now = new Date();
-  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+  // 1. useHydratedStoreを利用して、ハイドレーション前後で安全に値を切り替える
+  // マウント前(SSR時)は今月の開始・終了日(固定文字列)をフォールバックとして渡す
+  const dateFromStr = useHydratedStore(
+    useMealFilterStore,
+    (state) => state.dateFromStr,
+    dayjs().startOf('month').format('YYYY-MM-DD')
+  );
 
-  const [dateFrom, setDateFrom] = useState<any>(dayjs().startOf('month'));
-  const [dateTo, setDateTo] = useState<any>(dayjs().endOf('month'));
+  const dateToStr = useHydratedStore(
+    useMealFilterStore,
+    (state) => state.dateToStr,
+    dayjs().endOf('month').format('YYYY-MM-DD')
+  );
 
-  const fromStr = dateFrom ? dateFrom.format('YYYY-MM-DD') : '';
-  const toStr = dateTo ? dateTo.format('YYYY-MM-DD') : '';
+  // 更新関数（アクション）はDOMイベント起点の呼び出しになるため、通常の呼び出しで安全
+  const setDateFrom = useMealFilterStore((state) => state.setDateFrom);
+  const setDateTo = useMealFilterStore((state) => state.setDateTo);
 
+  // 2. DatePickerに渡すために string 型から dayjs オブジェクトに変換
+  const fromValue = dayjs(dateFromStr);
+  const toValue = dayjs(dateToStr);
+
+  // 3. GraphQL Query の実行（変数はZustandから同期された値を使用）
   const { data, loading, error, refetch } = useQuery(GET_MEALS, {
-    variables: { from: fromStr, to: toStr },
-    skip: !fromStr || !toStr,
+    variables: { from: dateFromStr, to: dateToStr },
+    skip: !dateFromStr || !dateToStr,
   });
 
   const [deleteMeal] = useMutation(DELETE_MEAL);
@@ -69,13 +84,16 @@ export default function MealListPage() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">献立 一覧</h1>
           </div>
-          
           <div className="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm border border-gray-200">
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 ml-1 mb-1">開始日</span>
               <DatePicker
-                value={dateFrom}
-                onChange={(newValue) => setDateFrom(newValue)}
+                value={fromValue}
+                onChange={(newValue) => {
+                  if (newValue && newValue.isValid()) {
+                    setDateFrom(newValue.format('YYYY-MM-DD'));
+                  }
+                }}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
               />
             </div>
@@ -83,8 +101,12 @@ export default function MealListPage() {
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 ml-1 mb-1">終了日</span>
               <DatePicker
-                value={dateTo}
-                onChange={(newValue) => setDateTo(newValue)}
+                value={toValue}
+                onChange={(newValue) => {
+                  if (newValue && newValue.isValid()) {
+                    setDateTo(newValue.format('YYYY-MM-DD'));
+                  }
+                }}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
               />
             </div>
