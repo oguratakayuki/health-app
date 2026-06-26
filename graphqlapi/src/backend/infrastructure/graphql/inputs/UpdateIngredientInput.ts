@@ -1,5 +1,13 @@
-import { InputType, Field, PartialType } from 'type-graphql';
-import { CreateIngredientInput } from './CreateIngredientInput';
+import { InputType, Field } from "type-graphql";
 
 @InputType()
-export class UpdateIngredientInput extends PartialType(CreateIngredientInput) {}
+export class UpdateIngredientInput {
+  @Field(() => String, { nullable: false })
+  name!: string;
+
+  @Field(() => String, { nullable: true })
+  remarks?: string;
+
+  @Field(() => String, { nullable: true })
+  originalName?: string;
+}

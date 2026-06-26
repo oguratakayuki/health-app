@@ -10,8 +10,8 @@ export class IngredientPresentationMapper {
   static toCreateDto(input: CreateIngredientInput): CreateIngredientDto {
     return {
       name: input.name || "",
-      remarks: input.remarks || null,
-      originalName: input.originalName || null,
+      remarks: input.remarks,
+      originalName: input.originalName,
     };
   }
 
@@ -22,8 +22,8 @@ export class IngredientPresentationMapper {
     return {
       id: ingredient.id,
       name: ingredient.name,
-      remarks: ingredient.remarks,
-      originalName: ingredient.originalName,
+      remarks: ingredient.remarks || undefined,
+      originalName: ingredient.originalName || undefined,
       createdAt: ingredient.createdAt,
       updatedAt: ingredient.updatedAt,
     };

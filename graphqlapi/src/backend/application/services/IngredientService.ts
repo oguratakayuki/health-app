@@ -22,8 +22,9 @@ export class IngredientService implements IIngredientService {
     return await this.ingredientRepository.findAll();
   }
 
-  async getIngredientById(id: bigint): Promise<IngredientWithRelations | null> {
-    return await this.ingredientRepository.findById(id);
+  async getIngredientById(id: string): Promise<IngredientWithRelations | null> {
+    const IngredientId = parseInt(id);
+    return await this.ingredientRepository.findById(IngredientId);
   }
 
   async createIngredient(dto: CreateIngredientDto): Promise<Ingredient> {
@@ -36,15 +37,20 @@ export class IngredientService implements IIngredientService {
   }
 
   async updateIngredient(
-    id: bigint,
+    id: string,
     dto: UpdateIngredientDto,
   ): Promise<Ingredient> {
+    const IngredientId = parseInt(id);
     const repositoryInput: UpdateIngredientRepositoryInput = { ...dto };
 
-    return await this.ingredientRepository.update(id, repositoryInput);
+    return await this.ingredientRepository.update(
+      IngredientId,
+      repositoryInput,
+    );
   }
 
-  async deleteIngredient(id: bigint): Promise<void> {
-    await this.ingredientRepository.delete(id);
+  async deleteIngredient(id: string): Promise<void> {
+    const IngredientId = parseInt(id);
+    await this.ingredientRepository.delete(IngredientId);
   }
 }

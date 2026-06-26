@@ -14,7 +14,7 @@ import { ArrowLeft } from "lucide-react";
 export default function IngredientEditPage() {
   const params = useParams();
   const router = useRouter();
-  const id = Number(params.id);
+  const id = params.id as string;
 
   const { data, loading } = useQuery(GET_INGREDIENTS);
   const [updateIngredient] = useMutation(UPDATE_INGREDIENT);
@@ -24,7 +24,7 @@ export default function IngredientEditPage() {
   // 初期値のセット
   useEffect(() => {
     if (data?.ingredients) {
-      const item = data.ingredients.find((item: any) => Number(item.id) === id);
+      const item = data.ingredients.find((item: any) => item.id === id);
       if (item) {
         setEditingName(item.name || "");
       }
@@ -42,9 +42,9 @@ export default function IngredientEditPage() {
   const handleUpdate = async () => {
     if (!editingName) return;
     await updateIngredient({
-      variables: { id, name: editingName },
+      variables: { id, input: { name: editingName } },
       // 更新後にキャッシュを再取得、または更新
-      refetchQueries: [{ query: GET_INGREDIENTS }] 
+      refetchQueries: [{ query: GET_INGREDIENTS }],
     });
     // 一覧画面に遷移
     router.push("/ingredients");
@@ -52,13 +52,18 @@ export default function IngredientEditPage() {
 
   return (
     <div className="max-w-xl mx-auto py-8 px-4">
-      <Link href="/ingredients" className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 mb-6">
+      <Link
+        href="/ingredients"
+        className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 mb-6"
+      >
         <ArrowLeft className="w-4 h-4" /> キャンセルして戻る
       </Link>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
         <h3 className="font-bold text-gray-900 mb-2">材料を編集 (ID: {id})</h3>
-        <p className="text-sm text-gray-600 mb-4">新しい材料名を入力してください。</p>
+        <p className="text-sm text-gray-600 mb-4">
+          新しい材料名を入力してください。
+        </p>
         <div className="flex flex-col gap-4">
           <input
             type="text"

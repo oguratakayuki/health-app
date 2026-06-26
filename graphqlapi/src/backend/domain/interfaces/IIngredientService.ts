@@ -11,8 +11,8 @@ import {
 
 export interface IIngredientService {
   getAllIngredients(): Promise<Ingredient[]>;
-  getIngredientById(id: bigint): Promise<IngredientWithRelations | null>;
+  getIngredientById(id: string): Promise<IngredientWithRelations | null>;
   createIngredient(ingredient: CreateIngredientDto): Promise<Ingredient>;
-  updateIngredient(id: bigint, dto: UpdateIngredientDto): Promise<Ingredient>;
-  deleteIngredient(id: bigint): Promise<void>;
+  updateIngredient(id: string, dto: UpdateIngredientDto): Promise<Ingredient>;
+  deleteIngredient(id: string): Promise<void>;
 }
