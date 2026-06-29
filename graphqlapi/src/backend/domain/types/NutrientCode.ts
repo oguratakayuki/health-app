@@ -12,9 +12,13 @@ export enum NutrientCode {
 
   VitaminA = "vitamin_a_ug",
   VitaminC = "vitamin_c_mg",
+  VitaminD = "vitamin_d_mg",
 
   Calcium = "calcium_mg",
   Iron = "iron_mg",
+  Zinc = "zinc_mg",
+  // TODO
+  Potassium = "potassium_mg",
 }
 export function toNutrientCode(code: string): NutrientCode {
   switch (code) {
@@ -32,13 +36,17 @@ export function toNutrientCode(code: string): NutrientCode {
       return NutrientCode.VitaminA;
     case "vitamin_c_mg":
       return NutrientCode.VitaminC;
-    // case "vitamin_d_ug": return NutrientCode.VitaminD;
+    case "vitamin_d_ug":
+      return NutrientCode.VitaminD;
     case "calcium_mg":
       return NutrientCode.Calcium;
     case "iron_mg":
       return NutrientCode.Iron;
-    // case "zinc_mg": return NutrientCode.Zinc;
-    // case "potassium_mg": return NutrientCode.Potassium;
+    case "zinc_mg":
+      return NutrientCode.Zinc;
+    case "potassium_mg":
+      // カリウム
+      return NutrientCode.Potassium;
     default:
       throw new Error(`Unknown nutrient code: ${code}`);
   }

@@ -43,7 +43,7 @@ export default function UpdateMealPage() {
     },
   );
   const { data: dishData, loading: dishesLoading } = useQuery(GET_DISHES);
-  const dishes = dishData?.prismaDishes || [];
+  const dishes = dishData?.dishes || [];
 
   const [updateMeal, { loading: updateLoading }] = useMutation(UPDATE_MEAL);
 
