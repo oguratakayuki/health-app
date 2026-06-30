@@ -1,0 +1,45 @@
+FUNCTION_NAME: "ユーザープロフィール詳細表示"
+DOMAIN_NAME: "UserProfile"
+DOMAIN_NAME_LOWER: "user_profile"
+OPERATION_TYPE: "Show"
+RESOLVER_METHOD_NAME: "userProfile"
+
+SCHEMA_REFERENCE: "prisma/schema.prisma 内の `UserProfile` モデルを参照すること"
+
+FRONTEND_FIELDS_SPEC: |
+  - 性別: `gender`
+  - 身長: `height`
+  - 誕生日: `birthday`
+  - 年齢: `age` (バックエンドまたはフロントエンドで `birthday` から動的に算出する)
+
+BUSINESS_LOGIC_DETAILS: |
+  1. `birthday` から現在時刻を基準とした「年齢（age）」を計算するロジックを実装すること。
+  2. 対象のユーザープロフィールが存在しない場合は、NotFoundエラーを返却すること。
+
+FRONTEND_UI_SPEC:
+  target_path: "app/(protected)/user-profiles/page.tsx"
+  design_base_file: "app/(protected)/(admin)/nutrients/page.tsx"
+  theme:
+    color_scale: "blue (focus:ring-blue-500, bg-blue-100, text-blue-600, bg-blue-600, hover:bg-blue-700)"
+    icon: "Scale"
+  page_title: "プロフィール"
+  display_fields:
+    - label: "性別"
+      db_field: "gender"
+      display_type: "text"
+      placeholder_if_null: "未設定" # NULLの可能性があるため
+    - label: "身長"
+      db_field: "height"
+      display_type: "number"
+      suffix: " cm" # decimal(4,1) なので 「170.5 cm」 のように表現するため
+    - label: "誕生日"
+      db_field: "birthday"
+      display_type: "date" # date型なので「YYYY年MM月DD日」などのフォーマット用
+    - label: "年齢"
+      db_field: "custom_logic" # DBにはない算出項目であることを明示
+      display_type: "text"
+      suffix: " 歳"
+  implementation_notes: |
+    1. 既存の `NutrientAdminPage` の構造、Loading表示、テーブル一覧のレイアウト、および `useRouter` による動的遷移（`/weights/${item.id}/edit`）の設計を完全に踏襲すること。
+    2. 一般ユーザー用のページであるため、パスは `app/(protected)/weights/page.tsx` に配置すること。
+    3. 初期ステートの型定義や GraphQL の Mutation 呼び出し（`CREATE_WEIGHT` / `DELETE_WEIGHT` / `GET_WEIGHTS`）は、生成された `@/frontend/generated/graphql` の最新の型（`CreateWeightMutation`等）に厳密に合わせること。
