@@ -2,7 +2,8 @@ import { DailyNutrientTarget } from "@/backend/domain/entities/valueObjects/Dail
 import { Gender } from "@/backend/domain/types/Gender";
 import { INutrientsIntakeStandardRepository } from "@/backend/domain/interfaces/INutrientsIntakeStandardRepository";
 
-export class NutritionTargetService {
+import { INutritionTargetService } from "@/backend/domain/interfaces/INutritionTargetService";
+export class NutritionTargetService implements INutritionTargetService {
   constructor(
     private readonly repository: INutrientsIntakeStandardRepository,
   ) {}

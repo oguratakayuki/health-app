@@ -71,10 +71,7 @@ intake_standards.each do |gender, a_from, a_to, values|
 end
 
 user = User.find_or_create_by!(email: "test@example.com") do |u|
-  u.height   = 171
-  u.age      = 44
   u.is_admin = 1
-  u.birthday = Date.new(1981, 1, 1)
 end
 
 # --- 5. 食材マスターの作成 ---

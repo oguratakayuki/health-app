@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_06_11_023950) do
+ActiveRecord::Schema.define(version: 2026_06_30_105943) do
 
   create_table "body_compositions", charset: "utf8mb4", collation: "utf8mb4_bin", comment: "ユーザーの体重・体組成の計測履歴データ", force: :cascade do |t|
     t.bigint "user_id", null: false, comment: "ユーザーID"
@@ -170,6 +170,16 @@ ActiveRecord::Schema.define(version: 2026_06_11_023950) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "user_profiles", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.bigint "user_id", null: false, comment: "ユーザーID"
+    t.string "gender", comment: "性別"
+    t.decimal "height", precision: 4, scale: 1, null: false, comment: "身長(cm)"
+    t.date "birthday", null: false, comment: "生年月日"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_user_profiles_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -177,10 +187,6 @@ ActiveRecord::Schema.define(version: 2026_06_11_023950) do
     t.string "name"
     t.string "cognito_sub"
     t.boolean "is_admin", default: false, null: false
-    t.string "gender"
-    t.integer "age"
-    t.decimal "height", precision: 4, scale: 1, comment: "身長 (cm)"
-    t.date "birthday", comment: "誕生日"
     t.index ["cognito_sub"], name: "index_users_on_cognito_sub", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
   end
@@ -196,4 +202,5 @@ ActiveRecord::Schema.define(version: 2026_06_11_023950) do
   add_foreign_key "nutrients", "nutrients", column: "parent_id"
   add_foreign_key "radar_chart_items", "nutrients"
   add_foreign_key "radar_chart_items", "radar_charts"
+  add_foreign_key "user_profiles", "users"
 end

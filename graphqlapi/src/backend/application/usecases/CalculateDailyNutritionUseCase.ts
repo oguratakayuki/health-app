@@ -20,7 +20,7 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
     private readonly queryService: DailyNutritionQueryService,
     private readonly aggregator: IDailyNutrientAggregator,
     private readonly pfcCalculator: IPfcCalculator,
-    private readonly nutrientionTargetService: INutritionTargetService,
+    private readonly nutritionTargetService: INutritionTargetService,
     private readonly rdiEvaluator: IRdiEvaluator,
   ) {}
   async execute(
@@ -36,10 +36,7 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
       await this.queryService.fetchAggregationItems(userId, date);
     const totals = this.aggregator.aggregate(items);
     const pfc = this.pfcCalculator.calculate(totals);
-    const targets = await this.nutrientionTargetService.findTargets(
-      gender,
-      age,
-    );
+    const targets = await this.nutritionTargetService.findTargets(gender, age);
     const comparisons = this.rdiEvaluator.evaluate(totals, targets, pfc);
     return {
       totals,
@@ -69,10 +66,7 @@ export class CalculateDailyNutritionUseCase implements ICalculateDailyNutritionU
       current.push(item);
       grouped.set(key, current);
     }
-    const targets = await this.nutrientionTargetService.findTargets(
-      gender,
-      age,
-    );
+    const targets = await this.nutritionTargetService.findTargets(gender, age);
     const days: DailyNutritionSnapshot[] = [];
     for (const [date, dailyItems] of grouped) {
       const totals = this.aggregator.aggregate(dailyItems);

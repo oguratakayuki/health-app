@@ -191,7 +191,7 @@ export class NutrientResolver {
       }
 
       const result = await ctx.calculateDailyNutritionUseCase.execute(
-        ctx.user.id,
+        ctx.user!.id,
         new Date(date),
       );
 
@@ -219,7 +219,7 @@ export class NutrientResolver {
       }
 
       const result = await ctx.calculateDailyNutritionUseCase.executeMonthly(
-        ctx.user.id,
+        ctx.user!.id,
         new Date(from),
         new Date(to),
       );
