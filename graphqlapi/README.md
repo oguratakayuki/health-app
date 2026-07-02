@@ -8,7 +8,8 @@
 rm -rf ~/.cache/prisma
 rm -rf node_modules/.prisma
 rm -rf node_modules/@prisma/client
-DATABASE_URL=mysql://root:rootp@db:3306/health_development npx prisma generate
+docker compose run -e DATABASE_URL="mysql://root:rootp@db:3306/health_development" graphqlapi npx prisma generate
+yarn codegen
 ```
 
 # cognitoの設定手順

@@ -1,10 +1,13 @@
-FUNCTION_NAME: "ユーザープロフィール詳細表示"
+# 💡 基本となる変数を定義（ここを書き換えるだけで下部にも自動反映される）
 DOMAIN_NAME: "UserProfile"
 DOMAIN_NAME_LOWER: "user_profile"
+DOMAIN_NAME_URL: "user-profiles"
+DOMAIN_NAME_UPPER: "USER_PROFILE"
+FUNCTION_NAME: "ユーザープロフィール詳細表示"
 OPERATION_TYPE: "Show"
 RESOLVER_METHOD_NAME: "userProfile"
 
-SCHEMA_REFERENCE: "prisma/schema.prisma 内の `UserProfile` モデルを参照すること"
+SCHEMA_REFERENCE: "prisma/schema.prisma 内の `{{DOMAIN_NAME}}` モデルを参照すること"
 
 FRONTEND_FIELDS_SPEC: |
   - 性別: `gender`
@@ -17,7 +20,7 @@ BUSINESS_LOGIC_DETAILS: |
   2. 対象のユーザープロフィールが存在しない場合は、NotFoundエラーを返却すること。
 
 FRONTEND_UI_SPEC:
-  target_path: "app/(protected)/user-profiles/page.tsx"
+  target_path: "app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx"
   design_base_file: "app/(protected)/(admin)/nutrients/page.tsx"
   theme:
     color_scale: "blue (focus:ring-blue-500, bg-blue-100, text-blue-600, bg-blue-600, hover:bg-blue-700)"
@@ -27,19 +30,21 @@ FRONTEND_UI_SPEC:
     - label: "性別"
       db_field: "gender"
       display_type: "text"
-      placeholder_if_null: "未設定" # NULLの可能性があるため
+      placeholder_if_null: "未設定"
     - label: "身長"
       db_field: "height"
       display_type: "number"
-      suffix: " cm" # decimal(4,1) なので 「170.5 cm」 のように表現するため
+      suffix: " cm"
     - label: "誕生日"
       db_field: "birthday"
-      display_type: "date" # date型なので「YYYY年MM月DD日」などのフォーマット用
+      display_type: "date"
     - label: "年齢"
-      db_field: "custom_logic" # DBにはない算出項目であることを明示
+      db_field: "custom_logic"
       display_type: "text"
       suffix: " 歳"
+
+  # 💡 長文の中でも {{ }} を使って安全に使い回しができるようになります
   implementation_notes: |
-    1. 既存の `NutrientAdminPage` の構造、Loading表示、テーブル一覧のレイアウト、および `useRouter` による動的遷移（`/weights/${item.id}/edit`）の設計を完全に踏襲すること。
-    2. 一般ユーザー用のページであるため、パスは `app/(protected)/weights/page.tsx` に配置すること。
-    3. 初期ステートの型定義や GraphQL の Mutation 呼び出し（`CREATE_WEIGHT` / `DELETE_WEIGHT` / `GET_WEIGHTS`）は、生成された `@/frontend/generated/graphql` の最新の型（`CreateWeightMutation`等）に厳密に合わせること。
+    1. 既存の `NutrientAdminPage` の構造、Loading表示、テーブル一覧のレイアウト、および `useRouter` による動的遷移（`/{{DOMAIN_NAME_URL}}/${item.id}/edit`）の設計を完全に踏襲すること。
+    2. 一般ユーザー用のページであるため、パスは `app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx` に配置すること。
+    3. 初期ステートの型定義や GraphQL の Mutation 呼び出し（`CREATE_{{DOMAIN_NAME_UPPER}}` / `DELETE_{{DOMAIN_NAME_UPPER}}` / `GET_{{DOMAIN_NAME_UPPER}}`）は、生成された `@/frontend/generated/graphql` の最新の型（`Create{{DOMAIN_NAME}}Mutation`等）に厳密に合わせること。

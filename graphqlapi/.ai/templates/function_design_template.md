@@ -12,13 +12,8 @@ OpenCodeは各STEPを厳密に順を追って実行すること。
 - **必須ビジネスロジック・算出ルール**:
 {{BUSINESS_LOGIC_DETAILS}}
 
-## STEP 0 フロントの実装
-1. apiリクエストをmockして仮実装
-   - リクエスト部分は固定データで実際にリクエストを行わない形でfrontを実装する。
-   - 画面仕様: {{FRONTEND_UI_SPEC}}
-
-## STEP 1 resolverの実装 (mock)
-1. graphql用input用の型定義を作る (create, update系の処理のみ)
+## STEP 0 【API/型定義ファースト】バックエンドのResolver Mockと型生成
+1. graphql用input用の型定義を作る
    - 実装パス: `src/backend/infrastructure/graphql/inputs/{{OPERATION_TYPE}}{{DOMAIN_NAME}}Input.ts`
    - ✨ **リファレンスサンプル**: `src/backend/infrastructure/graphql/inputs/UpdateMealInput.ts`
 2. graphql用output用の型定義を作る
@@ -34,6 +29,14 @@ OpenCodeは各STEPを厳密に順を追って実行すること。
    - 実装パス: `src/backend/presentation/resolvers/__tests__/{{DOMAIN_NAME}}Resolver.spec.ts`
    - テスト実行コマンド:
      `docker compose run graphqlapi npm run test:single src/backend/presentation/resolvers/__tests__/{{DOMAIN_NAME}}Resolver.spec.ts`
+5. ✨ フロントエンド型定義の自動生成 (重要)
+   - 以下のコマンドを実行して、フロント用の型を生成する。
+     `yarn codegen`
+
+## STEP 1 フロントの実装
+1. STEP 0 で生成された `@/frontend/generated/graphql` の最新の型（例: `{{DOMAIN_NAME}}Query`）をインポートして、画面を実装する。
+2. 実際にリクエストを行い、STEP 0 で作ったMockデータが画面に表示されることを確認する。
+   - 画面仕様: {{FRONTEND_UI_SPEC}}
 
 ## STEP 2 frontとの繋ぎこみ
 1. STEP 0でモックした処理を廃止し、実際にgraphqlのエンドポイントにリクエストするように実装する。
