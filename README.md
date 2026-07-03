@@ -2,6 +2,7 @@
 - [GraphQLにおける認証・認可アーキテクチャ設計](graphqlapi/docs/graphql-auth-architecture.md)
 - [フロントエンドの認証・認可アーキテクチャ設計](graphqlapi/docs/frontend-auth-architecture.md)
 - [バックエンドにおけるデータマッピング・腐敗防止層（ACL）の設計規律](graphqlapi/docs/backend-data-mapping-architecture.md)
+- [GraphQL Code Generator を用いた型同期アーキテクチャ](graphqlapi/docs/graphql-codegen.md)
 
 
 # SETUP
@@ -30,12 +31,13 @@ DATABASE_URL=mysql://root:rootp@db:3306/health_development npx prisma generate
 - [x] 認証認可ロジック
 - [x] master系のCRUD機能
 - [x] 献立データ、グラフ表示機能
+- [x] フロントの状態管理
 - [ ] user情報のCRUD
-- [ ] フロントの状態管理
-- [ ] キャッシュ機構の導入
-- [ ] 分析機能(月単位の過不足)
-- [ ] レコメンデーション(月単位の過不足から最適なレシピを提案)
 - [ ] 体重、体脂肪情報(の推移), 運動情報の取り込み
+- [ ] 分析機能(月単位の過不足)
+- [ ] CausalImpactの導入(特定の食事を取らなかったら、もし運動しなかったら、どうなっていたかをsimulation)
+- [ ] レコメンデーション(月単位の過不足から最適なレシピを提案)
+- [ ] キャッシュ機構の導入
 - [ ] 血圧情報の取り込み
 
 

@@ -1,0 +1,9 @@
+以下のプロンプトをopencodeに渡す
+```
+.ai/templates/function_design_template.md
+に
+.ai/features/sample_show.yaml
+のデータを流し込んだものを
+.ai/instructions/
+配下にmd形式で出力してください(ファイル名は任意)
+```
