@@ -19,19 +19,20 @@ OpenCodeは各STEPを厳密に順を追って実行すること。
 2. graphql用output用の型定義を作る
    - 実装パス: `src/backend/infrastructure/graphql/types/{{DOMAIN_NAME}}.ts`
    - ✨ **リファレンスサンプル**: `src/backend/infrastructure/graphql/types/Meal.ts` の `Meal`
-
 3. resolverとメソッドを作る(mock)
    - 実装パス: `src/backend/presentation/resolvers/{{DOMAIN_NAME}}Resolver.ts`
    - ✨ **リファレンスサンプル**: `src/backend/presentation/resolvers/MealResolver.ts`
    - 仕様: 引数として上記Inputを受け取り、上記Outputのmockデータ(固定値)を返却する。
-
 4. testの実装と実行
    - 実装パス: `src/backend/presentation/resolvers/__tests__/{{DOMAIN_NAME}}Resolver.spec.ts`
    - テスト実行コマンド:
      `docker compose run graphqlapi npm run test:single src/backend/presentation/resolvers/__tests__/{{DOMAIN_NAME}}Resolver.spec.ts`
-5. ✨ フロントエンド型定義の自動生成 (重要)
-   - 以下のコマンドを実行して、フロント用の型を生成する。
-     `yarn codegen`
+5. resolverの一括export用配列への登録
+   - 実装パス: `src/backend/presentation/resolvers/index.ts`
+   - 処理内容: 作成した `{{DOMAIN_NAME}}Resolver` をimportし、一括export用配列 `resolvers` に追加する（※buildSchemaに渡されるため必須）。
+6. サーバーの再起動と型自動生成
+   - コマンド: `docker compose restart graphqlapi`
+   - コマンド: `yarn codegen` # docker経由ではないことに注意。フロント用の型 `@/frontend/generated/graphql` を最新化する。
 
 ## STEP 1 フロントの実装
 1. STEP 0 で生成された `@/frontend/generated/graphql` の最新の型（例: `{{DOMAIN_NAME}}Query`）をインポートして、画面を実装する。
@@ -64,9 +65,24 @@ OpenCodeは各STEPを厳密に順を追って実行すること。
 1. input ➔ Dto 変換および DomainEntity ➔ Output 変換を担うPresentationMapperを作る
    - 実装パス: `src/backend/acl/presentation_application/{{DOMAIN_NAME}}PresentationMapper.ts`
    - ✨ **リファレンスサンプル**: `src/backend/acl/presentation_application/MealPresentationMapper.ts`
-2. resolverの修正
-   - 固定値返却を削除し、上記Mapperと `I{{DOMAIN_NAME}}Service` を呼び出すように変更。
-3. testの修正と実行 (ResolverテストをServiceモック方式に修正)
+
+## STEP 4.5 【DI/インフラ登録】ServiceクラスをGraphqlContextおよびDIコンテナへ追加
+1. GraphqlContextのinterface修正
+   - 実装パス: `src/backend/application/types/context.ts`
+   - 処理内容: interface `GraphqlContext` に、今回追加するServiceプロパティを追加する。
+   - サンプル: `{{RESOLVER_METHOD_NAME}}Service?: I{{DOMAIN_NAME}}Service;` (※適切な型をimportすること)
+2. DIコンポーズ関数の作成
+   - 実装パス: `src/backend/application/services/adapters/PrismaAdapter.ts`
+   - 処理内容: `prismaClient` やリポジトリのインスタンスを組み立て、今回追加したServiceクラスのインスタンスを生成して返すメソッド `create{{DOMAIN_NAME}}Service()` を作成する。
+3. DIファクトリメソッドへの登録
+   - 実装パス: `src/backend/application/services/adapters/index.tsx`
+   - 処理内容: `getServicesFromContext()` 内で、`{{RESOLVER_METHOD_NAME}}Service` が未存在の場合に上記2の `create{{DOMAIN_NAME}}Service()` を呼び出してContextにDI・注入するロジックを実装する（既存の `createMealService()` などの実装を参照）。
+
+## STEP 4.8 Resolver本実装の結合
+1. resolverの修正
+   - 実装パス: `src/backend/presentation/resolvers/{{DOMAIN_NAME}}Resolver.ts`
+   - 処理内容: 固定値返却(Mock)を削除し、Contextから `{{RESOLVER_METHOD_NAME}}Service` を取得。PresentationMapperを用いて安全に呼び出すように本実装を行う。
+2. testの修正と実行 (ResolverテストをServiceモック方式に修正)
 
 ## STEP 5 repositoryクラスのmock実装
 1. repositoryInput型の型定義を実装: `src/backend/domain/entities/{{DOMAIN_NAME}}.ts` (※Meal.tsのInput構造を参照)

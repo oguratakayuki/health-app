@@ -1,4 +1,4 @@
-# 💡 基本となる変数を定義（ここを書き換えるだけで下部にも自動反映される）
+# 💡 基本となる変数を定義
 DOMAIN_NAME: "UserProfile"
 DOMAIN_NAME_LOWER: "user_profile"
 DOMAIN_NAME_URL: "user-profiles"
@@ -43,7 +43,6 @@ FRONTEND_UI_SPEC:
       display_type: "text"
       suffix: " 歳"
 
-  # 💡 長文の中でも {{ }} を使って安全に使い回しができるようになります
   implementation_notes: |
     1. 既存の `NutrientAdminPage` の構造、Loading表示、テーブル一覧のレイアウト、および `useRouter` による動的遷移（`/{{DOMAIN_NAME_URL}}/${item.id}/edit`）の設計を完全に踏襲すること。
     2. 一般ユーザー用のページであるため、パスは `app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx` に配置すること。
