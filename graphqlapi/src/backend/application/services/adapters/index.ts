@@ -8,6 +8,7 @@ import { UserService } from "../UserService";
 import { IngredientNutrientService } from "../IngredientNutrientService";
 import { MealService } from "../MealService";
 import { CalculateDailyNutritionUseCase } from "../../usecases/CalculateDailyNutritionUseCase";
+import { UserProfileService } from "../UserProfileService";
 import {
   createPrismaDishService,
   createPrismaNutrientService,
@@ -18,6 +19,7 @@ import {
   createNutrientsIntakeStandardService,
   createCalculateDailyNutritionUseCase,
   createPrismaMealService,
+  createUserProfileService,
 } from "./PrismaAdapter";
 /**
  * サービスファクトリー
@@ -86,7 +88,17 @@ export class ServiceFactory {
     }
     return createPrismaMealService();
   }
-  // ヘルパーメソッド: コンテキストからすべてのサービスを取得
+
+  static createUserProfileService(context?: any): UserProfileService {
+    if (context?.userProfileService) {
+      return context.userProfileService;
+    }
+    return createUserProfileService();
+  }
+
+  // GraphQLコンテキストへ注入（DI）するための、
+  // 各種ビジネスロジック（Service/UseCase）の初期化と
+  // シングルトン管理（キャッシュ）を行うファクトリーメソッド
   static getServicesFromContext(context?: any) {
     return {
       dishService: context?.dishService || this.createDishService(context),
@@ -107,6 +119,8 @@ export class ServiceFactory {
         context?.calculateDailyNutritionUseCase ||
         this.createCalculateDailyNutritionUseCase(context),
       mealService: context?.mealService || this.createMealService(context),
+      userProfileService:
+        context?.userProfileService || this.createUserProfileService(context),
     };
   }
   static setUsePrisma(usePrisma: boolean) {

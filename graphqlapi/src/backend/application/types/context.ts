@@ -8,7 +8,7 @@ import { UserService } from "@/backend/application/services/UserService";
 import { IngredientNutrientService } from "@/backend/application/services/IngredientNutrientService";
 import { MealService } from "@/backend/application/services/MealService";
 import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
- 
+import { UserProfileService } from "@/backend/application/services/UserProfileService";
 export interface GraphQLContext {
   user?: {
     id: string;
@@ -29,5 +29,6 @@ export interface GraphQLContext {
   // 後方互換性のためのPrismaクライアント
   prisma?: any;
   calculateDailyNutritionUseCase?: CalculateDailyNutritionUseCase;
+  userProfileService?: UserProfileService;
 }
 

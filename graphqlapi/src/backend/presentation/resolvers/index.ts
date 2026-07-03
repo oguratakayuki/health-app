@@ -8,10 +8,11 @@ import { UserResolver } from "./UserResolver";
 // import { AuthResolver } from "./AuthResolver";
 import { MeResolver } from "./MeResolver";
 import { DishResolver } from "./DishResolver";
-// import { DishIngredientResolver } from "./DishIngredientResolver";
+// import { DishIngredientResolver } from "./IngredientTagResolver";
 import { NutrientResolver } from "./NutrientResolver";
 import { NutrientsIntakeStandardResolver } from "./NutrientsIntakeStandardResolver";
 import { MealResolver } from "./MealResolver";
+import { UserProfileResolver } from "./UserProfileResolver";
 
 export const resolvers = [
   IngredientResolver,
@@ -29,4 +30,6 @@ export const resolvers = [
   NutrientResolver,
   NutrientsIntakeStandardResolver,
   MealResolver,
+  UserProfileResolver,
 ] as const;
+
