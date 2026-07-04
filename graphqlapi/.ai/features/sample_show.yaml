@@ -20,7 +20,21 @@ BUSINESS_LOGIC_DETAILS: |
   2. 対象のユーザープロフィールが存在しない場合は、NotFoundエラーを返却すること。
 
 FRONTEND_UI_SPEC:
-  target_path: "app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx"
+  target_crud_structure: |
+    app/(protected)/{{DOMAIN_NAME_URL}}/
+    ├── [id]
+    │   ├── edit
+    │   │   ├── {{DOMAIN_NAME}}Form.tsx  # 編集用サブコンポーネント
+    │   │   └── page.tsx                 # 編集画面
+    │   └── page.tsx                     # 詳細画面 (※今回のターゲット)
+    ├── create
+    │   └── page.tsx                     # 新規作成画面
+    └── page.tsx                         # 一覧画面
+  target_path_mapping:
+    List: "app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx"
+    Create: "app/(protected)/{{DOMAIN_NAME_URL}}/create/page.tsx"
+    Show: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/page.tsx"
+    Edit: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/edit/page.tsx"
   design_base_file: "app/(protected)/(admin)/nutrients/page.tsx"
   theme:
     color_scale: "blue (focus:ring-blue-500, bg-blue-100, text-blue-600, bg-blue-600, hover:bg-blue-700)"

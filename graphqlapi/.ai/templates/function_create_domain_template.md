@@ -7,6 +7,22 @@ OpenCodeは各STEPを厳密に順を追って実行すること。
 
 - **対象ドメイン / 操作**: `{{DOMAIN_NAME}}` に対する `{{OPERATION_TYPE}}` 処理
 - **データソース（スキーマ参照元）**: `{{SCHEMA_REFERENCE}}`
+
+
+- **フロントエンドCRUD配置規約（全体構造）**:
+{{FRONTEND_UI_SPEC.target_crud_structure}}
+
+- **🚨 今回のフロントエンド実装対象パス（確定出力ルール）**:
+  <!-- 
+  【OpenCodeへの指示】
+  指示書（Markdown）を最終出力する際は、以下のマッピング表から `OPERATION_TYPE`（今回は "{{OPERATION_TYPE}}"）に合致するパスを1つ抽出し、`{{DOMAIN_NAME_URL}}` などの変数をすべて実値に置換した「確定パス」のみをここに記載すること。
+  [マッピング表]
+  - List   -> app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx
+  - Create -> app/(protected)/{{DOMAIN_NAME_URL}}/create/page.tsx
+  - Show   -> app/(protected)/{{DOMAIN_NAME_URL}}/[id]/page.tsx
+  - Edit   -> app/(protected)/{{DOMAIN_NAME_URL}}/[id]/edit/page.tsx
+  -->
+  `app/(protected)/{{DOMAIN_NAME_URL}}/[id]/page.tsx` (※Showに対応するパスに確定して出力すること)
 - **フロントエンド表示・処理項目**:
 {{FRONTEND_FIELDS_SPEC}}
 - **必須ビジネスロジック・算出ルール**:
