@@ -1,11 +1,19 @@
 (以下のプロンプトをopencodeに渡す)
 
-以下のテンプレートファイルにYAMLのデータを流し込み、私がそのまま実行可能な詳細指示書（Markdown）を完成させてください。
+以下のYAMLデータを解析し、今回の要件に合致する「いずれか1つのテンプレート」を選択して、私がそのまま実行可能な詳細指示書（Markdown）を完成させてください。
 
-- テンプレート: .ai/templates/function_design_template.md
+【入力データ】
 - データソース: .ai/features/sample_show.yaml
 
-【特に注意して処理するポイント】
-1. テンプレート内の {{DOMAIN_NAME}} などの変数（マスタッシュタグ）は、すべてYAMLの該当する値に置換してください。
-2. 「🚨 今回のフロントエンド実装対象パス（確定出力ルール）」のセクションでは、YAMLの `OPERATION_TYPE: "Show"` と `target_path_mapping` を照合し、変数を実値に置換した確定パス（app/(protected)/user-profiles/[id]/page.tsx）のみを残して出力してください。
-3. 完成した指示書は、.ai/instructions/ 配下に適切なファイル名（例: user_profile_show_instruction.md）で新規出力（保存）してください。
+【選択対象テンプレート（いずれか1つ）】
+1. ドメイン（機能群）を完全に新規で作成する場合:
+   .ai/templates/function_create_domain_template.md
+2. 既存のドメイン（既存ファイル）に対してメソッドや画面を追加・拡張する場合:
+   .ai/templates/function_extend_domain_template.md
+
+【OpenCodeへの指示・処理ルール】
+1. 今回追加するドメイン（UserProfile）が既存のプロジェクトに既に存在するかを判断し、適切な方のテンプレートを1つ選択してください。（※既存拡張の可能性が高い場合はテンプレート2を選択すること）
+2. 選択したテンプレート内の `{{変数名}}`（マスタッシュタグ）は、すべてYAMLの該当する実値に置換してください。
+3. YAML内のオブジェクト形式のデータ（FRONTEND_UI_SPEC など）は、テキストやツリー構造として綺麗に展開して流し込んでください。
+4. 「🚨 今回のフロントエンド実装対象パス（確定出力ルール）」のセクションは、マッピング表のコメントを削除し、変数置換済みの確定パス（app/(protected)/user-profiles/[id]/page.tsx）のみを綺麗に残してください。
+5. 完成した指示書は、.ai/instructions/ 配下に適切なファイル名（例: user_profile_show_instruction.md）で新規に出力（保存）してください。
