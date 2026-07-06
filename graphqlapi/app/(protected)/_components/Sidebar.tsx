@@ -29,6 +29,7 @@ const menuItems = [
   { text: "ダッシュボード", icon: <Dashboard />, path: "/dashboard" },
   { text: "献立", icon: <Restaurant />, path: "/meals" },
   { text: "ユーザー情報", icon: <Person />, path: "/user" },
+  { text: "プロフィール", icon: <Person />, path: "/user-profiles" },
   { text: "統計情報", icon: <Restaurant />, path: "/daily-nutrition" },
 ];
 

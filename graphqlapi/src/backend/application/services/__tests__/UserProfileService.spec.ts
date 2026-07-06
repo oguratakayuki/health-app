@@ -10,6 +10,7 @@ describe("UserProfileService", () => {
   beforeEach(() => {
     mockRepo = {
       findByUserId: vi.fn(),
+      update: vi.fn(),
     };
     service = new UserProfileService(mockRepo);
   });
@@ -43,5 +44,29 @@ describe("UserProfileService", () => {
     const birthday = new Date("1990-01-01");
     const age = service.calculateAge(birthday);
     expect(age).toBeGreaterThanOrEqual(34); // 2024/2025年基準
+  });
+
+  it("should return mock profile when editUserProfile is called", async () => {
+    const dto = {
+      id: 1,
+      gender: "Female",
+      height: 165,
+      birthday: "1995-01-01",
+    };
+    const mockEntity = {
+      id: 1,
+      userId: 100,
+      gender: "Female",
+      height: 165,
+      birthday: new Date("1995-01-01"),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    mockRepo.update.mockResolvedValue(mockEntity);
+
+    const result = await service.editUserProfile(dto);
+
+    expect(result?.id).toBe(1);
+    expect(result?.gender).toBe("Female");
   });
 });

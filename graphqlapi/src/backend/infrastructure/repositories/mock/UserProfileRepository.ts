@@ -30,4 +30,17 @@ export class MockUserProfileRepository implements IUserProfileRepository {
     this.profiles.set(profile.id, profile);
     return profile;
   }
+
+  async update(id: number, input: Partial<UserProfileRepositoryInput>): Promise<UserProfile | null> {
+    const existing = this.profiles.get(id);
+    if (!existing) return null;
+
+    const updated = {
+      ...existing,
+      ...input,
+      updatedAt: new Date(),
+    };
+    this.profiles.set(id, updated);
+    return updated;
+  }
 }

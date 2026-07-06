@@ -28,10 +28,23 @@ export class UserProfileRepository implements IUserProfileRepository {
       update: data,
       create: {
         ...data,
-        // upsert時にIDを明示的に指定したい場合は、Prismaのモデル定義に依存するが、
-        // 通常はuserIdでユニークなのでそこをキーにするか、既存IDがあれば更新とする。
       },
     });
     return UserProfileRepositoryMapper.mapToDomain(saved);
+  }
+
+  async update(id: number, input: Partial<UserProfileRepositoryInput>): Promise<UserProfile | null> {
+    const prismaData = UserProfileRepositoryMapper.mapToPrismaUpdate(input);
+    if (Object.keys(prismaData).length === 0) return this.findById(id);
+
+    try {
+      const updated = await this.prisma.userProfile.update({
+        where: { id },
+        data: prismaData,
+      });
+      return UserProfileRepositoryMapper.mapToDomain(updated);
+    } catch (error) {
+      return null;
+    }
   }
 }
