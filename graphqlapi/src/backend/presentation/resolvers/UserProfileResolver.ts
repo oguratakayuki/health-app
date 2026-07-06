@@ -18,11 +18,10 @@ export class UserProfileResolver {
   @Query(() => UserProfile, { nullable: true, name: "userProfile" })
   async userProfile(
     @Ctx() ctx: GraphQLContext,
-    @Arg("input", { nullable: true }) input?: ShowUserProfileInput,
   ): Promise<UserProfile | null> {
     try {
       const service = this.getUserProfileService(ctx);
-      const dto = UserProfilePresentationMapper.toServiceDto(ctx.user!.id, input!);
+      const dto = UserProfilePresentationMapper.toServiceDto(ctx.user!.id);
       const entity = await service.getUserProfile(dto);
       if (!entity) return null;
       return UserProfilePresentationMapper.toGraphQLType(entity);

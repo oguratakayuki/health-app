@@ -11,8 +11,7 @@ export class UserProfileService implements IUserProfileService {
 
   async getUserProfile(dto: ShowUserProfileDto): Promise<UserProfile | null> {
     try {
-      const userId = parseInt(dto.userId);
-      const profile = await this.userProfileRepository.findByUserId(userId);
+      const profile = await this.userProfileRepository.findByUserId(dto.userId);
 
       if (!profile) {
         throw new Error("UserProfileNotFound");

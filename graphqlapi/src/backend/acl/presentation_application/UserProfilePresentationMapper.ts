@@ -7,9 +7,9 @@ import { EditUserProfileInput } from "@/backend/infrastructure/graphql/inputs/Ed
 
 export class UserProfilePresentationMapper {
   // 【上り】Presentation（GraphQL入力） ➔ Application（UseCase DTO）
-  static toServiceDto(userId: string, input: ShowUserProfileInput): ShowUserProfileDto {
+  static toServiceDto(userId: string): ShowUserProfileDto {
     return {
-      userId: userId,
+      userId: parseInt(userId),
     };
   }
 

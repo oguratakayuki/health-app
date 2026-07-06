@@ -27,7 +27,7 @@ describe("UserProfileService", () => {
     };
     mockRepo.findByUserId.mockResolvedValue(mockEntity);
 
-    const dto: ShowUserProfileDto = { userId: "100" };
+    const dto: ShowUserProfileDto = { id: 100 };
     const result = await service.getUserProfile(dto);
     
     expect(result).toEqual(mockEntity);
@@ -36,7 +36,7 @@ describe("UserProfileService", () => {
   it("should throw error when user profile does not exist", async () => {
     mockRepo.findByUserId.mockResolvedValue(null);
 
-    const dto: ShowUserProfileDto = { userId: "999" };
+    const dto: ShowUserProfileDto = { id: 999 };
     await expect(service.getUserProfile(dto)).rejects.toThrow("対象のユーザープロフィールが存在しません。");
   });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@apollo/client";
 import { Scale } from "lucide-react";
 import UserProfileForm from "./UserProfileForm";
@@ -10,42 +10,39 @@ import {
   EditUserProfileMutationVariables 
 } from "@/frontend/generated/graphql";
 
-// 型定義をここに配置（実際には別ファイルに切り出すべきだが、まずは動作確認優先）
 export interface UserProfileFormValues {
   gender?: string;
   height?: number;
   birthday?: string;
 }
 
-interface EditUserProfilePageProps {
-  params: { id: string };
-}
+const formatDateToYYYYMMDD = (dateValue: any) => {
+  if (!dateValue) return "";
+  const date = new Date(dateValue);
+  if (isNaN(date.getTime())) return "";
+  return date.toISOString().split("T")[0];
+};
 
 import { 
   GET_USER_PROFILE, 
   EDIT_USER_PROFILE 
 } from "@/frontend/graphql/queries/user_profile";
 
-export default function UserProfileEditPage({ params }: EditUserProfilePageProps) {
+export default function UserProfileEditPage() {
   const router = useRouter();
-  const { id } = params;
   const [isSaving, setIsSaving] = useState(false);
 
-  // 1. 現データの取得 (詳細画面からの遷移を想定し、ここでは簡易的に実装)
   const { data: profileData, loading: loadingProfile } = useQuery<{
-    userProfile: { gender?: string; height?: number; birthday?: string }
-  }>(GET_USER_PROFILE, {
-    variables: { id },
-  });
+    userProfile: { gender?: string; height?: number; birthday?: string, id: number }
+  }>(GET_USER_PROFILE);
 
-  // 2. 更新処理のミューテーション
   const [editUserProfile] = useMutation<
     EditUserProfileMutation,
     EditUserProfileMutationVariables
   >(EDIT_USER_PROFILE);
 
   const handleCancel = () => {
-    router.push(`/user-profiles/${id}`);
+    router.push(`/user-profiles`);
   };
 
   const handleSubmit = async (data: UserProfileFormValues) => {
@@ -54,7 +51,7 @@ export default function UserProfileEditPage({ params }: EditUserProfilePageProps
       await editUserProfile({
         variables: {
           input: {
-            id: parseInt(id),
+            id: profileData?.userProfile?.id ?? 0,
             gender: data.gender,
             height: data.height,
             birthday: data.birthday,
@@ -62,7 +59,7 @@ export default function UserProfileEditPage({ params }: EditUserProfilePageProps
         },
       });
       alert("保存しました");
-      router.push(`/user-profiles/${id}`);
+      router.push(`/user-profiles`);
     } catch (error) {
       console.error(error);
       alert("保存に失敗しました");
@@ -93,7 +90,7 @@ export default function UserProfileEditPage({ params }: EditUserProfilePageProps
           initialData={{
             gender: profileData?.userProfile?.gender,
             height: profileData?.userProfile?.height,
-            birthday: profileData?.userProfile?.birthday?.toString(),
+            birthday: formatDateToYYYYMMDD(profileData?.userProfile?.birthday),
           }}
           onSubmit={handleSubmit}
           onCancel={handleCancel}

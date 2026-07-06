@@ -1,3 +1,3 @@
 export interface ShowUserProfileDto {
-  userId: string;
+  userId: number;
 }
