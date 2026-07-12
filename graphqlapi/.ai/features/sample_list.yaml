@@ -1,0 +1,68 @@
+# 💡 基本となる変数を定義
+DOMAIN_NAME: "BodyComposition"
+DOMAIN_NAME_LOWER: "body_composition"
+DOMAIN_NAME_URL: "body-compositions"
+DOMAIN_NAME_UPPER: "BODY_COMPOSITION"
+FUNCTION_NAME: "体組成計測履歴一覧表示"
+OPERATION_TYPE: "List"
+RESOLVER_METHOD_NAME: "bodyCompositions"
+
+SCHEMA_REFERENCE: "prisma/schema.prisma 内の `{{DOMAIN_NAME}}` モデルを参照すること"
+
+FRONTEND_FIELDS_SPEC: |
+  - 計測日時: `measured_at` (降順ソートで表示)
+  - 体重: `weight` (kg)
+  - BMI: `bmi`
+  - 体脂肪率: `body_fat_percentage` (%)
+  - 骨格筋率: `skeletal_muscle_percentage` (%)
+
+BUSINESS_LOGIC_DETAILS: |
+  1. ログインユーザー（`user_id`）に紐づく計測データを、計測日時（`measured_at`）の降順（新しい順）で取得すること。
+  2. CSVからの大量インポートを想定し、パフォーマンス低下を防ぐためのペジネーション（または最新N件の取得制限）の考慮を入れること。
+
+FRONTEND_UI_SPEC:
+  target_crud_structure: |
+    app/(protected)/{{DOMAIN_NAME_URL}}/
+    ├── [id]
+    │   ├── edit
+    │   │   ├── {{DOMAIN_NAME}}Form.tsx
+    │   │   └── page.tsx
+    │   └── page.tsx
+    ├── create
+    │   └── page.tsx
+    └── page.tsx                         # 一覧画面 (※今回のターゲット)
+  target_path_mapping:
+    List: "app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx"
+    Create: "app/(protected)/{{DOMAIN_NAME_URL}}/create/page.tsx"
+    Show: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/page.tsx"
+    Edit: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/edit/page.tsx"
+  design_base_file: "app/(protected)/(admin)/nutrients/page.tsx"
+  theme:
+    color_scale: "emerald (focus:ring-emerald-500, bg-emerald-100, text-emerald-600, bg-emerald-600, hover:bg-emerald-700)"
+    icon: "Activity" # 健康・体組成データに合わせたインジケータアイコン
+  page_title: "体組成・体重計測履歴"
+  display_fields:
+    - label: "計測日時"
+      db_field: "measured_at"
+      display_type: "datetime"
+    - label: "体重"
+      db_field: "weight"
+      display_type: "number"
+      suffix: " kg"
+    - label: "BMI"
+      db_field: "bmi"
+      display_type: "number"
+    - label: "体脂肪率"
+      db_field: "body_fat_percentage"
+      display_type: "number"
+      suffix: " %"
+    - label: "骨格筋率"
+      db_field: "skeletal_muscle_percentage"
+      display_type: "number"
+      suffix: " %"
+
+  implementation_notes: |
+    1. 既存の `NutrientAdminPage` の構造、Loading表示、テーブル一覧のレイアウトを完全に踏襲すること。
+    2. ターゲットパスに配置し、テーブルの各行をクリックした際は詳細画面（`/{{DOMAIN_NAME_URL}}/${item.id}`）へ動的遷移する設計にすること。
+    3. 初期ステートの型定義や GraphQL の Query 呼び出し（`GET_{{DOMAIN_NAME_UPPER}}S`）は、生成された `@/frontend/generated/graphql` の最新の型（`Get{{DOMAIN_NAME}}sQuery`等）に厳密に合わせること。
+    4. 今後、画面上部に「CSVインポート」のボタンやフォームを配置する拡張性（レイアウト上のスペース）を考慮して、ヘッダー右側のトグルやボタンの配置を設計すること。

@@ -16,6 +16,10 @@ import { UserRepository } from "@/backend/infrastructure/repositories/prisma/Use
 import { UserProfileRepository } from "@/backend/infrastructure/repositories/prisma/UserProfileRepository";
 import { MealRepository } from "@/backend/infrastructure/repositories/prisma/MealRepository";
 import { MealDishRepository } from "@/backend/infrastructure/repositories/prisma/MealDishRepository";
+import { BodyCompositionRepository } from "@/backend/infrastructure/repositories/prisma/BodyCompositionRepository";
+import { BodyCompositionService } from "../BodyCompositionService";
+
+// ... (existing imports)
 import { PrismaClient } from "@prisma/client";
 import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
 import { DailyNutritionQueryService } from "@/backend/application/services/DailyNutritionQueryService";
@@ -139,6 +143,12 @@ export function createUserProfileService(): UserProfileService {
   const prisma = getPrismaClient();
   const repository = new UserProfileRepository(prisma);
   return new UserProfileService(repository);
+}
+
+export function createBodyCompositionService(): BodyCompositionService {
+  const prisma = getPrismaClient();
+  const repository = new BodyCompositionRepository(prisma);
+  return new BodyCompositionService(repository);
 }
 
 export function cleanupPrisma() {

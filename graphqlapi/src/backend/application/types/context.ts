@@ -9,6 +9,7 @@ import { IngredientNutrientService } from "@/backend/application/services/Ingred
 import { MealService } from "@/backend/application/services/MealService";
 import { CalculateDailyNutritionUseCase } from "@/backend/application/usecases/CalculateDailyNutritionUseCase";
 import { UserProfileService } from "@/backend/application/services/UserProfileService";
+import { BodyCompositionService } from "@/backend/application/services/BodyCompositionService";
 export interface GraphQLContext {
   user?: {
     id: string;
@@ -30,5 +31,6 @@ export interface GraphQLContext {
   prisma?: any;
   calculateDailyNutritionUseCase?: CalculateDailyNutritionUseCase;
   userProfileService?: UserProfileService;
+  bodyCompositionService?: BodyCompositionService;
 }
 

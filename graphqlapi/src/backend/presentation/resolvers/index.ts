@@ -13,6 +13,7 @@ import { NutrientResolver } from "./NutrientResolver";
 import { NutrientsIntakeStandardResolver } from "./NutrientsIntakeStandardResolver";
 import { MealResolver } from "./MealResolver";
 import { UserProfileResolver } from "./UserProfileResolver";
+import { BodyCompositionResolver } from "./BodyCompositionResolver";
 
 export const resolvers = [
   IngredientResolver,
@@ -31,5 +32,6 @@ export const resolvers = [
   NutrientsIntakeStandardResolver,
   MealResolver,
   UserProfileResolver,
+  BodyCompositionResolver,
 ] as const;
 
