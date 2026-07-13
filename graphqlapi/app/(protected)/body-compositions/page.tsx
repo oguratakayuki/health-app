@@ -9,7 +9,7 @@ import {
   GetBodyCompositionsQuery,
 } from "@/frontend/generated/graphql";
 import { useRouter } from "next/navigation";
-import { Edit2, Activity } from "lucide-react";
+import { Edit2, Activity, Eye } from "lucide-react";
 
 export default function BodyCompositionListPage() {
   const router = useRouter();
@@ -36,7 +36,6 @@ export default function BodyCompositionListPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">体組成・体重計測履歴</h1>
         </div>
-        
         {/* 将来的なCSVインポートボタン用のスペース */}
         <div className="flex gap-2">
           {/* <button className="...">CSVインポート</button> */}
@@ -77,18 +76,29 @@ export default function BodyCompositionListPage() {
                   <td className="px-4 py-3 text-sm text-gray-600">{item.bmi}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">{item.bodyFatPercentage}%</td>
                   <td className="px-4 py-3 text-sm text-gray-600">{item.skeletalMusclePercentage}%</td>
-                  <td className="px-4 py-3 text-right">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/body-compositions/${item.id}/edit`);
-                      }}
-                      className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition"
-                      title="編集"
-                    >
-                      <Edit2 className="w-5 h-5" />
-                    </button>
-                  </td>
+                   <td className="px-4 py-3 text-right flex justify-end gap-2">
+                     <button 
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         router.push(`/body-compositions/${item.id}`);
+                       }}
+                       className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition"
+                       title="詳細"
+                     >
+                       <Eye className="w-5 h-5" />
+                     </button>
+                     <button 
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         router.push(`/body-compositions/${item.id}/edit`);
+                       }}
+                       className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition"
+                       title="編集"
+                     >
+                       <Edit2 className="w-5 h-5" />
+                     </button>
+                   </td>
+
                 </tr>
               ))
             )}

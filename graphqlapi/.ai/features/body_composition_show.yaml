@@ -1,0 +1,95 @@
+# 💡 基本となる変数を定義
+DOMAIN_NAME: "BodyComposition"
+DOMAIN_NAME_LOWER: "body_composition"
+DOMAIN_NAME_URL: "body-compositions"
+DOMAIN_NAME_UPPER: "BODY_COMPOSITION"
+FUNCTION_NAME: "体組成計測詳細表示"
+OPERATION_TYPE: "Show"
+RESOLVER_METHOD_NAME: "bodyComposition"
+
+SCHEMA_REFERENCE: "prisma/schema.prisma 内の `{{DOMAIN_NAME}}` モデルを参照すること"
+
+FRONTEND_FIELDS_SPEC: |
+  - 基本指標: `measured_at`, `weight`, `bmi`
+  - 脂肪データ: `body_fat_percentage`, `body_fat_mass`, `subcutaneous_fat_percentage`, `visceral_fat_level`
+  - 筋肉・骨・代謝: `skeletal_muscle_percentage`, `skeletal_muscle_mass`, `ffmi`, `bone_mass`, `basal_metabolism`
+
+BUSINESS_LOGIC_DETAILS: |
+  1. 対象の体組成計測レコードが存在しない場合は、NotFoundエラーを返却すること。
+  2. 取得するデータは、ログインユーザー（`user_id`）本人のレコードであるかどうかの認可チェックを行うこと。
+
+FRONTEND_UI_SPEC:
+  target_crud_structure: |
+    app/(protected)/{{DOMAIN_NAME_URL}}/
+    ├── [id]
+    │   ├── edit
+    │   │   ├── {{DOMAIN_NAME}}Form.tsx
+    │   │   └── page.tsx
+    │   └── page.tsx                     # 詳細画面 (※今回のターゲット)
+    ├── create
+    │   └── page.tsx
+    └── page.tsx
+  target_path_mapping:
+    List: "app/(protected)/{{DOMAIN_NAME_URL}}/page.tsx"
+    Create: "app/(protected)/{{DOMAIN_NAME_URL}}/create/page.tsx"
+    Show: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/page.tsx"
+    Edit: "app/(protected)/{{DOMAIN_NAME_URL}}/[id]/edit/page.tsx"
+  design_base_file: "app/(protected)/(admin)/nutrients/page.tsx"
+  theme:
+    color_scale: "emerald (focus:ring-emerald-500, bg-emerald-100, text-emerald-600, bg-emerald-600, hover:bg-emerald-700)"
+    icon: "Activity"
+  page_title: "体組成計測詳細"
+  display_fields:
+    # --- 基本情報 ---
+    - label: "計測日時"
+      db_field: "measured_at"
+      display_type: "datetime"
+    - label: "体重"
+      db_field: "weight"
+      display_type: "number"
+      suffix: " kg"
+    - label: "BMI"
+      db_field: "bmi"
+      display_type: "number"
+    # --- 脂肪関連 ---
+    - label: "体脂肪率"
+      db_field: "body_fat_percentage"
+      display_type: "number"
+      suffix: " %"
+    - label: "体脂肪量"
+      db_field: "body_fat_mass"
+      display_type: "number"
+      suffix: " kg"
+    - label: "皮下脂肪率"
+      db_field: "subcutaneous_fat_percentage"
+      display_type: "number"
+      suffix: " %"
+    - label: "内臓脂肪レベル"
+      db_field: "visceral_fat_level"
+      display_type: "integer"
+    # --- 筋肉・骨・その他 ---
+    - label: "骨格筋率"
+      db_field: "skeletal_muscle_percentage"
+      display_type: "number"
+      suffix: " %"
+    - label: "骨格筋量"
+      db_field: "skeletal_muscle_mass"
+      display_type: "number"
+      suffix: " kg"
+    - label: "FFMI（除脂肪量指数）"
+      db_field: "ffmi"
+      display_type: "number"
+    - label: "骨量"
+      db_field: "bone_mass"
+      display_type: "number"
+      suffix: " kg"
+    - label: "基礎代謝量"
+      db_field: "basal_metabolism"
+      display_type: "integer"
+      suffix: " kcal"
+
+  implementation_notes: |
+    1. 既存の `NutrientAdminPage` などのレイアウトをベースにしつつ、詳細画面として見やすく整理された2カラムのカードグリッド等のUI構成にすること。
+    2. ターゲットパスに配置し、URLパラメータから `id` を取得して GraphQL の `GET_{{DOMAIN_NAME_UPPER}}` Queryを呼び出すこと。
+    3. ヘッダー付近に「一覧に戻る」ボタン、および本データの編集画面（`/{{DOMAIN_NAME_URL}}/${id}/edit`）へ遷移する「編集する」ボタンを配置すること。
+    4. 型定義は生成された `@/frontend/generated/graphql` の最新の型（`Get{{DOMAIN_NAME}}Query`等）を厳密に使用すること。

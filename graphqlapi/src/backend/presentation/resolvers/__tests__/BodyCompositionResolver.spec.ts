@@ -24,6 +24,24 @@ describe("BodyCompositionResolver", () => {
           updatedAt: new Date(),
         } as any,
       ]),
+      showBodyComposition: vi.fn().mockResolvedValue({
+        id: "1",
+        userId: "user-123",
+        weight: 70.5,
+        bmi: 22.1,
+        bodyFatPercentage: 18.5,
+        bodyFatMass: 13.0,
+        subcutaneousFatPercentage: 12.0,
+        visceralFatLevel: 5,
+        skeletalMusclePercentage: 45.0,
+        skeletalMuscleMass: 31.5,
+        ffmi: 21.0,
+        boneMass: 3.2,
+        basalMetabolism: 1600,
+        measuredAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
     };
     mockCtx = {
       user: { id: "user-123" },
@@ -36,6 +54,14 @@ describe("BodyCompositionResolver", () => {
     expect(mockService.listBodyCompositions).toHaveBeenCalled();
     expect(result.length).toBe(1);
     expect(result[0].weight).toBe(70);
+  });
+
+  it("should return a single body composition", async () => {
+    const input = { id: 1 };
+    const result = await resolver.bodyComposition(input, mockCtx as GraphQLContext);
+    expect(result).not.toBeNull();
+    expect(result?.id).toBe("1");
+    expect(result?.weight).toBe(70.5);
   });
 
   it("should return a list of body compositions", async () => {

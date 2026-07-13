@@ -15,3 +15,27 @@ export const GET_BODY_COMPOSITIONS = gql`
     }
   }
 `;
+
+export const GET_BODY_COMPOSITION = gql`
+  query GetBodyComposition($input: ShowBodyCompositionInput!) {
+    bodyComposition(input: $input) {
+      id
+      userId
+      measuredAt
+      weight
+      bmi
+      bodyFatPercentage
+      bodyFatMass
+      subcutaneousFatPercentage
+      visceralFatLevel
+      skeletalMusclePercentage
+      skeletalMuscleMass
+      ffmi
+      boneMass
+      basalMetabolism
+      createdAt
+      updatedAt
+    }
+  }
+`;
+

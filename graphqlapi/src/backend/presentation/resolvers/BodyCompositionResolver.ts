@@ -1,6 +1,7 @@
 import { Query, Resolver, Arg, Ctx } from "type-graphql";
 import { BodyComposition } from "@/backend/infrastructure/graphql/types/BodyComposition";
 import { ListBodyCompositionInput } from "@/backend/infrastructure/graphql/inputs/ListBodyCompositionInput";
+import { ShowBodyCompositionInput } from "@/backend/infrastructure/graphql/inputs/ShowBodyCompositionInput";
 import type { GraphQLContext } from "@/backend/application/types/context";
 import { Authorized } from "@/backend/application/auth/decorators";
 import { BodyCompositionService } from "@/backend/application/services/BodyCompositionService";
@@ -32,6 +33,26 @@ export class BodyCompositionResolver {
     } catch (error) {
       console.error(`Error in bodyCompositions query: ${error}`);
       throw new Error("Failed to fetch body compositions");
+    }
+  }
+
+  @Query(() => BodyComposition, { nullable: true, name: "bodyComposition" })
+  @Authorized()
+  async bodyComposition(
+    @Arg("input") input: ShowBodyCompositionInput,
+    @Ctx() ctx: GraphQLContext,
+  ): Promise<BodyComposition | null> {
+    try {
+      const service = this.getBodyCompositionService(ctx);
+      const dto = {
+        id: input.id,
+        userId: ctx.user!.id,
+      };
+      const entity = await service.showBodyComposition(dto);
+      return entity ? BodyCompositionPresentationMapper.toGraphQLType(entity) : null;
+    } catch (error) {
+      console.error(`Error in bodyComposition query: ${error}`);
+      throw new Error("体組成計測データの取得に失敗しました。");
     }
   }
 }

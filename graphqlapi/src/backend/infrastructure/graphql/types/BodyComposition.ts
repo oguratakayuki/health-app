@@ -21,7 +21,28 @@ export class BodyComposition {
   bodyFatPercentage!: number;
 
   @Field()
+  bodyFatMass!: number;
+
+  @Field()
+  subcutaneousFatPercentage!: number;
+
+  @Field()
+  visceralFatLevel!: number;
+
+  @Field()
   skeletalMusclePercentage!: number;
+
+  @Field()
+  skeletalMuscleMass!: number;
+
+  @Field()
+  ffmi!: number;
+
+  @Field()
+  boneMass!: number;
+
+  @Field()
+  basalMetabolism!: number;
 
   @Field()
   createdAt!: Date;
