@@ -16,3 +16,18 @@ export interface BodyComposition {
   createdAt: Date; // レコード作成日時
   updatedAt: Date; // レコード更新日時
 }
+
+export interface EditBodyCompositionRepositoryInput {
+  weight: number;
+  bmi: number;
+  bodyFatPercentage: number;
+  bodyFatMass: number;
+  skeletalMusclePercentage: number;
+  skeletalMuscleMass: number;
+  subcutaneousFatPercentage: number;
+  ffmi: number;
+  boneMass: number;
+  visceralFatLevel: number;
+  basalMetabolism: number;
+  measuredAt: Date;
+}

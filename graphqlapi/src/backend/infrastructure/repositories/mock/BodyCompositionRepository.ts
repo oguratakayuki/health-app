@@ -1,5 +1,5 @@
 import { IBodyCompositionRepository } from "@/backend/domain/interfaces/IBodyCompositionRepository";
-import { BodyComposition } from "@/backend/domain/entities/BodyComposition";
+import { BodyComposition, EditBodyCompositionRepositoryInput } from "@/backend/domain/entities/BodyComposition";
 
 export class BodyCompositionRepository implements IBodyCompositionRepository {
   async findByUser(userId: string, limit?: number, offset?: number): Promise<BodyComposition[]> {
@@ -60,6 +60,28 @@ export class BodyCompositionRepository implements IBodyCompositionRepository {
       visceralFatLevel: 8,
       basalMetabolism: 1600,
       measuredAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
+
+  async update(id: string, input: EditBodyCompositionRepositoryInput): Promise<BodyComposition | null> {
+    // Mock implementation: return the updated entity
+    return {
+      id: id,
+      userId: "user-123",
+      weight: input.weight,
+      bmi: input.bmi,
+      bodyFatPercentage: input.bodyFatPercentage,
+      bodyFatMass: input.bodyFatMass,
+      skeletalMusclePercentage: input.skeletalMusclePercentage,
+      skeletalMuscleMass: input.skeletalMuscleMass,
+      subcutaneousFatPercentage: input.subcutaneousFatPercentage,
+      ffmi: input.ffmi,
+      boneMass: input.boneMass,
+      visceralFatLevel: input.visceralFatLevel,
+      basalMetabolism: input.basalMetabolism,
+      measuredAt: input.measuredAt,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

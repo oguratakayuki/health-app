@@ -1,5 +1,7 @@
 import { BodyCompositionService } from "../BodyCompositionService";
 import { ListBodyCompositionDto } from "@/backend/application/dtos/ListBodyCompositionDto";
+import { ShowBodyCompositionDto } from "@/backend/application/dtos/ShowBodyCompositionDto";
+import { EditBodyCompositionDto } from "@/backend/application/dtos/EditBodyCompositionDto";
 import { IBodyCompositionRepository } from "@/backend/domain/interfaces/IBodyCompositionRepository";
 import { vi } from "vitest";
 
@@ -41,11 +43,21 @@ describe("BodyCompositionService", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       } as any),
+      update: vi.fn().mockResolvedValue({
+        id: "1",
+        userId: "user-123",
+        weight: 75,
+        bmi: 24,
+        bodyFatPercentage: 20,
+        measuredAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any),
     };
     service = new BodyCompositionService(mockRepo);
   });
 
-    it("should return a list of body compositions sorted by measuredAt descending", async () => {
+  it("should return a list of body compositions sorted by measuredAt descending", async () => {
     const dto: ListBodyCompositionDto = { userId: "user-123" };
     const result = await service.listBodyCompositions(dto);
     
@@ -57,12 +69,35 @@ describe("BodyCompositionService", () => {
   });
 
   it("should return a mock body composition for showBodyComposition", async () => {
-    const dto: ShowBodyCompositionDto = { id: 1, userId: "user-123" };
+    const dto: ShowBodyCompositionDto = { id: "1", userId: "user-123" };
     const result = await service.showBodyComposition(dto);
 
     expect(result).not.toBeNull();
     expect(result?.id).toBe("1");
     expect(result?.weight).toBe(70.5);
   });
-}
-);
+
+  it("should return a mocked body composition for editBodyComposition", async () => {
+    const dto: EditBodyCompositionDto = {
+      id: "1",
+      userId: "user-123",
+      measuredAt: new Date(),
+      weight: 75,
+      bmi: 24,
+      bodyFatPercentage: 20,
+      bodyFatMass: 15,
+      subcutaneousFatPercentage: 15,
+      visceralFatLevel: 8,
+      skeletalMusclePercentage: 35,
+      skeletalMuscleMass: 25,
+      ffmi: 20,
+      boneMass: 3.0,
+      basalMetabolism: 1700,
+    };
+    const result = await service.editBodyComposition(dto);
+
+    expect(result).toBeDefined();
+    expect(result.id).toBe("1");
+    expect(result.weight).toBe(75);
+  });
+});

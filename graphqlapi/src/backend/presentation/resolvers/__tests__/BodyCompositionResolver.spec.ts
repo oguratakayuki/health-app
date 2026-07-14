@@ -42,6 +42,24 @@ describe("BodyCompositionResolver", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       }),
+      editBodyComposition: vi.fn().mockResolvedValue({
+        id: "1",
+        userId: "user-123",
+        weight: 75,
+        bmi: 24,
+        bodyFatPercentage: 20,
+        bodyFatMass: 15,
+        subcutaneousFatPercentage: 15,
+        visceralFatLevel: 8,
+        skeletalMusclePercentage: 35,
+        skeletalMuscleMass: 25,
+        ffmi: 20,
+        boneMass: 3.0,
+        basalMetabolism: 1700,
+        measuredAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
     };
     mockCtx = {
       user: { id: "user-123" },
@@ -69,5 +87,27 @@ describe("BodyCompositionResolver", () => {
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBeGreaterThan(0);
     expect(result[0].userId).toBe("user-123");
+  });
+
+  it("should return mocked body composition when calling editBodyComposition", async () => {
+    const input = {
+      id: "1",
+      measuredAt: new Date(),
+      weight: 75,
+      bmi: 24,
+      bodyFatPercentage: 20,
+      bodyFatMass: 15,
+      subcutaneousFatPercentage: 15,
+      visceralFatLevel: 8,
+      skeletalMusclePercentage: 35,
+      skeletalMuscleMass: 25,
+      ffmi: 20,
+      boneMass: 3.0,
+      basalMetabolism: 1700,
+    };
+    const result = await resolver.editBodyComposition(input, mockCtx as GraphQLContext);
+    expect(result).toBeDefined();
+    expect(result.id).toBe("1");
+    expect(result.weight).toBe(75);
   });
 });

@@ -1,5 +1,7 @@
 import { BodyComposition } from "@/backend/domain/entities/BodyComposition";
 import { ListBodyCompositionDto } from "@/backend/application/dtos/ListBodyCompositionDto";
+import { ShowBodyCompositionDto } from "@/backend/application/dtos/ShowBodyCompositionDto";
+import { EditBodyCompositionDto } from "@/backend/application/dtos/EditBodyCompositionDto";
 
 export interface IBodyCompositionService {
   /**
@@ -11,6 +13,11 @@ export interface IBodyCompositionService {
    * 体組成計測データの詳細を取得する
    */
   showBodyComposition(dto: ShowBodyCompositionDto): Promise<BodyComposition | null>;
+
+  /**
+   * 体組成計測データを編集・更新する
+   */
+  editBodyComposition(dto: EditBodyCompositionDto): Promise<BodyComposition>;
 }
 
 

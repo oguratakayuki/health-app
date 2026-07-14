@@ -39,3 +39,26 @@ export const GET_BODY_COMPOSITION = gql`
   }
 `;
 
+export const EDIT_BODY_COMPOSITION = gql`
+  mutation EditBodyComposition($input: EditBodyCompositionInput!) {
+    editBodyComposition(input: $input) {
+      id
+      userId
+      measuredAt
+      weight
+      bmi
+      bodyFatPercentage
+      bodyFatMass
+      subcutaneousFatPercentage
+      visceralFatLevel
+      skeletalMusclePercentage
+      skeletalMuscleMass
+      ffmi
+      boneMass
+      basalMetabolism
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
