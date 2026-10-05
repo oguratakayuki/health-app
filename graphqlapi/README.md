@@ -1,9 +1,10 @@
 
 # 設計ドキュメント
-- [GraphQLにおける認証・認可アーキテクチャ設計](graphqlapi/docs/graphql-auth-architecture.md)
-- [フロントエンドの認証・認可アーキテクチャ設計](graphqlapi/docs/frontend-auth-architecture.md)
-- [バックエンドにおけるデータマッピング・腐敗防止層（ACL）の設計規律](graphqlapi/docs/backend-data-mapping-architecture.md)
-- [GraphQL Code Generator を用いた型同期アーキテクチャ](graphqlapi/docs/graphql-codegen.md)
+- [GraphQLにおける認証・認可アーキテクチャ設計](docs/graphql-auth-architecture.md)
+- [フロントエンドの認証・認可アーキテクチャ設計](docs/frontend-auth-architecture.md)
+- [バックエンドにおけるデータマッピング・腐敗防止層（ACL）の設計規律](docs/backend-data-mapping-architecture.md)
+- [GraphQL Code Generator を用いた型同期アーキテクチャ](docs/graphql-codegen.md)
+- [クリーンアーキテクチャとAI駆動開発プロセスの設計思想](docs/ai-driven-development-process.md)
 
 
 # SETUP
