@@ -15,7 +15,7 @@ export default function BodyCompositionDetailPage() {
   const { data, loading, error } = useQuery<GetBodyCompositionQuery>(GET_BODY_COMPOSITION, {
     variables: {
       input: {
-        id: parseInt(id),
+        id: id,
       },
     },
   });

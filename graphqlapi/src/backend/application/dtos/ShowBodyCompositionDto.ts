@@ -1,4 +1,4 @@
 export interface ShowBodyCompositionDto {
-  id: number;
+  id: string;
   userId: string;
 }

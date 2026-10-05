@@ -30,7 +30,7 @@ export class BodyCompositionService implements IBodyCompositionService {
   async showBodyComposition(dto: ShowBodyCompositionDto): Promise<BodyComposition | null> {
     try {
       // 1. リポジトリからIDでデータを取得
-      const entity = await this.bodyCompositionRepository.findById(dto.id.toString());
+      const entity = await this.bodyCompositionRepository.findById(dto.id);
 
       if (!entity) {
         throw new Error("BodyCompositionNotFound");

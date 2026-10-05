@@ -18,7 +18,7 @@ export default function BodyCompositionEditPage() {
   const id = params.id as string;
 
   const { data, loading, error } = useQuery<GetBodyCompositionQuery>(GET_BODY_COMPOSITION, {
-    variables: { input: { id } },
+    variables: { input: { id: id } },
   });
 
   const [editBodyComposition, { loading: mutationLoading }] = useMutation<
